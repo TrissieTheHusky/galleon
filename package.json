@@ -1,0 +1,15 @@
+{
+  "author": "runic-tears",
+  "license": "GPL-3.0",
+  "scripts": {
+    "start": "node src/Shard",
+    "dev": "nodemon src/Shard"
+  },
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "mongoose": "^5.7.13",
+    "nodemon": "^2.0.1",
+    "sugar": "^2.0.6"
+  }
+}
