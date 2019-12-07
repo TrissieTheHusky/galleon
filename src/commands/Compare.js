@@ -6,7 +6,7 @@ module.exports.execute = async (client, msg, args) => {
 
   const selected = randElem(args);
 
-  msg.channel.send(new RichEmbed().setDescription(`In my not randomised opinion, \`${selected}\` is better.`).setColor(0x3498db));
+  msg.channel.send(`In my not randomised opinion, \`${selected}\` is better.`);
 };
 
 module.exports.meta = {

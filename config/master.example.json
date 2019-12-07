@@ -4,5 +4,6 @@
     "message": "on my lord",
     "type": "WATCHING"
   },
-  "ownerId": "576322791129743361"
+  "ownerId": "576322791129743361",
+  "loggerHookUrl": "https://discordapp.com/api/webhooks/000000000/asdasdasdasd"
 }

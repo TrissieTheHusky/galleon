@@ -1,0 +1,4 @@
+creating a folder with a command group name
+then adding index.js
+then requiring each command
+ez
