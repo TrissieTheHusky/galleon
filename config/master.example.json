@@ -5,5 +5,8 @@
     "type": "WATCHING"
   },
   "ownerId": "576322791129743361",
-  "loggerHookUrl": "https://discordapp.com/api/webhooks/000000000/asdasdasdasd"
+  "loggerHookUrl": "https://discordapp.com/api/webhooks/000000000/asdasdasdasd",
+  "customApis": {
+    "cat": "your key"
+  }
 }

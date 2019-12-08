@@ -13,6 +13,9 @@ fs.readdir(path.join(__dirname, "./commands/"), (err, files) => {
   if (err) return console.error(err);
   console.log("--------");
   files.forEach(file => {
+    if (!file.endsWith(".js")) return console.log(`- ${file} is not a JavaScript file, ignored.`);
+    if (file.endsWith(".disabled.js")) return console.log(`? ${file.split(".")[0]} is disabled, ignored.`)
+
     const command = require(`./commands/${file}`);
     client.commands.set(command.meta.name, command);
     console.log(`* ${command.meta.name}`);
@@ -23,6 +26,9 @@ fs.readdir(path.join(__dirname, "./commands/"), (err, files) => {
 fs.readdir(path.join(__dirname, "./events/"), (err, files) => {
   if (err) return console.error(err);
   files.forEach(file => {
+    if (!file.endsWith(".js")) return console.log(`- ${file} is not a JavaScript file, ignored.`);
+    if (file.endsWith(".disabled.js")) return console.log(`? ${file.split(".")[0]} is disabled, ignored.`)
+
     const event = require(`./events/${file}`);
     let eventName = file.toLowerCase().split(".")[0];
     client.on(eventName, event.bind(null, client));

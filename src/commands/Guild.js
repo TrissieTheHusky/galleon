@@ -25,7 +25,7 @@ module.exports.execute = async (client, msg, args) => {
     }
 
     default: {
-      msg.channel.send(":x: Субкоманда не указана, либо указана неверная субкоманда.");
+      msg.channel.send(":x: You have invoked an invalid subcommand.");
       break;
     }
   }
@@ -36,6 +36,5 @@ module.exports.meta = {
   description: "Manipulations with guilds",
   usage: "[list | leave <guildId>]",
   args: true,
-  minLevel: 1,
   ownerOnly: true
 };

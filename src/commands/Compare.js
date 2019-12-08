@@ -1,12 +1,9 @@
-const { RichEmbed } = require("discord.js");
 const randElem = require("sugar").Array.sample;
 
 module.exports.execute = async (client, msg, args) => {
   if (args.includes("|", " | ")) args = args.join(" ").split(" | ");
 
-  const selected = randElem(args);
-
-  msg.channel.send(`In my not randomised opinion, \`${selected}\` is better.`);
+  msg.channel.send(`I think that \`${randElem(args)}\` is better.`);
 };
 
 module.exports.meta = {
