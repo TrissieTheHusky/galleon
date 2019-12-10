@@ -12,5 +12,5 @@ module.exports.meta = {
   cooldown: 5,
   args: true,
   usage: "<first thing> | <second thing> | ...",
-  description: "Compares anything \nSpacebar sensitive!"
+  description: "Compares something you'd like to compare."
 };

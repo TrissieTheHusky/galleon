@@ -42,6 +42,7 @@ module.exports.meta = {
   subcommands: ["repeat", "edit"],
   aliases: ["msg"],
   description: "Sending messages from bot's name",
+  hidden: true,
   args: true,
   ownerOnly: true
 };

@@ -35,8 +35,8 @@ module.exports.execute = async (client, msg, args) => {
 module.exports.meta = {
   category: "Owner",
   name: "guild",
-  description: "Manipulations with guilds",
-  usage: "[list | leave <guildId>]",
+  description: "Manipulations with guilds.",
+  hidden: true,
   args: true,
   ownerOnly: true
 };

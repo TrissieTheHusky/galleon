@@ -20,5 +20,5 @@ module.exports.meta = {
   category: "Fun",
   name: "cat",
   cooldown: 5,
-  description: "Gets a random cat pictures"
+  description: "Gets a random cat pictures from some cat API."
 };

@@ -19,5 +19,5 @@ module.exports.meta = {
   name: "about",
   aliases: ["botinfo"],
   cooldown: 5,
-  description: "Shows information about the bot"
+  description: "Shows information about the bot."
 };
