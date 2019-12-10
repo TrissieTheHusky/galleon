@@ -19,9 +19,10 @@ module.exports.execute = async (client, msg, args) => {
       if (subcommandArgs.length < 1) return msg.channel.send(":x: Вы не указали `<guildID>`!");
 
       const guild = client.guilds.get(subcommandArgs[0]);
-      guild.leave().then(g => console.log(`[D.JS] Left ${g} (${g.id})`));
+      if (!guild) return msg.channel.send(`:warning: I cannot leave this guild, it appears to be an unexisting guild.`);
+      guild.leave().catch(e => msg.channel.send(`:x: Something went wrong \`\`\`${e.message}\`\`\``));
 
-      return msg.channel.send(`:white_check_mark: I left **${guild.name}** (\`${guild.id}\`)`)
+      return msg.channel.send(`:white_check_mark: I left **${guild.name}** (\`${guild.id}\`)`);
     }
 
     default: {
@@ -32,6 +33,7 @@ module.exports.execute = async (client, msg, args) => {
 };
 
 module.exports.meta = {
+  category: "Owner",
   name: "guild",
   description: "Manipulations with guilds",
   usage: "[list | leave <guildId>]",

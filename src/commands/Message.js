@@ -37,6 +37,7 @@ module.exports.execute = async (client, msg, args) => {
 };
 
 module.exports.meta = {
+  category: "Owner",
   name: "message",
   subcommands: ["repeat", "edit"],
   aliases: ["msg"],

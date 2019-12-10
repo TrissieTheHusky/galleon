@@ -15,6 +15,7 @@ module.exports.execute = async (client, msg, args) => {
 };
 
 module.exports.meta = {
+  category: "Utils",
   name: "about",
   aliases: ["botinfo"],
   cooldown: 5,

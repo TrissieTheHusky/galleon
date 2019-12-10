@@ -7,6 +7,7 @@ module.exports.execute = async (client, msg, args) => {
 };
 
 module.exports.meta = {
+  category: "Fun",
   name: "compare",
   cooldown: 5,
   args: true,

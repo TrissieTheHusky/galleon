@@ -17,6 +17,7 @@ module.exports.execute = async (client, msg, args = null) => {
 };
 
 module.exports.meta = {
+  category: "Fun",
   name: "cat",
   cooldown: 5,
   description: "Gets a random cat pictures"

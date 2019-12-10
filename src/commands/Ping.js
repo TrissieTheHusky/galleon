@@ -17,6 +17,7 @@ module.exports.execute = async (client, msg, args) => {
 };
 
 module.exports.meta = {
+  category: "Utils",
   name: "ping",
   description: "Does a ping request",
   aliases: ["pong"],
