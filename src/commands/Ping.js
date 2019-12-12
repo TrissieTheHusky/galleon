@@ -19,7 +19,7 @@ module.exports.execute = async (client, msg, args) => {
 module.exports.meta = {
   category: "Utils",
   name: "ping",
-  description: "Does a ping request",
+  description: "Gets latencies data.",
   aliases: ["pong"],
   guildOnly: true,
   cooldown: 5
