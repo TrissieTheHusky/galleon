@@ -1,0 +1,5 @@
+aiohttp==3.5.4
+discord.py==1.2.5
+python-dotenv==0.10.3
+pep8==1.7.1
+autopep8==1.4.4
