@@ -1,9 +1,0 @@
-{
-    "apps": [
-        {
-            "name": "defrabot",
-            "script": "yarn",
-            "args" : "start"
-        }
-    ]
-}
