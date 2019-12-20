@@ -18,7 +18,7 @@ if __name__ == "__main__":
         if file.endswith(".py") and not file.endswith(".disabled.py"):
             bot.load_extension(f"src.cogs.{file[:-3]}")
             print(f"* {file[:-3]} loaded")
-    
+
     print("--------------")
 
 
