@@ -6,6 +6,8 @@ from contextlib import redirect_stdout
 import io
 import asyncio
 from src.utils.configuration import cfg
+from mcstatus import MinecraftServer
+from socket import gaierror
 
 
 class BotOwner(commands.Cog, name='Владелец бота'):
@@ -21,6 +23,16 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
+
+    @commands.command()
+    async def mcstatus(self, ctx, *, ip: str):
+        try:
+            srv = MinecraftServer.lookup(ip)
+            status = srv.status()
+        except gaierror:
+            return await ctx.send(f"Ошибка подключения!")
+        else:
+            return await ctx.send(f"на сервере {status.players.online} игроков, задержка ответа {round(status.latency / 2, 2)} мс")
 
     @commands.command(name="logout", aliases=("shutdown", "turnoff"))
     async def shutdown_the_bot(self, ctx):
