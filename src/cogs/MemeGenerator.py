@@ -5,13 +5,35 @@ from os.path import join, dirname
 from PIL import Image, ImageDraw, ImageFont
 from functools import partial
 from io import BytesIO
+import aiohttp
 import textwrap
 
 
 class MemeGenerator(commands.Cog, name="Генератор мемов"):
     def __init__(self, bot):
+        self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot = bot
         self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"), size=75, encoding="utf-8")
+
+    def become_mandalorian(self, minecraft_skin: bytes) -> BytesIO:
+        buffer = BytesIO()
+
+        with Image.open(BytesIO(minecraft_skin)) as img:
+            img = img.convert("RGBA")
+
+            with Image.new("RGBA", img.size) as bg:
+                with Image.open(join(dirname(__file__), f"../meme_templates/mando_helm.png")) as mando:
+                    mando = mando.convert("RGBA")
+                    mando = mando.crop((0, 0, 64, 16))
+
+                    bg.paste(img)
+                    bg.paste(mando)
+
+                bg.save(buffer, format="PNG")
+
+        buffer.seek(0)
+
+        return buffer
 
     def generate_meme(self, meme: str, text: str) -> BytesIO:
         buffer = BytesIO()
@@ -54,6 +76,31 @@ class MemeGenerator(commands.Cog, name="Генератор мемов"):
         buffer.seek(0)
 
         return buffer
+
+    @commands.command(name="mandalorianize")
+    @commands.cooldown(1, 30, BucketType.user)
+    async def mandalorianize(self, ctx):
+        """Стать мандалорцем"""
+        msg = await ctx.send("Генерируем...")
+        attachments = ctx.message.attachments
+
+        if len(attachments) <= 0:
+            return await msg.edit(content="Вы не прикрипили скин!")
+
+        if attachments[0].width != 64 and (attachments[0].height != 64 or attachments[0].height != 32):
+            return await msg.edit(content="Разрешение скина должно быть 64x64 или 64x32!")
+
+        skin_url = attachments[0].url
+
+        async with self.session.get(skin_url) as res:
+            skin_bytes = await res.read()
+
+        fn = partial(self.become_mandalorian, skin_bytes)
+        mandalorized = await self.bot.loop.run_in_executor(None, fn)
+        file = discord.File(fp=mandalorized, filename=f"mando_{ctx.author.name}.png")
+
+        await ctx.send(file=file, content=f"{ctx.author.mention}, ваше чудо-творение готово!")
+        return await msg.delete()
 
     @commands.command(name="shpaklevka")
     @commands.cooldown(1, 30, BucketType.user)
