@@ -1,10 +1,16 @@
 {
-    "DEFAULT_PRESENCE": "with toy soldier",
-    "DEFAULT_PREFIX": "?",
-    "WEBHOOK": {
-      "NAME": "Defrabot",
-      "AVATAR_URL": "",
-      "LOGGING_URL": "https://discordapp.com/api/webhooks/000000000000/asdasdasdas1q234123dsgdfcg"
-    }
+  "DEFAULT_PRESENCE": "with toy soldier",
+  "DEFAULT_PREFIX": "?",
+  "WEBHOOK": {
+    "NAME": "Defrabot",
+    "AVATAR_URL": "",
+    "LOGGING_URL": "https://discordapp.com/api/webhooks/000000000000/asdasdasdas1q234123dsgdfcg"
+  },
+  "CLOWNS": {
+    "ENABLED": false,
+    "LIST": [
+      178404926869733376
+    ]
   }
+}
   

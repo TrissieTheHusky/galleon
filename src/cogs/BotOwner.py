@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+from discord import Forbidden
 import traceback
 import textwrap
 from contextlib import redirect_stdout
@@ -23,6 +24,22 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
+
+    @commands.command()
+    async def clown(self, ctx, user: discord.User):
+        await ctx.send(f":clown: {user} has been clowned")
+
+        try:
+            message = await self.bot.wait_for("message", timeout=60 * 5,
+                                              check=lambda m: m.author == user and m.channel.guild == ctx.guild and m.channel.permissions_for(
+                                                  m.guild.me).add_reactions)
+        except asyncio.TimeoutError:
+            pass
+        else:
+            try:
+                await message.add_reaction("🤡")
+            except Forbidden:
+                await message.channel.send("🤡")
 
     @commands.command()
     async def mcstatus(self, ctx, *, ip: str):
