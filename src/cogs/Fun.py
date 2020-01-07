@@ -17,7 +17,7 @@ class Fun(commands.Cog, name="Смешнявки"):
 
     @commands.command(name="compare")
     async def _compare(self, ctx, *things: commands.clean_content):
-        things = " ".join(list(things)).split("|")
+        things = " ".join(str(things)).split("|")
         things = [thing.strip(' ') for thing in things]
         return await ctx.send(f"Я думаю, что **{random.choice(things)}** лучше.")
 
