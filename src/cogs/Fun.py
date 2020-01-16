@@ -18,7 +18,7 @@ class Fun(commands.Cog, name="Fun"):
         return await ctx.send(f"I'd give `{body}` **{rating} / 10**.")
 
     @commands.command(name="compare", usage="thing | another thing | one more thing")
-    async def _compare(self, ctx, *things: commands.clean_content):
+    async def _compare(self, ctx, things: commands.clean_content):
         """Compares things"""
         things = " ".join(str(things)).split("|")
         things = [thing.strip(' ') for thing in things]
