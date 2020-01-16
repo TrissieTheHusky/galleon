@@ -9,6 +9,7 @@ import asyncio
 from src.utils.configuration import cfg, Config
 from mcstatus import MinecraftServer
 from socket import gaierror
+import subprocess
 
 
 class BotOwner(commands.Cog, name='Bot Owner'):
@@ -24,6 +25,18 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
+
+    @commands.command(name="pullv2", aliases=("update", "pull"))
+    async def pullv2(self, ctx):
+        pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        stdout, stderr = pull.communicate()
+
+        if stderr is None:
+            return await ctx.send('```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
+        else:
+            return await ctx.send('```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
     @commands.command(name="refresh_prefixes")
     async def refresh_prefixes(self, ctx):
