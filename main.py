@@ -1,15 +1,14 @@
+from src.utils.custom_bot_class import DefraBot
 from src.utils.configuration import Config, cfg
 from src.utils.webhook_logger import Logger
 from os.path import join, dirname
-from discord.ext import commands
 from dotenv import load_dotenv
 from uuid import uuid4
 import discord
 import asyncio
 import os
 
-
-bot = commands.AutoShardedBot(command_prefix=Config.get_prefix)
+bot = DefraBot(command_prefix=Config.get_prefix)
 
 if __name__ == "__main__":
     load_dotenv(join(dirname(__file__), ".env"))
@@ -24,6 +23,7 @@ if __name__ == "__main__":
 
 @bot.event
 async def on_ready():
+    bot.prefixes = await Config.update_prefixes()
     print(f"[{bot.user.name.upper()}] Authenticated.")
     await bot.change_presence(activity=discord.Activity(name=cfg["DEFAULT_PRESENCE"], type=discord.ActivityType.playing))
     await Logger.log(embed=discord.Embed(color=0x3498db, description=f":white_check_mark: Sucessfully loaded!\n\n:hash: `{str(uuid4())[-6:]}`"))

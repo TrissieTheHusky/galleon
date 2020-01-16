@@ -6,12 +6,12 @@ import textwrap
 from contextlib import redirect_stdout
 import io
 import asyncio
-from src.utils.configuration import cfg
+from src.utils.configuration import cfg, Config
 from mcstatus import MinecraftServer
 from socket import gaierror
 
 
-class BotOwner(commands.Cog, name='Владелец бота'):
+class BotOwner(commands.Cog, name='Bot Owner'):
     def __init__(self, bot):
         self.bot = bot
         self._last_result = None
@@ -24,6 +24,12 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
+
+    @commands.command(name="refresh_prefixes")
+    async def refresh_prefixes(self, ctx):
+        m = await ctx.send("Refreshing prefixes...")
+        self.bot.prefixes = await Config.update_prefixes()
+        await m.edit(content=":ok_hand: Guild prefixes data refreshed")
 
     @commands.command()
     async def clown(self, ctx, user: discord.User):
@@ -47,13 +53,13 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             srv = MinecraftServer.lookup(ip)
             status = srv.status()
         except gaierror:
-            return await ctx.send(f"Ошибка подключения!")
+            return await ctx.send(f"Connection error")
         else:
-            return await ctx.send(f"на сервере {status.players.online} игроков, задержка ответа {round(status.latency / 2, 2)} мс")
+            return await ctx.send(f"{status.players.online} players, {round(status.latency / 2, 2)} мs")
 
     @commands.command(name="logout", aliases=("shutdown", "turnoff"))
     async def shutdown_the_bot(self, ctx):
-        await ctx.send("Выключение через 10 секунд...")
+        await ctx.send("The bot will turn off in 10 seconds...")
         await asyncio.sleep(10)
         return await self.bot.logout()
 
@@ -61,7 +67,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
     @commands.guild_only()
     async def msg(self, ctx):
         if ctx.invoked_subcommand is None:
-            return await ctx.send('Вы не указали субкоманду.')
+            return await ctx.send('You didn\'t specify any subcommand.')
 
     @msg.command(name="repeat", aliases=('mimic', 'copy'))
     async def msg_repeat(self, ctx, *, _input: str):
@@ -72,7 +78,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         c = self.bot.get_channel(channel_id)
 
         if c is None:
-            return await ctx.send(":x: Неизвестный канал.")
+            return await ctx.send(":x: Unknown channel.")
 
         m = await c.fetch_message(message_id)
 
@@ -80,10 +86,10 @@ class BotOwner(commands.Cog, name='Владелец бота'):
 
         e = discord.Embed(
             colour=0x3498db,
-            description="\N{OK HAND SIGN} Сообщение отредактировано."
+            description="\N{OK HAND SIGN} Message edited."
         ).add_field(
-            name=f"Просмотреть",
-            value=f"[Перейти по ссылке](https://discordapp.com/{ctx.guild.id}/{channel_id}/{message_id}/"
+            name=f"See updated content",
+            value=f"[Jump to message](https://discordapp.com/{ctx.guild.id}/{channel_id}/{message_id}/)"
         )
 
         await ctx.send(embed=e)
@@ -91,14 +97,14 @@ class BotOwner(commands.Cog, name='Владелец бота'):
 
     @commands.group(name="status")
     async def _status(self, ctx):
-        """Манипулирование со статусом бота"""
+        """Manipulations with bot's presence"""
         if ctx.invoked_subcommand is None:
-            return await ctx.send('Вы не указали субкоманду.')
+            return await ctx.send('No subcommand.')
 
     @_status.command(name="reset")
     async def _status_reset(self, ctx):
-        """Сбрасывает статус бота на статус по умолчанию"""
-        stat = discord.Activity(name="Сбрасывание статуса...", type=discord.ActivityType.playing)
+        """Makes bot's status back to default"""
+        stat = discord.Activity(name="Status being reset...", type=discord.ActivityType.playing)
         await self.bot.change_presence(activity=stat)
         await asyncio.sleep(0.5)
         await self.bot.change_presence(activity=discord.Activity(name=cfg['DEFAULT_PRESENCE'], type=discord.ActivityType.playing))
@@ -108,17 +114,17 @@ class BotOwner(commands.Cog, name='Владелец бота'):
 
     @_status.command(name="set")
     async def _status_set(self, ctx, stype, *, text):
-        """Изменение статуса"""
+        """Changes bot's status"""
         if (stype == 'playing') or (stype == '1'):
             playing_now = discord.Activity(name=str(text), type=discord.ActivityType.playing)
         elif (stype == 'watching') or (stype == '2'):
             playing_now = discord.Activity(name=str(text), type=discord.ActivityType.watching)
         elif (stype == 'listening') or (stype == '3'):
             playing_now = discord.Activity(name=str(text), type=discord.ActivityType.listening)
-        # Немного сломано, нужно понять в чём проблема.
+        # Something broken here.
         elif (stype == 'streaming') or (stype == '4'):
             if " | " not in text:
-                return await ctx.send("Ссылку обязательно нужно указать `<название> | <ссылка>`")
+                return await ctx.send("URL is needed `<name> | <url>`")
             text = text.split(" | ")
             playing_now = discord.Activity(name=str(text[0]), url=str(text[1]), type=discord.ActivityType.streaming)
         else:
@@ -127,15 +133,15 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         await self.bot.change_presence(activity=playing_now)
 
         del playing_now, text, stype
-        return await ctx.send(":ok_hand: Статус успешно изменён.")
+        return await ctx.send(":ok_hand: Status changed.")
 
     # ==== GUILD COMMANDS ==== #
 
     @commands.group(name='guild')
     async def _guild(self, ctx):
-        """Манипуляции с серверами, где я есть"""
+        """Manipulations with guilds"""
         if ctx.invoked_subcommand is None:
-            return await ctx.send('Вы не указали субкоманду (`leave`, `list`)')
+            return await ctx.send('Pls, use some subcommand')
 
     @_guild.command(name='list')
     async def _guild_list(self, ctx):
@@ -152,12 +158,12 @@ class BotOwner(commands.Cog, name='Владелец бота'):
     async def _guild_leave(self, ctx, guild_id):
         guild = self.bot.get_guild(int(guild_id))
         await guild.leave()
-        await ctx.send(f"Я успешно покинул сервер **{guild.name}** (`{guild.id}`)")
+        await ctx.send(f"I left **{guild.name}** (`{guild.id}`)")
 
     @commands.command(pass_context=True, name='eval')
     async def _eval(self, ctx, *, body: str):
         """
-        Выполняет код
+        Evaluates the code
 
         ❤ Also huge thanks to the https://github.com/Rapptz/RoboDanny ❤
         """

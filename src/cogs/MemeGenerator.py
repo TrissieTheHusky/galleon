@@ -9,7 +9,7 @@ import aiohttp
 import textwrap
 
 
-class MemeGenerator(commands.Cog, name="Генератор мемов"):
+class MemeGenerator(commands.Cog, name="Memes generator"):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot = bot
@@ -80,15 +80,15 @@ class MemeGenerator(commands.Cog, name="Генератор мемов"):
     @commands.command(name="mandalorianize")
     @commands.cooldown(1, 30, BucketType.user)
     async def mandalorianize(self, ctx):
-        """Стать мандалорцем"""
-        msg = await ctx.send("Генерируем...")
+        """Become The Mandalorian"""
+        msg = await ctx.send("Generating...")
         attachments = ctx.message.attachments
 
         if len(attachments) <= 0:
-            return await msg.edit(content="Вы не прикрипили скин!")
+            return await msg.edit(content="You have to attach your minecraft skin to the message!")
 
         if attachments[0].width != 64 and (attachments[0].height != 64 or attachments[0].height != 32):
-            return await msg.edit(content="Разрешение скина должно быть 64x64 или 64x32!")
+            return await msg.edit(content="Picture size must be 64x64 or 64x32!")
 
         skin_url = attachments[0].url
 
@@ -99,36 +99,36 @@ class MemeGenerator(commands.Cog, name="Генератор мемов"):
         mandalorized = await self.bot.loop.run_in_executor(None, fn)
         file = discord.File(fp=mandalorized, filename=f"mando_{ctx.author.name}.png")
 
-        await ctx.send(file=file, content=f"{ctx.author.mention}, ваше чудо-творение готово!")
+        await ctx.send(file=file, content=f"{ctx.author.mention}, this is the way.")
         return await msg.delete()
 
     @commands.command(name="shpaklevka")
     @commands.cooldown(1, 30, BucketType.user)
     async def shpaklevka_meme(self, ctx, *, body: str):
-        """шапклёвка )))"""
+        """some steve from minecref"""
         msg = await ctx.send("Generating your HQ meme...")
 
         if len(body) > 90:
-            return await msg.edit(content=":x: Длина текста не может превышать 90 символов!")
+            return await msg.edit(content=":x: Text length must be less than 90 characters")
 
         fn = partial(self.generate_meme, "shpaklevka", body)
         meme = await self.bot.loop.run_in_executor(None, fn)
         file = discord.File(fp=meme, filename="shpaklevka.jpg")
 
-        await ctx.send(file=file, content=f"{ctx.author.mention}, ваше чудо-творение готово!")
+        await ctx.send(file=file, content=f"{ctx.author.mention}, your art is here!")
         return await msg.delete()
 
     @commands.command(name="pika")
     @commands.cooldown(1, 30, BucketType.user)
     async def surprised_pika(self, ctx, *, body: str):
-        """Генерирует мем с шокированным Пикачу :о"""
+        """Shocked pika meme with your text"""
         msg = await ctx.send("Generating your HQ meme...")
 
         fn = partial(self.generate_meme, "pika", body)
         meme = await self.bot.loop.run_in_executor(None, fn)
         file = discord.File(fp=meme, filename="pika.jpg")
 
-        await ctx.send(file=file, content=f"{ctx.author.mention}, ваше чудо-творение готово!")
+        await ctx.send(file=file, content=f"{ctx.author.mention} pika-pika!")
         return await msg.delete()
 
 
