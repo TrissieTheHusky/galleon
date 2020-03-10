@@ -19,7 +19,12 @@ class MapMaker(Cog, name="MapMakers"):
     @server.command()
     @commands.has_any_role("Team Member", "Team Lead")
     async def start(self, ctx: Context):
-        pull = subprocess.Popen(['systemd', 'start', 'minecraft'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        pull = subprocess.Popen(
+            ['systemctl', 'start', 'minecraft.service'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT
+        )
+        
         stdout, stderr = pull.communicate()
 
         if stderr is None:
