@@ -9,7 +9,6 @@ import asyncio
 from src.utils.configuration import cfg, Config
 from mcstatus import MinecraftServer
 from socket import gaierror
-import subprocess
 
 
 class BotOwner(commands.Cog, name='Bot Owner'):
@@ -28,10 +27,12 @@ class BotOwner(commands.Cog, name='Bot Owner'):
 
     @commands.command(name="pullv2", aliases=("update", "pull"))
     async def pullv2(self, ctx):
-        pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        stdout, stderr = pull.communicate()
+        proc = await asyncio.create_subprocess_shell(
+            'git pull origin master',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE)
+
+        stdout, stderr = await proc.communicate()
 
         if stderr is None:
             return await ctx.send('```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
