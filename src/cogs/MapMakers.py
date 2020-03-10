@@ -1,4 +1,4 @@
-from asyncio import subprocess
+import subprocess
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 
