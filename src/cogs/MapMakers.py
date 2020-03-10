@@ -35,7 +35,7 @@ class MapMaker(Cog, name="MapMakers"):
     @commands.has_any_role("Team Member", "Team Lead")
     async def update_datapack(self, ctx: Context, mapname, datapack):
         proc = await asyncio.create_subprocess_shell(
-            f"git -C /home/minecraft/{mapname}/datapacks/{datapack} pull origin master",
+            f"sudo git -C /home/minecraft/{mapname}/datapacks/{datapack} pull origin master",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE)
 
