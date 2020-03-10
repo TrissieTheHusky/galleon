@@ -1,4 +1,4 @@
-import subprocess
+import asyncio
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 
@@ -19,23 +19,32 @@ class MapMaker(Cog, name="MapMakers"):
     @server.command()
     @commands.has_any_role("Team Member", "Team Lead")
     async def start(self, ctx: Context):
-        pull = subprocess.Popen(
-            ['systemctl', 'start', 'minecraft.service'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT
-        )
-        
-        stdout, stderr = pull.communicate()
+        proc = await asyncio.create_subprocess_shell(
+            'systemctl start minecraft.service',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE)
+
+        stdout, stderr = await proc.communicate()
 
         if stderr is None:
-            return await ctx.send('**SUCCESS**\n```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
+            return await ctx.send('**SUCCESS**')
         else:
             return await ctx.send(':x: **ERROR**:\n```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
     @server.command()
     @commands.has_any_role("Team Member", "Team Lead")
-    async def update_datapack(self, ctx: Context):
-        return await ctx.send("Time to get newer version og datapack, isn't it? huh?")
+    async def update_datapack(self, ctx: Context, mapname, datapack):
+        proc = await asyncio.create_subprocess_shell(
+            f"git -C /home/minecraft/{mapname}/datapacks/{datapack} pull origin master",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE)
+
+        stdout, stderr = await proc.communicate()
+
+        if stderr is None:
+            return await ctx.send('**SUCCESS**')
+        else:
+            return await ctx.send(':x: **ERROR**:\n```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
 
 def setup(bot):
