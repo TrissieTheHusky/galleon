@@ -50,7 +50,8 @@ class BotOwner(commands.Cog, name='Bot Owner'):
 
         try:
             message = await self.bot.wait_for("message", timeout=60 * 5,
-                                              check=lambda m: m.author == user and m.channel.guild == ctx.guild and m.channel.permissions_for(
+                                              check=lambda
+                                                  m: m.author == user and m.channel.guild == ctx.guild and m.channel.permissions_for(
                                                   m.guild.me).add_reactions)
         except asyncio.TimeoutError:
             pass
@@ -102,7 +103,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
             description="\N{OK HAND SIGN} Message edited."
         ).add_field(
             name=f"See updated content",
-            value=f"[Jump to message](https://discordapp.com/{ctx.guild.id}/{channel_id}/{message_id}/)"
+            value=f"[Jump to message](https://discordapp.com/{m.guild.id}/{channel_id}/{message_id}/)"
         )
 
         await ctx.send(embed=e)
@@ -120,7 +121,8 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         stat = discord.Activity(name="Status being reset...", type=discord.ActivityType.playing)
         await self.bot.change_presence(activity=stat)
         await asyncio.sleep(0.5)
-        await self.bot.change_presence(activity=discord.Activity(name=cfg['DEFAULT_PRESENCE'], type=discord.ActivityType.playing))
+        await self.bot.change_presence(
+            activity=discord.Activity(name=cfg['DEFAULT_PRESENCE'], type=discord.ActivityType.playing))
 
         del stat
         return await ctx.send(":ok_hand: Статус успешно сброшен.")
