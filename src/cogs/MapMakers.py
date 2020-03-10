@@ -44,7 +44,7 @@ class MapMaker(Cog, name="MapMakers"):
         stdout, stderr = proc.communicate()
 
         if stderr is None:
-            return await ctx.send('**SUCCESS**')
+            return await ctx.send('**SUCCESS**\n```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
         else:
             return await ctx.send(':x: **ERROR**:\n```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
