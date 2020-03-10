@@ -19,21 +19,27 @@ class MapMaker(Cog, name="MapMakers"):
     @server.command()
     @commands.has_any_role("Team Member", "Team Lead")
     async def start(self, ctx: Context):
-        proc = await asyncio.create_subprocess_shell(
+        await asyncio.create_subprocess_shell(
             'systemctl start minecraft.service',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE)
+
+        proc = await asyncio.create_subprocess_shell(
+            'systemctl status minecraft.service',
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE)
 
         stdout, stderr = await proc.communicate()
 
         if stderr is None:
-            return await ctx.send('**SUCCESS**')
+            return await ctx.send('**SUCCESS**\n```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
         else:
             return await ctx.send(':x: **ERROR**:\n```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
     @server.command()
     @commands.has_any_role("Team Member", "Team Lead")
     async def update_datapack(self, ctx: Context, mapname, datapack):
+        # BUG: Doesn't use ssh for some weird reason
         proc = await asyncio.create_subprocess_shell(
             f"sudo git -C /home/minecraft/{mapname}/datapacks/{datapack} pull origin master",
             stdout=asyncio.subprocess.PIPE,
