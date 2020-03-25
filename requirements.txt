@@ -1,6 +1,6 @@
 mcstatus==2.3.0
 discord.py
-python-dotenv==0.10.3
-pep8==1.7.1
-autopep8==1.4.4
-Pillow==6.2.1
+python-dotenv
+pep8
+autopep8
+Pillow

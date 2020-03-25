@@ -13,7 +13,8 @@ class MemeGenerator(commands.Cog, name="Memes generator"):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot = bot
-        self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"), size=75, encoding="utf-8")
+        self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"),
+                                            size=75, encoding="utf-8")
 
     def become_mandalorian(self, minecraft_skin: bytes) -> BytesIO:
         buffer = BytesIO()

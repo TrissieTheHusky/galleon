@@ -3,6 +3,7 @@ from discord.ext import commands
 import traceback
 import sys
 from src.utils.webhook_logger import Logger
+from discord.ext.commands import Context
 
 
 class ErrorHandler(commands.Cog):
@@ -10,19 +11,15 @@ class ErrorHandler(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, ctx: Context, error):
         """
         ctx   : Context
         error : Exception
         """
-
-        # Это предотвращает обработку ошибок для команд, с локальным обработчиками
         if hasattr(ctx.command, 'on_error'):
             return
 
         error = getattr(error, 'original', error)
-
-        # Все типы ошибок, внутри ignored - будут игнорироваться обработчиком
         is_ignore_enabled = False
         ignored = commands.UserInputError
 
@@ -30,14 +27,13 @@ class ErrorHandler(commands.Cog):
             if isinstance(error, ignored):
                 return
 
-        async def send_here(message):
+        async def send_here(message: str):
             await ctx.send(message)
 
         async def send_here_no_perms():
             await ctx.send(f':lock: You have no power to run `{ctx.command}`')
 
         # """"
-        # Обработка ошибок происходит тут
         # Reference: isinstance(error, event)
         # """
 

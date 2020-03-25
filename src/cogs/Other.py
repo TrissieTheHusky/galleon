@@ -13,7 +13,7 @@ class Other(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def about(self, ctx):
+    async def about(self, ctx: commands.Context):
         e = Embed(color=0x3498db)
         e.set_author(name=f"{self.bot.user}", icon_url=self.bot.user.avatar_url)
         e.add_field(name="Author", value=f"{self.bot.owner}")

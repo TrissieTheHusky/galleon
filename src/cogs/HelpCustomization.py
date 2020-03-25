@@ -1,4 +1,5 @@
 from discord.ext import commands
+from src.utils.custom_bot_class import DefraBot
 
 
 class MyHelpCommand(commands.DefaultHelpCommand):
@@ -7,7 +8,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 
 
 class HelpCustomization(commands.Cog, name='Помощь'):
-    def __init__(self, client):
+    def __init__(self, client: DefraBot):
         self._original_help_command = client.help_command
         client.help_command = MyHelpCommand(
             indent=3,

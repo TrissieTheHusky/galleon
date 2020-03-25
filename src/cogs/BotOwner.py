@@ -9,7 +9,6 @@ import asyncio
 from src.utils.configuration import cfg, Config
 from mcstatus import MinecraftServer
 from socket import gaierror
-import subprocess
 
 
 class BotOwner(commands.Cog, name='Bot Owner'):
@@ -18,7 +17,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         self._last_result = None
         self.sessions = set()
 
-    async def cog_check(self, ctx):
+    async def cog_check(self, ctx: commands.Context):
         return await ctx.bot.is_owner(ctx.author)
 
     def cleanup_code(self, content):
@@ -28,31 +27,36 @@ class BotOwner(commands.Cog, name='Bot Owner'):
 
     @commands.command(name="pullv2", aliases=("update", "pull"))
     async def pullv2(self, ctx):
-        pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        stdout, stderr = pull.communicate()
 
-        if stderr is None:
+        proc = await asyncio.create_subprocess_shell(
+            'git pull origin master',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE)
+
+        stdout, stderr = await proc.communicate()
+
+        if stdout:
             return await ctx.send('```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
-        else:
+
+        if stderr:
             return await ctx.send('```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
     @commands.command(name="refresh_prefixes")
-    async def refresh_prefixes(self, ctx):
+    async def refresh_prefixes(self, ctx: commands.Context):
         m = await ctx.send("Refreshing prefixes...")
         self.bot.prefixes = await Config.update_prefixes()
         await m.edit(content=":ok_hand: Guild prefixes data refreshed")
 
     @commands.command()
-    async def clown(self, ctx, user: discord.User):
+    async def clown(self, ctx: commands.Context, user: discord.User):
         await ctx.send(f":clown: {user} has been clowned")
 
+        def check(m):
+            return m.author == user and m.channel.guild == ctx.guild and m.channel.permissions_for(
+                m.guild.me).add_reactions
+
         try:
-            message = await self.bot.wait_for("message", timeout=60 * 5,
-                                              check=lambda
-                                                  m: m.author == user and m.channel.guild == ctx.guild and m.channel.permissions_for(
-                                                  m.guild.me).add_reactions)
+            message = await self.bot.wait_for("message", timeout=60 * 5, check=check)
         except asyncio.TimeoutError:
             pass
         else:
@@ -62,7 +66,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
                 await message.channel.send("🤡")
 
     @commands.command()
-    async def mcstatus(self, ctx, *, ip: str):
+    async def mcstatus(self, ctx: commands.Context, *, ip: str):
         try:
             srv = MinecraftServer.lookup(ip)
             status = srv.status()
@@ -72,23 +76,23 @@ class BotOwner(commands.Cog, name='Bot Owner'):
             return await ctx.send(f"{status.players.online} players, {round(status.latency / 2, 2)} мs")
 
     @commands.command(name="logout", aliases=("shutdown", "turnoff"))
-    async def shutdown_the_bot(self, ctx):
+    async def shutdown_the_bot(self, ctx: commands.Context):
         await ctx.send("The bot will turn off in 10 seconds...")
         await asyncio.sleep(10)
         return await self.bot.logout()
 
     @commands.group(name="message", aliases=("msg", "✉"))
     @commands.guild_only()
-    async def msg(self, ctx):
+    async def msg(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             return await ctx.send('You didn\'t specify any subcommand.')
 
     @msg.command(name="repeat", aliases=('mimic', 'copy'))
-    async def msg_repeat(self, ctx, *, _input: str):
+    async def msg_repeat(self, ctx: commands.Context, *, _input: str):
         await ctx.send(_input)
 
     @msg.command(name="edit")
-    async def msg_edit(self, ctx, channel_id: int, message_id: int, *, _input: str = None):
+    async def msg_edit(self, ctx: commands.Context, channel_id: int, message_id: int, *, _input: str = None):
         c = self.bot.get_channel(channel_id)
 
         if c is None:
@@ -110,13 +114,13 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         del e
 
     @commands.group(name="status")
-    async def _status(self, ctx):
+    async def _status(self, ctx: commands.Context):
         """Manipulations with bot's presence"""
         if ctx.invoked_subcommand is None:
             return await ctx.send('No subcommand.')
 
     @_status.command(name="reset")
-    async def _status_reset(self, ctx):
+    async def _status_reset(self, ctx: commands.Context):
         """Makes bot's status back to default"""
         stat = discord.Activity(name="Status being reset...", type=discord.ActivityType.playing)
         await self.bot.change_presence(activity=stat)
@@ -128,7 +132,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         return await ctx.send(":ok_hand: Статус успешно сброшен.")
 
     @_status.command(name="set")
-    async def _status_set(self, ctx, stype, *, text):
+    async def _status_set(self, ctx: commands.Context, stype, *, text):
         """Changes bot's status"""
         if (stype == 'playing') or (stype == '1'):
             playing_now = discord.Activity(name=str(text), type=discord.ActivityType.playing)
@@ -153,13 +157,13 @@ class BotOwner(commands.Cog, name='Bot Owner'):
     # ==== GUILD COMMANDS ==== #
 
     @commands.group(name='guild')
-    async def _guild(self, ctx):
+    async def _guild(self, ctx: commands.Context):
         """Manipulations with guilds"""
         if ctx.invoked_subcommand is None:
             return await ctx.send('Pls, use some subcommand')
 
     @_guild.command(name='list')
-    async def _guild_list(self, ctx):
+    async def _guild_list(self, ctx: commands.Context):
         guilds_ls = self.bot.guilds
         resulting_txt = "```xl\n"
         for i in range(len(guilds_ls)):
@@ -170,13 +174,13 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         return await ctx.send(resulting_txt)
 
     @_guild.command(name='leave')
-    async def _guild_leave(self, ctx, guild_id):
+    async def _guild_leave(self, ctx: commands.Context, guild_id):
         guild = self.bot.get_guild(int(guild_id))
         await guild.leave()
         await ctx.send(f"I left **{guild.name}** (`{guild.id}`)")
 
     @commands.command(pass_context=True, name='eval')
-    async def _eval(self, ctx, *, body: str):
+    async def _eval(self, ctx: commands.Context, *, body: str):
         """
         Evaluates the code
 
