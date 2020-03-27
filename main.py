@@ -1,4 +1,5 @@
 from src.utils.custom_bot_class import DefraBot
+import src.utils.converters as converters
 from src.utils.configuration import Config, cfg
 from src.utils.webhook_logger import Logger
 from os.path import join, dirname
@@ -9,6 +10,7 @@ import discord
 import os
 
 bot = DefraBot(command_prefix=Config.get_prefix)
+converters.init(bot)
 
 if __name__ == "__main__":
     load_dotenv(join(dirname(__file__), ".env"))
@@ -25,6 +27,7 @@ if __name__ == "__main__":
 async def on_ready():
     bot.prefixes = await Config.update_prefixes()
     bot.owner = await bot.fetch_user(576322791129743361)
+
     await bot.change_presence(
         activity=discord.Activity(name=cfg["DEFAULT_PRESENCE"], type=discord.ActivityType.playing))
     await Logger.log(embed=discord.Embed(color=0x3498db,
