@@ -3,7 +3,7 @@ import aiohttp
 from src.utils.configuration import cfg
 
 
-class Logger:
+class WebhookLogger:
     @staticmethod
     async def log(text=None, embed=None):
         async with aiohttp.ClientSession() as session:

@@ -6,3 +6,4 @@ class DefraBot(AutoShardedBot):
         super().__init__(command_prefix, **options)
         self.prefixes = {}
         self.owner = None
+        self.dev_log_channel = None

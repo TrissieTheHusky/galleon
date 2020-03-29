@@ -1,6 +1,7 @@
 {
   "DEFAULT_PRESENCE": "with toy soldier",
   "DEFAULT_PREFIX": "d?",
+  "DEV_LOG_CHANNEL_ID": 123,
   "WEBHOOK": {
     "NAME": "Defrabot",
     "AVATAR_URL": "",

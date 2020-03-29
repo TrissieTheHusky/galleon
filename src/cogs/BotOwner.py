@@ -6,14 +6,14 @@ import textwrap
 from contextlib import redirect_stdout
 import io
 import asyncio
+
 from src.utils.configuration import cfg, Config
-from mcstatus import MinecraftServer
-from socket import gaierror
+from src.utils.custom_bot_class import DefraBot
 
 
 class BotOwner(commands.Cog, name='Bot Owner'):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: DefraBot = bot
         self._last_result = None
         self.sessions = set()
 
@@ -25,8 +25,8 @@ class BotOwner(commands.Cog, name='Bot Owner'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
 
-    @commands.command(name="pullv2", aliases=("update", "pull"))
-    async def pullv2(self, ctx):
+    @commands.command(name="pull", aliases=("update",))
+    async def pull(self, ctx):
 
         proc = await asyncio.create_subprocess_shell(
             'git pull origin master',
@@ -65,17 +65,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
             except Forbidden:
                 await message.channel.send("🤡")
 
-    @commands.command()
-    async def mcstatus(self, ctx: commands.Context, *, ip: str):
-        try:
-            srv = MinecraftServer.lookup(ip)
-            status = srv.status()
-        except gaierror:
-            return await ctx.send(f"Connection error")
-        else:
-            return await ctx.send(f"{status.players.online} players, {round(status.latency / 2, 2)} мs")
-
-    @commands.command(name="logout", aliases=("shutdown", "turnoff"))
+    @commands.command(name="logout", aliases=("shutdown", "turnoff", "restart", "reboot"))
     async def shutdown_the_bot(self, ctx: commands.Context):
         await ctx.send("The bot will turn off in 10 seconds...")
         await asyncio.sleep(10)
