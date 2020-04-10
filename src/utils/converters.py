@@ -1,9 +1,10 @@
-from discord.ext import commands
 from discord.ext.commands import UserConverter, BadArgument, Converter
-from discord import HTTPException, User
+from discord import HTTPException
+from src.typings import BotType
+from typing import Optional
 import re
 
-BOT: commands.AutoShardedBot or None = None
+BOT: Optional[BotType] = None
 
 
 def init(actual_bot):

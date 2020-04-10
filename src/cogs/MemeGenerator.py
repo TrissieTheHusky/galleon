@@ -7,12 +7,13 @@ from functools import partial
 from io import BytesIO
 import aiohttp
 import textwrap
+from src.typings import BotType
 
 
-class MemeGenerator(commands.Cog, name="Memes generator"):
+class MemeGenerator(commands.Cog, name="Мемогенератор"):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
-        self.bot = bot
+        self.bot: BotType = bot
         self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"),
                                             size=75, encoding="utf-8")
 
@@ -55,29 +56,28 @@ class MemeGenerator(commands.Cog, name="Memes generator"):
             img.save(buffer, format="jpeg", optimize=True, quality=90)
 
         buffer.seek(0)
-
         return buffer
 
-    @commands.command(name="shpaklevka")
+    @commands.command(name="shpaklevka", aliases=("шпаклевка", "шпаклёвка"))
     @commands.cooldown(1, 10, BucketType.user)
     async def shpaklevka_meme(self, ctx, *, body: str):
-        """some steve from minecref"""
-        msg = await ctx.send("Generating your HQ meme...")
+        """Майнкрафт - это прекрасно"""
+        msg = await ctx.send("Генерирую ваш мемес...")
 
         if len(body) > 90:
-            return await msg.edit(content=":x: Text length must be less than 90 characters")
+            return await msg.edit(content=":x: Длина текста не должна превышать 90 символов")
 
         fn = partial(self.generate_meme, "shpaklevka", body)
         meme = await self.bot.loop.run_in_executor(None, fn)
         file = discord.File(fp=meme, filename="shpaklevka.jpg")
 
-        await ctx.send(file=file, content=f"{ctx.author.mention}, your art is here!")
+        await ctx.send(file=file, content=f"{ctx.author.mention}")
         return await msg.delete()
 
-    @commands.command(name="pika")
+    @commands.command(name="pika", aliases=("шо",))
     @commands.cooldown(1, 10, BucketType.user)
     async def surprised_pika(self, ctx, *, body: str):
-        """Shocked pika meme with your text"""
+        """Шо?"""
         msg = await ctx.send("Generating your HQ meme...")
 
         fn = partial(self.generate_meme, "pika", body)

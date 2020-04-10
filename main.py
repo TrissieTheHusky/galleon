@@ -4,8 +4,8 @@ from src.utils.configuration import Config, cfg
 from os.path import join, dirname
 from datetime import datetime
 from dotenv import load_dotenv
-from discord import Activity, ActivityType
 from discord.ext import commands
+from discord import ActivityType, Activity
 import os
 
 bot = DefraBot(command_prefix=Config.get_prefix)
@@ -53,14 +53,6 @@ async def load(ctx: commands.Context, cog: str):
 async def unload(ctx: commands.Context, cog: str):
     bot.unload_extension(f"src.cogs.{cog}")
     await ctx.send(f":white_check_mark: Unloaded `{cog}`")
-
-
-@load.error
-@unload.error
-async def cog_err_handler(ctx: commands.Context, error):
-    # For some reason isinstance(error, error_event) is not working here...
-    # TODO: Fix it
-    return await ctx.send(f"{error=}")
 
 
 bot.run(os.environ.get("TOKEN"))

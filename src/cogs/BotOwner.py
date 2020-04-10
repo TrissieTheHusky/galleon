@@ -6,14 +6,13 @@ import textwrap
 from contextlib import redirect_stdout
 import io
 import asyncio
-
 from src.utils.configuration import cfg, Config
-from src.utils.custom_bot_class import DefraBot
+from src.typings import BotType
 
 
 class BotOwner(commands.Cog, name='Bot Owner'):
     def __init__(self, bot):
-        self.bot: DefraBot = bot
+        self.bot: BotType = bot
         self._last_result = None
         self.sessions = set()
 

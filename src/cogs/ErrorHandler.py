@@ -32,7 +32,7 @@ class ErrorHandler(commands.Cog):
             await ctx.send(message)
 
         async def send_here_no_perms():
-            await ctx.send(f':lock: You have no power to run `{ctx.command}`')
+            await ctx.send(f':lock: У вас недостаточно прав для использовани команды `{ctx.command}`')
 
         # """"
         # Reference: isinstance(error, event)
@@ -42,15 +42,15 @@ class ErrorHandler(commands.Cog):
             return
 
         elif isinstance(error, commands.DisabledCommand):
-            return await ctx.send(f'Command `{ctx.command}` disabled.')
+            return await ctx.send(f'Команда `{ctx.command}` отключена.')
 
         elif isinstance(error, commands.MissingPermissions):
             return await send_here_no_perms()
 
         elif isinstance(error, commands.MissingRequiredArgument):
             return await send_here(
-                ":warning: Required argument is missing.\n"
-                f"\N{SPIRAL NOTE PAD} Syntax: "
+                ":warning: Вы пропустили важный аргумент.\n"
+                f"\N{SPIRAL NOTE PAD} Синтаксис команды: "
                 f"`{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`"
             )
 
@@ -58,16 +58,16 @@ class ErrorHandler(commands.Cog):
             return await send_here_no_perms()
 
         elif isinstance(error, commands.BotMissingPermissions):
-            return await ctx.send(f":x: I don't have enough permissions to do that.")
+            return await ctx.send(f":x: Мне не хватает прав для выполнения этого действия.")
 
         elif isinstance(error, commands.CheckFailure):
             return await send_here_no_perms()
 
         elif isinstance(error, commands.NoPrivateMessage):
-            return await ctx.author.send(f":x: {ctx.command} is a server-only command.")
+            return await ctx.author.send(f":x: Команду {ctx.command} можно использовать только на сервере.")
 
         elif isinstance(error, discord.Forbidden):
-            return await ctx.send(":x: I can't do that, since I don't have enough permissions")
+            return await ctx.send(":x: Я не могу выполнить это действие, т.к. мне не хватает прав.")
 
         # ==== COOLDOWN CHECKS ====
 
@@ -75,7 +75,7 @@ class ErrorHandler(commands.Cog):
             if await ctx.bot.is_owner(ctx.message.author):
                 return await ctx.reinvoke()
 
-            return await ctx.send(f'Please, wait **{round(error.retry_after, 2)}** seconds.')
+            return await ctx.send(f'Пожалуйста, подожди ещё **{round(error.retry_after, 2)}** секунд.')
 
         await self.bot.dev_log_channel.send(
             f"{self.bot.owner.mention}",
