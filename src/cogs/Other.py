@@ -36,10 +36,10 @@ class Other(commands.Cog):
             member: discord.Member = None if ctx.guild is None else ctx.guild.get_member(user.id)
 
         e = discord.Embed(colour=0x3498db)
-        e.set_thumbnail(url=user.avatar_url)
+        e.set_thumbnail(url=f"{user.avatar_url_as(format='png')}")
         e.add_field(name='Имя', value=f'{user}', inline=False)
         e.add_field(name='ID', value=str(user.id), inline=False)
-        e.add_field(name='Аватарка', value=f'[Перейти по ссылке]({user.avatar_url})', inline=False)
+        e.add_field(name='Аватарка', value=f"[Перейти по ссылке]({user.avatar_url_as(format='png')})", inline=False)
 
         e.description = '\N{HEAVY BLACK HEART} Это мой создатель!' if user == self.bot.owner else None
 
@@ -84,11 +84,11 @@ class Other(commands.Cog):
                     else:
                         e.add_field(name='Неизвестный вид активности', value='\U00002753 Неизвестно', inline=False)
 
-            e.add_field(name='Присоеднилися в (UTC)',
+            e.add_field(name='Когда присоеднилися (UTC)',
                         value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)',
                         inline=False)
 
-        e.add_field(name='Аккаунт создан в (UTC)',
+        e.add_field(name='Когда создан аккаунт (UTC)',
                     value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)',
                     inline=False)
 

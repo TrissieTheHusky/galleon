@@ -1,2 +1,3 @@
 #! /bin/sh
-python3.8 ./main.py
+source "/home/bots/def-bot/venv/bin/activate"
+python main.py
