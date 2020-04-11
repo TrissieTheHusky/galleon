@@ -7,7 +7,7 @@ from datetime import datetime
 from src.typings import BotType
 
 
-class Other(commands.Cog):
+class Other(commands.Cog, ):
     def __init__(self, bot):
         self.bot: BotType = bot
 

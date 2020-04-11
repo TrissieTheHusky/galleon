@@ -3,3 +3,4 @@ python-dotenv
 pep8
 autopep8
 Pillow==7.0.0
+git+https://github.com/Rapptz/discord-ext-menus
