@@ -1,13 +1,13 @@
 from discord.ext import commands
-from discord import Embed
 from src.utils.configuration import cfg
 from src.utils.converters import DiscordUser
+from src.utils.base import DefraEmbed
 import discord
 from datetime import datetime
 from src.typings import BotType
 
 
-class Other(commands.Cog, ):
+class Other(commands.Cog):
     def __init__(self, bot):
         self.bot: BotType = bot
 
@@ -18,8 +18,11 @@ class Other(commands.Cog, ):
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def about(self, ctx: commands.Context):
-        e = Embed(color=0x3498db)
-        e.set_author(name=f"{self.bot.user}", icon_url=self.bot.user.avatar_url)
+        e = DefraEmbed(
+            title="Bot Info",
+            footer_text=f"Requested by {ctx.author}",
+            footer_icon_url=ctx.author.avatar_url
+        )
         e.add_field(name="Author", value=f"{self.bot.owner}")
         e.add_field(name="Source Code", value="[Click to open](https://github.com/runic-tears/def-bot)")
         await ctx.send(embed=e)
