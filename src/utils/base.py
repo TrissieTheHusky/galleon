@@ -1,5 +1,18 @@
 from discord import Embed
 from datetime import datetime
+from pytz import timezone
+
+
+def current_time_with_tz(tz_name: str) -> datetime:
+    return datetime.now().astimezone(tz=timezone(tz_name))
+
+
+def is_num_in_str(str: str) -> bool:
+    try:
+        int(str)
+        return True
+    except ValueError:
+        return False
 
 
 class DefraEmbed(Embed):

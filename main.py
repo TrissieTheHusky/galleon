@@ -2,25 +2,34 @@ from src.utils.custom_bot_class import DefraBot
 import src.utils.converters as converters
 from src.utils.configuration import Config, cfg
 from os.path import join, dirname
-from datetime import datetime
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import ActivityType, Activity
+from src.utils.database import Database
+from src.utils.base import current_time_with_tz
 import os
+import logging
 
 bot = DefraBot(command_prefix=Config.get_prefix)
-converters.init(bot)
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     load_dotenv(join(dirname(__file__), ".env"))
+
+    converters.init(bot)
+
+
+@bot.event
+async def on_connect():
+    await Database.connect({
+        "user": cfg["DATABASE"]["USER"], "password": cfg["DATABASE"]["PASSWORD"],
+        "database": cfg["DATABASE"]["DATABASE"], "host": cfg["DATABASE"]["HOST"],
+        "port": cfg["DATABASE"]["PORT"]
+    })
 
 
 @bot.event
 async def on_ready():
-    bot.prefixes = await Config.update_prefixes()
-    bot.owner = await bot.fetch_user(576322791129743361)
-    bot.dev_log_channel = bot.get_channel(cfg["DEV_LOG_CHANNEL_ID"])
-
     for file in os.listdir(join(dirname(__file__), "./src/cogs")):
         if file.endswith(".py") and not file.endswith(".disabled.py"):
             bot.load_extension(f"src.cogs.{file[:-3]}")
@@ -28,8 +37,13 @@ async def on_ready():
 
     print("--------------")
 
+    bot.prefixes = await Config.update_prefixes()
+    bot.owner = await bot.fetch_user(576322791129743361)
+    bot.dev_log_channel = bot.get_channel(cfg["DEV_LOG_CHANNEL_ID"])
+
     await bot.change_presence(activity=Activity(name=cfg['DEFAULT_PRESENCE'], type=ActivityType.playing))
-    await bot.dev_log_channel.send(f"`[{datetime.utcnow()}]` I am ready!")
+    await bot.dev_log_channel.send(
+        f"\U0001f527 **`[{current_time_with_tz(cfg.get('DEFAULT_TZ')).strftime('%d.%M.%Y %H:%M')}]`** I am ready!")
 
     print(f"[{bot.user.name.upper()}] Ready.")
 

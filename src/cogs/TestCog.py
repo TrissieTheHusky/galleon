@@ -1,6 +1,7 @@
 from discord.ext.commands import Cog, command, Context, is_owner
 from src.typings import BotType
 from discord.ext import menus
+from typing import List, Dict, Optional
 
 
 class MySource(menus.ListPageSource):
@@ -15,16 +16,21 @@ class TestCog(Cog, command_attrs={"hidden": True}):
     def __init__(self, bot):
         self.bot: BotType = bot
 
+    async def cog_check(self, ctx: Context):
+        return await ctx.bot.is_owner(ctx.author)
+
     @command()
-    @is_owner()
-    async def test(self, ctx: Context):
-        entries = ['The random text here', 'Bottom Text', 'MS Comic Sans is the best', "Hi page 2",
-                   "is this a good page?", "nah looks like 3rd"]
+    async def test(self, ctx: Context, *name: Optional[str]):
+        # source = MySource(entries, per_page=2)
+        # menu = menus.MenuPages(source, clear_reactions_after=True)
+        #
+        # await menu.start(ctx)
+        cogs: List[str] = []
 
-        source = MySource(entries, per_page=2)
-        menu = menus.MenuPages(source, clear_reactions_after=True)
+        for cog in self.bot.cogs:
+            cogs.append(cog)
 
-        await menu.start(ctx)
+        await ctx.send(f"")
 
 
 def setup(bot):

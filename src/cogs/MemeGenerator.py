@@ -60,6 +60,7 @@ class MemeGenerator(commands.Cog, name="Мемогенератор"):
 
     @commands.command(name="shpaklevka", aliases=("шпаклевка", "шпаклёвка"))
     @commands.cooldown(1, 10, BucketType.user)
+    @commands.max_concurrency(2, BucketType.default)
     async def shpaklevka_meme(self, ctx, *, body: str):
         """Майнкрафт - это прекрасно"""
         msg = await ctx.send("Генерирую ваш мемес...")
@@ -76,6 +77,7 @@ class MemeGenerator(commands.Cog, name="Мемогенератор"):
 
     @commands.command(name="pika", aliases=("шо",))
     @commands.cooldown(1, 10, BucketType.user)
+    @commands.max_concurrency(2, BucketType.default)
     async def surprised_pika(self, ctx, *, body: str):
         """Шо?"""
         msg = await ctx.send("Generating your HQ meme...")

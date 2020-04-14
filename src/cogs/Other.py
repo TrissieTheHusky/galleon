@@ -5,13 +5,14 @@ from src.utils.base import DefraEmbed
 import discord
 from datetime import datetime
 from src.typings import BotType
+from pytz import timezone
 
 
 class Other(commands.Cog):
     def __init__(self, bot):
         self.bot: BotType = bot
 
-    @commands.command(name="whatprefix", aliases=("prefix", "currentprefix", "какойпрефикс", "префикс"))
+    @commands.command(name="whatprefix", aliases=("prefix", "currentprefix"))
     async def what_prefix(self, ctx):
         await ctx.send(f"Мой префикс на сервере: `{self.bot.prefixes.get(str(ctx.guild.id), cfg['DEFAULT_PREFIX'])}`")
 
@@ -33,16 +34,18 @@ class Other(commands.Cog):
         """Получить информацию о пользователе"""
         if user is None:
             user = member = ctx.author
-            user = await self.bot.fetch_user(user.id)
 
         else:
             member: discord.Member = None if ctx.guild is None else ctx.guild.get_member(user.id)
 
         e = discord.Embed(colour=0x3498db)
-        e.set_thumbnail(url=f"{user.avatar_url_as(format='png')}")
+        e.set_thumbnail(
+            url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
         e.add_field(name='Имя', value=f'{user}', inline=False)
         e.add_field(name='ID', value=str(user.id), inline=False)
-        e.add_field(name='Аватарка', value=f"[Перейти по ссылке]({user.avatar_url_as(format='png')})", inline=False)
+        e.add_field(name='Аватарка',
+                    value=f"[Перейти по ссылке]({user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')})",
+                    inline=False)
 
         e.description = '\N{HEAVY BLACK HEART} Это мой создатель!' if user == self.bot.owner else None
 
@@ -87,12 +90,12 @@ class Other(commands.Cog):
                     else:
                         e.add_field(name='Неизвестный вид активности', value='\U00002753 Неизвестно', inline=False)
 
-            e.add_field(name='Когда присоеднилися (UTC)',
-                        value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)',
+            e.add_field(name='Когда присоеднилися',
+                        value=f'{(datetime.utcnow() - member.joined_at).days} дней назад (`{member.joined_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
                         inline=False)
 
-        e.add_field(name='Когда создан аккаунт (UTC)',
-                    value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)',
+        e.add_field(name='Когда создан аккаунт',
+                    value=f'{(datetime.utcnow() - user.created_at).days} дней назад (`{user.created_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
                     inline=False)
 
         await ctx.send(embed=e)

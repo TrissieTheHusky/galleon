@@ -1,4 +1,5 @@
 {
+  "DEFAULT_TZ": "Europe/Moscow",
   "DEFAULT_PRESENCE": "with toy soldier",
   "DEFAULT_PREFIX": "d?",
   "DEV_LOG_CHANNEL_ID": 123,
@@ -6,6 +7,13 @@
     "NAME": "Defrabot",
     "AVATAR_URL": "",
     "LOGGING_URL": "https://discordapp.com/api/webhooks/000000000000/asdasdasdas1q234123dsgdfcg"
+  },
+  "DATABASE": {
+    "USER": "username",
+    "PASSWORD": "password",
+    "DATABASE": "DB name",
+    "HOST": "IP addr",
+    "PORT": 5432
   }
 }
   

@@ -1,6 +1,5 @@
 from discord.ext import commands
-import discord
-from discord import Forbidden
+from discord import Forbidden, User, Embed, ActivityType, Activity
 import traceback
 import textwrap
 from contextlib import redirect_stdout
@@ -25,7 +24,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         return content.strip('` \n')
 
     @commands.command(name="pull", aliases=("update",))
-    async def pull(self, ctx):
+    async def pull(self, ctx: commands.Context):
 
         proc = await asyncio.create_subprocess_shell(
             'git pull origin master',
@@ -47,7 +46,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         await m.edit(content=":ok_hand: Guild prefixes data refreshed")
 
     @commands.command()
-    async def clown(self, ctx: commands.Context, user: discord.User):
+    async def clown(self, ctx: commands.Context, user: User):
         await ctx.send(f":clown: {user} has been clowned")
 
         def check(m):
@@ -91,12 +90,12 @@ class BotOwner(commands.Cog, name='Bot Owner'):
 
         await m.edit(content=_input)
 
-        e = discord.Embed(
+        e = Embed(
             colour=0x3498db,
             description="\N{OK HAND SIGN} Message edited."
         ).add_field(
             name=f"See updated content",
-            value=f"[Jump to message](https://discordapp.com/{m.guild.id}/{channel_id}/{message_id}/)"
+            value=f"[Jump to message](https://discordapp.com/channels/{m.guild.id}/{m.channel.id}/{m.id}/)"
         )
 
         await ctx.send(embed=e)
@@ -111,11 +110,11 @@ class BotOwner(commands.Cog, name='Bot Owner'):
     @_status.command(name="reset")
     async def _status_reset(self, ctx: commands.Context):
         """Makes bot's status back to default"""
-        stat = discord.Activity(name="Status being reset...", type=discord.ActivityType.playing)
+        stat = Activity(name="Status being reset...", type=ActivityType.playing)
         await self.bot.change_presence(activity=stat)
         await asyncio.sleep(0.5)
         await self.bot.change_presence(
-            activity=discord.Activity(name=cfg['DEFAULT_PRESENCE'], type=discord.ActivityType.playing))
+            activity=Activity(name=cfg['DEFAULT_PRESENCE'], type=ActivityType.playing))
 
         del stat
         return await ctx.send(":ok_hand: Статус успешно сброшен.")
@@ -124,19 +123,19 @@ class BotOwner(commands.Cog, name='Bot Owner'):
     async def _status_set(self, ctx: commands.Context, stype, *, text):
         """Changes bot's status"""
         if (stype == 'playing') or (stype == '1'):
-            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.playing)
+            playing_now = Activity(name=str(text), type=ActivityType.playing)
         elif (stype == 'watching') or (stype == '2'):
-            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.watching)
+            playing_now = Activity(name=str(text), type=ActivityType.watching)
         elif (stype == 'listening') or (stype == '3'):
-            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.listening)
+            playing_now = Activity(name=str(text), type=ActivityType.listening)
         # Something broken here.
         elif (stype == 'streaming') or (stype == '4'):
             if " | " not in text:
                 return await ctx.send("URL is needed `<name> | <url>`")
             text = text.split(" | ")
-            playing_now = discord.Activity(name=str(text[0]), url=str(text[1]), type=discord.ActivityType.streaming)
+            playing_now = Activity(name=str(text[0]), url=str(text[1]), type=ActivityType.streaming)
         else:
-            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.playing)
+            playing_now = Activity(name=str(text), type=ActivityType.playing)
 
         await self.bot.change_presence(activity=playing_now)
 
@@ -176,6 +175,8 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         ❤ Also huge thanks to the https://github.com/Rapptz/RoboDanny ❤
         """
 
+        m = await ctx.send("Executing...")
+
         env = {
             'bot': self.bot,
             'ctx': ctx,
@@ -196,7 +197,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         try:
             exec(to_compile, env)
         except Exception as e:
-            return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+            return await m.edit(content=f'```py\n{e.__class__.__name__}: {e}\n```')
 
         func = env['func']
         try:
@@ -214,10 +215,23 @@ class BotOwner(commands.Cog, name='Bot Owner'):
 
             if ret is None:
                 if value:
-                    await ctx.send(f'```py\n{value}\n```')
+                    await m.edit(content=f'```py\n{value}\n```')
             else:
                 self._last_result = ret
-                await ctx.send(f'```py\n{value}{ret}\n```')
+                await m.edit(content=f'```py\n{value}{ret}\n```')
+
+            try:
+                await m.add_reaction('\U0001f5d1')
+
+                def check(reaction, user):
+                    return str(reaction.emoji) == '\U0001f5d1' and user.id == ctx.author.id
+
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                pass
+            else:
+                await m.edit(content="[DELETED]")
+                await m.delete(delay=5)
 
 
 def setup(bot):
