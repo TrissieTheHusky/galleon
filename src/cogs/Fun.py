@@ -4,11 +4,12 @@ from src.utils.jokes import Jokes
 import random
 from typing import Optional
 from src.utils.base import is_num_in_str
+from src.typings import BotType
 
 
 class Fun(commands.Cog, name="Забавы"):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: BotType = bot
 
     @commands.command()
     async def coinflip(self, ctx: commands.Context, times: Optional[str] = None):

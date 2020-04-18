@@ -5,6 +5,7 @@ from src.utils.database import Database
 from src.utils.base import DefraEmbed, is_num_in_str
 from datetime import timezone
 
+
 # TODO: Создать систему прав
 
 class Moderation(Cog):
