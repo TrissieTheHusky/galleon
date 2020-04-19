@@ -40,13 +40,9 @@ class InfractionRow(TypedDict):
     expires_at: datetime
 
 
-class GuildLoggingConfig(TypedDict):
-    MOD_LOGS: List[int]
-
-
 class GuildConfig(TypedDict):
-    PREFIX: Optional[str]
-    ADMIN_ROLES: List[int]
-    MOD_ROLES: List[int]
-    TRUSTED_ROLES: List[int]
-    LOGGING: GuildLoggingConfig
+    prefix: Optional[str]
+    admin_roles: List[int]
+    mod_roles: List[int]
+    trusted_roles: List[int]
+    mod_logs: List[int]

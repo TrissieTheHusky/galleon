@@ -1,10 +1,11 @@
 from discord.ext import commands
 from src.utils.base import DefraEmbed
 from src.utils.jokes import Jokes
-import random
 from typing import Optional
 from src.utils.base import is_num_in_str
 from src.typings import BotType
+
+import random
 
 
 class Fun(commands.Cog, name="Забавы"):

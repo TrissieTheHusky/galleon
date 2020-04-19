@@ -14,7 +14,7 @@ class Other(commands.Cog):
 
     @commands.command(name="whatprefix", aliases=("prefix", "currentprefix"))
     async def what_prefix(self, ctx):
-        await ctx.send(f"Мой префикс на сервере: `{self.bot.prefixes.get(str(ctx.guild.id), cfg['DEFAULT_PREFIX'])}`")
+        await ctx.send(f"Мой префикс на сервере: `{self.bot.prefixes.get(ctx.guild.id, cfg['DEFAULT_PREFIX'])}`")
 
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -30,6 +30,7 @@ class Other(commands.Cog):
 
     @commands.command(aliases=("info", "инфа"))
     @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.max_concurrency(10, commands.BucketType.default, wait=True)
     async def userinfo(self, ctx: commands.Context, user: DiscordUser = None):
         """Получить информацию о пользователе"""
         if user is None:

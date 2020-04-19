@@ -1,10 +1,10 @@
 from datetime import datetime
-import discord
 from discord.ext import commands
+from src.utils.custom_bot_class import DefraBot
+
+import discord
 import traceback
 import sys
-from src.utils.custom_bot_class import DefraBot
-from discord.ext.commands import Context
 
 
 class ErrorHandler(commands.Cog):
@@ -12,7 +12,7 @@ class ErrorHandler(commands.Cog):
         self.bot: DefraBot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: Context, error):
+    async def on_command_error(self, ctx: commands.Context, error):
         """
         ctx   : Context
         error : Exception

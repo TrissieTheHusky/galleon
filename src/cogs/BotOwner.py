@@ -5,7 +5,7 @@ import textwrap
 from contextlib import redirect_stdout
 import io
 import asyncio
-from src.utils.configuration import cfg, Config
+from src.utils.configuration import cfg
 from src.typings import BotType
 
 
@@ -39,11 +39,15 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         if stderr:
             return await ctx.send('```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
-    @commands.command(name="refresh_prefixes")
-    async def refresh_prefixes(self, ctx: commands.Context):
-        m = await ctx.send("Refreshing prefixes...")
-        self.bot.prefixes = await Config.update_prefixes()
-        await m.edit(content=":ok_hand: Guild prefixes data refreshed")
+    @commands.command(name="refresh_prefix")
+    async def refresh_prefixes(self, ctx: commands.Context, target):
+        if "all" in target:
+            for guild in self.bot.guilds:
+                await self.bot.update_prefix(guild.id)
+        else:
+            await self.bot.update_prefix(int(target))
+
+        await ctx.send(":ok_hand: Done.")
 
     @commands.command()
     async def clown(self, ctx: commands.Context, user: User):

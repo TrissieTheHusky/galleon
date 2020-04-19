@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog, command, Context, is_owner
 from src.typings import BotType
 from discord.ext import menus
-from typing import List, Dict, Optional
+from typing import List, Optional
 
 
 class MySource(menus.ListPageSource):

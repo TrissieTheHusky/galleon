@@ -27,9 +27,9 @@ async def on_connect():
         "port": cfg["DATABASE"]["PORT"]
     })
 
+    for guild in bot.guilds:
+        bot.loop.create_task(bot.update_prefix(guild.id))
 
-@bot.event
-async def on_ready():
     for file in os.listdir(join(dirname(__file__), "./src/cogs")):
         if file.endswith(".py") and not file.endswith(".disabled.py"):
             bot.load_extension(f"src.cogs.{file[:-3]}")
@@ -37,7 +37,9 @@ async def on_ready():
 
     print("--------------")
 
-    bot.prefixes = await Config.update_prefixes()
+
+@bot.event
+async def on_ready():
     bot.owner = await bot.fetch_user(576322791129743361)
     bot.dev_log_channel = bot.get_channel(cfg["DEV_LOG_CHANNEL_ID"])
 

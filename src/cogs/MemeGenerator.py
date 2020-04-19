@@ -1,13 +1,14 @@
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
-import discord
 from os.path import join, dirname
 from PIL import Image, ImageDraw, ImageFont
 from functools import partial
 from io import BytesIO
+from src.typings import BotType
+
+import discord
 import aiohttp
 import textwrap
-from src.typings import BotType
 
 
 class MemeGenerator(commands.Cog, name="Мемогенератор"):

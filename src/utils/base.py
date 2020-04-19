@@ -1,15 +1,26 @@
+from src.utils.configuration import cfg
 from discord import Embed
 from datetime import datetime
 from pytz import timezone
 
 
-def current_time_with_tz(tz_name: str) -> datetime:
+def current_time_with_tz(tz_name=cfg['DEFAULT_TZ']) -> datetime:
+    """
+    :param str tz_name: Timezone name, e.g. "Europe/Moscow"
+    :return: Datetime object with timezone from tz_name argument
+    """
     return datetime.now().astimezone(tz=timezone(tz_name))
 
 
-def is_num_in_str(str: str) -> bool:
+def is_num_in_str(arg: str):
+    """
+    Checks if the string can be converted into the integer
+
+    :param arg: a string to check
+    :return: True if can be converted, False if not
+    """
     try:
-        int(str)
+        int(arg)
         return True
     except ValueError:
         return False

@@ -18,7 +18,16 @@ class Database:
         except gaierror:
             raise DatabaseException("Unable to connect to the database")
 
+    @classmethod
+    async def get_prefix(cls, guild_id: int) -> str:
+        async with cls.pool.acquire() as db:
+            row = await db.fetchrow("SELECT prefix FROM bot.guilds WHERE guild_id = $1;", guild_id)
+            return row['prefix']
 
+    @classmethod
+    async def set_prefix(cls, guild_id: int, new_prefix: str):
+        async with cls.pool.acquire() as db:
+            await db.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)
 
     @classmethod
     async def execute(cls, execute_string, *args):
