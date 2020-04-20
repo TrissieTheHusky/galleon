@@ -1,7 +1,9 @@
 from discord.ext.commands import UserConverter, BadArgument, Converter
 from discord import HTTPException
-from src.typings import BotType
 from typing import Optional
+
+from src.typings import BotType
+
 import re
 
 BOT: Optional[BotType] = None

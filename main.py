@@ -41,16 +41,16 @@ async def on_connect():
 @bot.event
 async def on_ready():
     bot.owner = await bot.fetch_user(576322791129743361)
-    bot.dev_log_channel = bot.get_channel(cfg["DEV_LOG_CHANNEL_ID"])
+    bot.dev_channel = bot.get_channel(cfg["DEV_LOG_CHANNEL_ID"])
 
     await bot.change_presence(activity=Activity(name=cfg['DEFAULT_PRESENCE'], type=ActivityType.playing))
-    await bot.dev_log_channel.send(
+    await bot.dev_channel.send(
         f"\U0001f527 **`[{current_time_with_tz(cfg.get('DEFAULT_TZ')).strftime('%d.%M.%Y %H:%M')}]`** I am ready!")
 
     print(f"[{bot.user.name.upper()}] Ready.")
 
 
-@bot.group(name="cogs", aliases=("cog",))
+@bot.group(name="cogs", aliases=["cog"])
 @commands.is_owner()
 async def cog(ctx: commands.Context):
     if ctx.invoked_subcommand is None:

@@ -4,7 +4,7 @@ from src.typings import BotType
 
 class MyHelpCommand(commands.DefaultHelpCommand):
     def get_ending_note(self):
-        return f'Используйте {self.clean_prefix}help <команда>, чтобы узнать больше.'
+        return f'Use {self.clean_prefix}help [command | cog], to learn more.'
 
 
 class HelpCustomization(commands.Cog, name='Помощь'):
@@ -12,7 +12,7 @@ class HelpCustomization(commands.Cog, name='Помощь'):
         self._original_help_command = client.help_command
         client.help_command = MyHelpCommand(
             indent=3,
-            no_category='Без категории',
+            no_category='No Category',
             command_attrs=dict(hidden=True)
         )
         client.help_command.cog = self

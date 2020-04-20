@@ -1,4 +1,5 @@
 from discord.ext import commands
+
 from src.typings import BotType
 from src.utils.database import Database
 
@@ -15,32 +16,32 @@ def is_server_manager_or_bot_owner():
     return commands.check(predicate)
 
 
-class ServerAdmin(commands.Cog, name="Администрирование"):
+class ServerAdmin(commands.Cog):
     def __init__(self, bot):
         self.bot: BotType = bot
 
-    @commands.group()
+    @commands.group(aliases=["cfg"])
     @is_server_manager_or_bot_owner()
     async def config(self, ctx: commands.Context):
         """
-        Обновление параметров конфигурации
+        Updates guild configuration
         """
         if ctx.invoked_subcommand is None:
-            await ctx.send(":warning: Вы не указали субкоманду.\n"
-                           f":information_source: Подробнее: `{ctx.prefix}help {ctx.invoked_with}`")
+            await ctx.send(":warning: You didn't specify any subcommand.\n"
+                           f":information_source: Learn more: `{ctx.prefix}help {ctx.invoked_with}`")
 
     @config.command()
     async def prefix(self, ctx: commands.Context, new_prefix=None):
         """
-        Смена префикса бота
+        Changes prefix
         """
         if new_prefix is None:
-            return await ctx.send(":warning: Вы не указали новый префикс!")
+            return await ctx.send(":warning: You didn't specify new prefix!")
 
         await Database.set_prefix(ctx.guild.id, new_prefix)
         await self.bot.update_prefix(ctx.guild.id)
 
-        await ctx.send(f":ok_hand: Вы успешно сменили префикс на `{self.bot.prefixes.get(ctx.guild.id)}`")
+        await ctx.send(f":ok_hand: Prefix was changed to `{self.bot.prefixes.get(ctx.guild.id)}`")
 
 
 def setup(bot):

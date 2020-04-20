@@ -4,6 +4,7 @@ from os.path import join, dirname
 from PIL import Image, ImageDraw, ImageFont
 from functools import partial
 from io import BytesIO
+
 from src.typings import BotType
 
 import discord
@@ -11,7 +12,7 @@ import aiohttp
 import textwrap
 
 
-class MemeGenerator(commands.Cog, name="Мемогенератор"):
+class MemeGenerator(commands.Cog, name="Memes"):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot: BotType = bot
@@ -59,15 +60,15 @@ class MemeGenerator(commands.Cog, name="Мемогенератор"):
         buffer.seek(0)
         return buffer
 
-    @commands.command(name="shpaklevka", aliases=("шпаклевка", "шпаклёвка"))
+    @commands.command(name="shpaklevka")
     @commands.cooldown(1, 10, BucketType.user)
     @commands.max_concurrency(2, BucketType.default)
     async def shpaklevka_meme(self, ctx, *, body: str):
-        """Майнкрафт - это прекрасно"""
-        msg = await ctx.send("Генерирую ваш мемес...")
+        """Minecraft is just beautiful"""
+        msg = await ctx.send("Your meme is being generated")
 
         if len(body) > 90:
-            return await msg.edit(content=":x: Длина текста не должна превышать 90 символов")
+            return await msg.edit(content=":x: Text length must be 90 characters or less!")
 
         fn = partial(self.generate_meme, "shpaklevka", body)
         meme = await self.bot.loop.run_in_executor(None, fn)
@@ -76,11 +77,11 @@ class MemeGenerator(commands.Cog, name="Мемогенератор"):
         await ctx.send(file=file, content=f"{ctx.author.mention}")
         return await msg.delete()
 
-    @commands.command(name="pika", aliases=("шо",))
+    @commands.command(name="pika")
     @commands.cooldown(1, 10, BucketType.user)
     @commands.max_concurrency(2, BucketType.default)
     async def surprised_pika(self, ctx, *, body: str):
-        """Шо?"""
+        """wow"""
         msg = await ctx.send("Generating your HQ meme...")
 
         fn = partial(self.generate_meme, "pika", body)

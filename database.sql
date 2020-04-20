@@ -1,4 +1,6 @@
-create table bot.guilds
+-- Guilds settings table script --
+
+create table if not exists bot.guilds
 (
     guild_id      bigint not null,
     prefix        text     default null,
@@ -17,9 +19,14 @@ alter table bot.guilds
     add constraint guilds_pk
         primary key (guild_id);
 
+alter table bot.guilds
+    owner to defrabot;
 
 
-create table bot.infractions
+-- Infractions table script --
+
+
+create table if not exists bot.infractions
 (
     inf_id       bigserial                                              not null
         constraint infractions_pk
@@ -38,3 +45,43 @@ alter table bot.infractions
 
 create unique index infractions_inf_id_uindex
     on bot.infractions (inf_id);
+
+
+-- Stats table script --
+
+
+create table if not exists bot.stats
+(
+    user_id       bigint not null,
+    messages_sent bigint default 0
+);
+
+comment on table bot.stats is 'Some stats';
+
+alter table bot.stats
+    owner to defrabot;
+
+create unique index if not exists stats_user_id_uindex
+    on bot.stats (user_id);
+
+
+-- Karma counter table --
+
+
+create table if not exists bot.karma
+(
+    user_id     bigint                                                 not null
+        constraint karma_pk
+            primary key,
+    karma       bigint    default 0,
+    modified_at timestamp default (now())::timestamp without time zone not null
+);
+
+comment on table bot.karma is 'users karma data';
+
+alter table bot.karma
+    owner to defrabot;
+
+create unique index if not exists karma_user_id_uindex
+    on bot.karma (user_id);
+

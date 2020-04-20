@@ -1,4 +1,5 @@
 from src.utils.configuration import cfg
+
 from discord import Embed
 from datetime import datetime
 from pytz import timezone

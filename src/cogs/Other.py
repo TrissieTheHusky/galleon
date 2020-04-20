@@ -1,20 +1,24 @@
 from discord.ext import commands
+from datetime import datetime
+from pytz import timezone
+
 from src.utils.configuration import cfg
 from src.utils.converters import DiscordUser
 from src.utils.base import DefraEmbed
-import discord
-from datetime import datetime
 from src.typings import BotType
-from pytz import timezone
+from src.utils.database import Database
+
+import discord
 
 
 class Other(commands.Cog):
     def __init__(self, bot):
         self.bot: BotType = bot
 
-    @commands.command(name="whatprefix", aliases=("prefix", "currentprefix"))
+    @commands.command(name="whatprefix", aliases=["prefix", "currentprefix"])
     async def what_prefix(self, ctx):
-        await ctx.send(f"Мой префикс на сервере: `{self.bot.prefixes.get(ctx.guild.id, cfg['DEFAULT_PREFIX'])}`")
+        prefix = self.bot.prefixes.get(ctx.guild.id, cfg['DEFAULT_PREFIX'])
+        await ctx.send(f"Current prefix is `{prefix if prefix is not None else cfg['DEFAULT_PREFIX']}`")
 
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -28,11 +32,11 @@ class Other(commands.Cog):
         e.add_field(name="Source Code", value="[Click to open](https://github.com/runic-tears/def-bot)")
         await ctx.send(embed=e)
 
-    @commands.command(aliases=("info", "инфа"))
+    @commands.command(aliases=["info"])
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.max_concurrency(10, commands.BucketType.default, wait=True)
     async def userinfo(self, ctx: commands.Context, user: DiscordUser = None):
-        """Получить информацию о пользователе"""
+        """Shows information summary about discord users"""
         if user is None:
             user = member = ctx.author
 
@@ -42,13 +46,16 @@ class Other(commands.Cog):
         e = discord.Embed(colour=0x3498db)
         e.set_thumbnail(
             url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
-        e.add_field(name='Имя', value=f'{user}', inline=False)
+        e.add_field(name='Name', value=f'{user}', inline=False)
         e.add_field(name='ID', value=str(user.id), inline=False)
-        e.add_field(name='Аватарка',
-                    value=f"[Перейти по ссылке]({user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')})",
+        e.add_field(name='Avatar',
+                    value=f"[Go to URL]({user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')})",
                     inline=False)
 
-        e.description = '\N{HEAVY BLACK HEART} Это мой создатель!' if user == self.bot.owner else None
+        e.description = '\N{HEAVY BLACK HEART} This is my creator!' if user == self.bot.owner else None
+
+        karma_points, _ = await Database.get_karma(user.id)
+        e.add_field(name="Karma Points", value=f"{karma_points if karma_points is not None else 0}")
 
         if member is not None:
             e.colour = member.top_role.colour
@@ -58,45 +65,45 @@ class Other(commands.Cog):
                 member_status = 'Online'
 
             elif member_status == 'dnd':
-                member_status = 'Не беспокоить'
+                member_status = 'Do Not Disturb'
 
             elif member_status == 'idle':
-                member_status = 'Не активен'
+                member_status = 'Inactive'
 
             elif member_status == 'offline':
-                member_status = 'Оффлайн'
+                member_status = 'Offline'
 
-            e.add_field(name='Статус', value=member_status, inline=False)
+            e.add_field(name='Status', value=member_status, inline=False)
 
             if member.bot is not True:
                 if member.activity is not None:
                     if member.activity.type == discord.ActivityType.playing:
-                        e.add_field(name='\N{VIDEO GAME} Играет в', value=f'{member.activity.name}', inline=False)
+                        e.add_field(name='\N{VIDEO GAME} Playing', value=f'{member.activity.name}', inline=False)
 
                     elif member.activity.type == discord.ActivityType.streaming:
-                        e.add_field(name='Стримит', value=f'{member.activity.name}', inline=False)
+                        e.add_field(name='Streaming', value=f'{member.activity.name}', inline=False)
 
                     elif member.activity.type == discord.ActivityType.watching:
-                        e.add_field(name='\N{EYES} Смотрит', value=f'{member.activity.name}', inline=False)
+                        e.add_field(name='\N{EYES} Watching', value=f'{member.activity.name}', inline=False)
 
                     elif member.activity.type == discord.ActivityType.listening:
                         track_url = f"https://open.spotify.com/track/{member.activity.track_id}"
-                        e.add_field(name='Слшуает',
+                        e.add_field(name='Listening',
                                     value=f'[\N{MUSICAL NOTE} {", ".join(member.activity.artists)} \N{EM DASH} {member.activity.title}]({track_url})',
                                     inline=False)
 
                     elif member.activity.type == discord.ActivityType.custom:
-                        e.add_field(name="Статус", value=f"{member.activity.name}", inline=False)
+                        e.add_field(name="Status", value=f"{member.activity.name}", inline=False)
 
                     else:
-                        e.add_field(name='Неизвестный вид активности', value='\U00002753 Неизвестно', inline=False)
+                        e.add_field(name='Unknown activity', value='\U00002753 Unknown', inline=False)
 
-            e.add_field(name='Когда присоеднилися',
-                        value=f'{(datetime.utcnow() - member.joined_at).days} дней назад (`{member.joined_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
+            e.add_field(name=f'Joined at ({cfg.get("DEFAULT_TZ")})',
+                        value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
                         inline=False)
 
-        e.add_field(name='Когда создан аккаунт',
-                    value=f'{(datetime.utcnow() - user.created_at).days} дней назад (`{user.created_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
+        e.add_field(name=f'Account created at ({cfg.get("DEFAULT_TZ")})',
+                    value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
                     inline=False)
 
         await ctx.send(embed=e)

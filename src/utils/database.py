@@ -1,6 +1,8 @@
 from asyncpg.pool import Pool, create_pool
-from typing import Optional
+from typing import Optional, Tuple
 from socket import gaierror
+from random import randint
+from datetime import datetime
 
 
 class DatabaseException(Exception):
@@ -19,13 +21,57 @@ class Database:
             raise DatabaseException("Unable to connect to the database")
 
     @classmethod
+    async def get_karma(cls, user_id: int) -> Tuple[Optional[int], Optional[datetime]]:
+        """
+        Gets users karma points and datetime when they received some
+
+        :param user_id: Discord User ID
+        :return: A tuple with amount of karma and last modification time
+        """
+        async with cls.pool.acquire() as db:
+            row = await db.fetchrow("SELECT karma, modified_at FROM bot.karma WHERE user_id = $1 LIMIT 1;", user_id)
+
+            if row is not None:
+                return row.get('karma'), row.get('modified_at')
+            else:
+                return None, None
+
+    @classmethod
+    async def add_karma(cls, user_id: int, new_karma: int = None):
+        """
+        Adds karma points to users in database
+
+        :param user_id: Discord User ID
+        :param new_karma: New amount of karma, by default will be random integer number between 1 and 10
+        """
+
+        async with cls.pool.acquire() as db:
+            query = "INSERT INTO bot.karma (user_id, karma) VALUES ($1, $2)" \
+                    "ON CONFLICT (user_id) DO UPDATE SET karma = karma.karma + $2, modified_at = default;"
+
+            if new_karma is not None:
+                await db.execute(query, user_id, new_karma)
+            else:
+                await db.execute(query, user_id, randint(1, 10))
+
+    @classmethod
     async def get_prefix(cls, guild_id: int) -> str:
+        """
+        :param guild_id: Discord Guild ID
+        :return: Guild prefix from settings table
+        """
         async with cls.pool.acquire() as db:
             row = await db.fetchrow("SELECT prefix FROM bot.guilds WHERE guild_id = $1;", guild_id)
             return row['prefix']
 
     @classmethod
     async def set_prefix(cls, guild_id: int, new_prefix: str):
+        """
+        Changes prefix for a guild in the settings table
+
+        :param guild_id: Discord Guild ID
+        :param new_prefix: prefix that user wants to set
+        """
         async with cls.pool.acquire() as db:
             await db.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)
 

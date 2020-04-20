@@ -1,8 +1,10 @@
 from discord.ext.commands import when_mentioned_or
 from discord import Message
 from os.path import join, dirname
-import json
+
 from src.typings import ConfigType, BotType
+
+import json
 
 with open(join(dirname(__file__), "../../config/master.json"), encoding="utf-8") as master_config:
     cfg: ConfigType = json.load(master_config)

@@ -1,12 +1,14 @@
 from discord.ext import commands
 from discord import Forbidden, User, Embed, ActivityType, Activity
-import traceback
-import textwrap
 from contextlib import redirect_stdout
-import io
-import asyncio
+
 from src.utils.configuration import cfg
 from src.typings import BotType
+
+import io
+import asyncio
+import traceback
+import textwrap
 
 
 class BotOwner(commands.Cog, name='Bot Owner'):
@@ -223,19 +225,6 @@ class BotOwner(commands.Cog, name='Bot Owner'):
             else:
                 self._last_result = ret
                 await m.edit(content=f'```py\n{value}{ret}\n```')
-
-            try:
-                await m.add_reaction('\U0001f5d1')
-
-                def check(reaction, user):
-                    return str(reaction.emoji) == '\U0001f5d1' and user.id == ctx.author.id
-
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
-            except asyncio.TimeoutError:
-                pass
-            else:
-                await m.edit(content="[DELETED]")
-                await m.delete(delay=5)
 
 
 def setup(bot):
