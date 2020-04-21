@@ -46,7 +46,14 @@ class ServerAdmin(commands.Cog):
         if is_timezone(new_timezone) is False:
             return await ctx.send(":warning: Got invalid timezone argument!")
 
-        await ctx.send(f"{is_timezone(new_timezone)=}")
+        await Database.set_timezone(ctx.guild.id, new_timezone)
+        await self.bot.update_timezone(ctx.guild.id)
+
+        if self.bot.timezones.get(ctx.guild.id) == new_timezone:
+            await ctx.send(f":information_source: Server's timezone has been updated to `{new_timezone}`")
+        else:
+            await ctx.send(f":x: It looks like something wrong and server's timezone didn't update. "
+                           "Please, contact bot developer to fix this issue.")
 
 
 def setup(bot):
