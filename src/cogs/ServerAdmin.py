@@ -22,6 +22,7 @@ class ServerAdmin(commands.Cog):
                            f":information_source: Learn more: `{ctx.prefix}help {ctx.invoked_with}`")
 
     @config.command()
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def prefix(self, ctx: commands.Context, new_prefix=None):
         """
         Changes prefix
@@ -32,16 +33,21 @@ class ServerAdmin(commands.Cog):
         await Database.set_prefix(ctx.guild.id, new_prefix)
         await self.bot.update_prefix(ctx.guild.id)
 
-        await ctx.send(f":ok_hand: Prefix was changed to `{self.bot.prefixes.get(ctx.guild.id)}`")
+        if self.bot.prefixes.get(ctx.guild.id) == new_prefix:
+            await ctx.send(f":ok_hand: Server's prefix has been updated to `{new_prefix}`")
+        else:
+            await ctx.send(f":x: It looks like something went wrong and server's timezone didn't update. "
+                           "Please, contact bot developer to fix this issue.")
 
     @config.command()
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def timezone(self, ctx: commands.Context, new_timezone=None):
         """
         Changes timezone for logs and other bot functionality that involves time
         """
         if new_timezone is None:
             current_tz = self.bot.timezones.get(ctx.guild.id)
-            return await ctx.send(f":information_source: Current timezone: **`{current_tz}`**")
+            return await ctx.send(f":ok_hand: Current timezone: **`{current_tz}`**")
 
         if is_timezone(new_timezone) is False:
             return await ctx.send(":warning: Got invalid timezone argument!")
@@ -50,9 +56,9 @@ class ServerAdmin(commands.Cog):
         await self.bot.update_timezone(ctx.guild.id)
 
         if self.bot.timezones.get(ctx.guild.id) == new_timezone:
-            await ctx.send(f":information_source: Server's timezone has been updated to `{new_timezone}`")
+            await ctx.send(f":ok_hand: Server's timezone has been updated to `{new_timezone}`")
         else:
-            await ctx.send(f":x: It looks like something wrong and server's timezone didn't update. "
+            await ctx.send(f":x: It looks like something went wrong and server's timezone didn't update. "
                            "Please, contact bot developer to fix this issue.")
 
 
