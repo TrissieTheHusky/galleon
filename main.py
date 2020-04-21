@@ -29,6 +29,7 @@ async def on_connect():
 
     for guild in bot.guilds:
         bot.loop.create_task(bot.update_prefix(guild.id))
+        bot.loop.create_task(bot.update_timezone(guild.id))
 
     for file in os.listdir(join(dirname(__file__), "./src/cogs")):
         if file.endswith(".py") and not file.endswith(".disabled.py"):

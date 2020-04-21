@@ -9,6 +9,7 @@ from src.typings import BotType
 from src.utils.database import Database
 
 import discord
+import sys
 
 
 class Other(commands.Cog):
@@ -17,6 +18,9 @@ class Other(commands.Cog):
 
     @commands.command(name="whatprefix", aliases=["prefix", "currentprefix"])
     async def what_prefix(self, ctx):
+        if ctx.guild is None:
+            return await ctx.send(f"Current prefix is `{cfg['DEFAULT_PREFIX']}`")
+
         prefix = self.bot.prefixes.get(ctx.guild.id, cfg['DEFAULT_PREFIX'])
         await ctx.send(f"Current prefix is `{prefix if prefix is not None else cfg['DEFAULT_PREFIX']}`")
 
@@ -26,12 +30,15 @@ class Other(commands.Cog):
         e = DefraEmbed(
             title="Bot Info",
             footer_text=f"Requested by {ctx.author}",
-            footer_icon_url=ctx.author.avatar_url
+            footer_icon_url=ctx.author.avatar_url,
+            description=f"**Bot Author:** {self.bot.owner} ({self.bot.owner.mention})\n"
+                        f"**discord.py version:** {discord.__version__}\n"
+                        f"**Python version:** {'.'.join(map(str, sys.version_info[:3]))}\n\n"
+                        "**Source Code:** [Click to open](https://github.com/runic-tears/def-bot)"
         )
-        e.add_field(name="Author", value=f"{self.bot.owner}")
-        e.add_field(name="Source Code", value="[Click to open](https://github.com/runic-tears/def-bot)")
         await ctx.send(embed=e)
 
+    @commands.guild_only()
     @commands.command(aliases=["info"])
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.max_concurrency(10, commands.BucketType.default, wait=True)
@@ -56,6 +63,8 @@ class Other(commands.Cog):
 
         karma_points, _ = await Database.get_karma(user.id)
         e.add_field(name="Karma Points", value=f"{karma_points if karma_points is not None else 0}")
+
+        guild_timezone = self.bot.timezones.get(ctx.guild.id, "UTC") if ctx.guild is not None else "UTC"
 
         if member is not None:
             e.colour = member.top_role.colour
@@ -98,12 +107,12 @@ class Other(commands.Cog):
                     else:
                         e.add_field(name='Unknown activity', value='\U00002753 Unknown', inline=False)
 
-            e.add_field(name=f'Joined at ({cfg.get("DEFAULT_TZ")})',
-                        value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
+            e.add_field(name=f'Joined at ({guild_timezone})',
+                        value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
                         inline=False)
 
-        e.add_field(name=f'Account created at ({cfg.get("DEFAULT_TZ")})',
-                    value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.astimezone(timezone(cfg.get("DEFAULT_TZ"))).strftime("%d.%m.%Y %H:%M:%S")}`)',
+        e.add_field(name=f'Account created at ({guild_timezone})',
+                    value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
                     inline=False)
 
         await ctx.send(embed=e)

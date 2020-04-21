@@ -2,22 +2,20 @@
 
 create table if not exists bot.guilds
 (
-    guild_id      bigint not null,
-    prefix        text     default null,
-    admin_roles   bigint[] default '{}',
-    mod_roles     bigint[] default '{}',
-    trusted_roles bigint[] default '{}',
-    mod_logs      bigint[] default '{}'
+    guild_id      bigint                       not null
+        constraint guilds_pk
+            primary key,
+    prefix        text,
+    admin_roles   bigint[] default '{}'::bigint[],
+    mod_roles     bigint[] default '{}'::bigint[],
+    trusted_roles bigint[] default '{}'::bigint[],
+    _timezone     text     default 'UTC'::text not null
 );
 
 comment on table bot.guilds is 'Settings of every guild';
 
-create unique index guilds_guild_id_uindex
+create unique index if not exists guilds_guild_id_uindex
     on bot.guilds (guild_id);
-
-alter table bot.guilds
-    add constraint guilds_pk
-        primary key (guild_id);
 
 alter table bot.guilds
     owner to defrabot;

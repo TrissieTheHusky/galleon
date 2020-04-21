@@ -79,22 +79,21 @@ class ErrorHandler(commands.Cog):
             return await ctx.send(
                 f'Please, wait **{round(error.retry_after, 2)}** seconds before running this command.')
 
-        await self.bot.dev_channel.send(
-            f"{self.bot.owner.mention}",
-            embed=discord.Embed(
-                color=0xFF0000,
-                title=f"Uncaught Exception in command {ctx.command}",
-                description=f"{error}",
-                timestamp=datetime.utcnow()
-            ).add_field(
-                name="Guild", value=f"{ctx.guild} (`{ctx.guild.id}`)"
-            ).add_field(
-                name="Author", value=f"{ctx.author} (`{ctx.author.id}`)"
-            ).add_field(
-                name="Command", value=f"{ctx.message.content}", inline=False
-            )
+        e = discord.Embed(
+            color=0xFF0000,
+            title=f"Uncaught Exception in command {ctx.command}",
+            description=f"{error}",
+            timestamp=datetime.utcnow()
         )
+        e.add_field(name="Author", value=f"{ctx.author} (`{ctx.author.id}`)")
+        e.add_field(name="Command", value=f"{ctx.message.content}", inline=False)
+
+        if ctx.guild is not None:
+            e.add_field(name="Guild", value=f"{ctx.guild} (`{ctx.guild.id}`)")
+
+        await self.bot.dev_channel.send(f"{self.bot.owner.mention}", embed=e)
         await ctx.send(':x: Unexpected error, developer was informed about it.')
+        e.clear_fields()
         print('---------\nIgnoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 

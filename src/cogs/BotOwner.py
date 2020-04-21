@@ -180,9 +180,6 @@ class BotOwner(commands.Cog, name='Bot Owner'):
 
         ❤ Also huge thanks to the https://github.com/Rapptz/RoboDanny ❤
         """
-
-        m = await ctx.send("Executing...")
-
         env = {
             'bot': self.bot,
             'ctx': ctx,
@@ -203,7 +200,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         try:
             exec(to_compile, env)
         except Exception as e:
-            return await m.edit(content=f'```py\n{e.__class__.__name__}: {e}\n```')
+            return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
 
         func = env['func']
         try:
@@ -221,10 +218,10 @@ class BotOwner(commands.Cog, name='Bot Owner'):
 
             if ret is None:
                 if value:
-                    await m.edit(content=f'```py\n{value}\n```')
+                    await ctx.send(f'```py\n{value}\n```')
             else:
                 self._last_result = ret
-                await m.edit(content=f'```py\n{value}{ret}\n```')
+                await ctx.send(f'```py\n{value}{ret}\n```')
 
 
 def setup(bot):

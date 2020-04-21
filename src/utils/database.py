@@ -55,13 +55,38 @@ class Database:
                 await db.execute(query, user_id, randint(1, 10))
 
     @classmethod
+    async def get_timezone(cls, guild_id: int) -> Optional[str]:
+        """
+        Gets timezone for specified Discord Guild
+
+        :param guild_id: Discord Guild ID
+        :return: Timezone string
+        """
+        async with cls.pool.acquire() as db:
+            guild_tz = await db.fetchval("SELECT _timezone FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
+            return guild_tz
+
+    @classmethod
+    async def set_timezone(cls, guild_id: int, new_timezone: str):
+        """
+        Sets timezone for specified Discord Guild
+
+        :param guild_id: Discord Guild ID
+        :param new_timezone: Timezone string
+        """
+        async with cls.pool.acquire() as db:
+            await db.execute("UPDATE bot.guilds SET _timezone = $2 WHERE guild_id = $1;",
+                             guild_id,
+                             new_timezone)
+
+    @classmethod
     async def get_prefix(cls, guild_id: int) -> str:
         """
         :param guild_id: Discord Guild ID
         :return: Guild prefix from settings table
         """
         async with cls.pool.acquire() as db:
-            row = await db.fetchrow("SELECT prefix FROM bot.guilds WHERE guild_id = $1;", guild_id)
+            row = await db.fetchrow("SELECT prefix FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
             return row['prefix']
 
     @classmethod

@@ -45,4 +45,4 @@ class GuildConfig(TypedDict):
     admin_roles: List[int]
     mod_roles: List[int]
     trusted_roles: List[int]
-    mod_logs: List[int]
+    _timezone: str  # UTC by default

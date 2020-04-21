@@ -2,26 +2,17 @@ from discord.ext import commands
 
 from src.typings import BotType
 from src.utils.database import Database
-
-
-def is_server_manager_or_bot_owner():
-    """
-    Checks if context author is a bot owner or has manage_guild permission
-    """
-
-    def predicate(ctx: commands.Context):
-        return (ctx.message.author.id == ctx.bot.owner.id) or \
-               ((ctx.guild.get_member(ctx.message.author.id).guild_permissions.value & 0x20) == 0x20)
-
-    return commands.check(predicate)
+from src.utils.base import is_timezone
+from src.utils.checks import is_server_manager_or_bot_owner
 
 
 class ServerAdmin(commands.Cog):
     def __init__(self, bot):
         self.bot: BotType = bot
 
-    @commands.group(aliases=["cfg"])
+    @commands.guild_only()
     @is_server_manager_or_bot_owner()
+    @commands.group(aliases=["cfg"])
     async def config(self, ctx: commands.Context):
         """
         Updates guild configuration
@@ -42,6 +33,20 @@ class ServerAdmin(commands.Cog):
         await self.bot.update_prefix(ctx.guild.id)
 
         await ctx.send(f":ok_hand: Prefix was changed to `{self.bot.prefixes.get(ctx.guild.id)}`")
+
+    @config.command()
+    async def timezone(self, ctx: commands.Context, new_timezone=None):
+        """
+        Changes timezone for logs and other bot functionality that involves time
+        """
+        if new_timezone is None:
+            current_tz = self.bot.timezones.get(ctx.guild.id)
+            return await ctx.send(f":information_source: Current timezone: **`{current_tz}`**")
+
+        if is_timezone(new_timezone) is False:
+            return await ctx.send(":warning: Got invalid timezone argument!")
+
+        await ctx.send(f"{is_timezone(new_timezone)=}")
 
 
 def setup(bot):

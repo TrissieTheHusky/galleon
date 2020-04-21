@@ -2,7 +2,7 @@ from src.utils.configuration import cfg
 
 from discord import Embed
 from datetime import datetime
-from pytz import timezone
+from pytz import timezone, exceptions
 
 
 def current_time_with_tz(tz_name=cfg['DEFAULT_TZ']) -> datetime:
@@ -24,6 +24,20 @@ def is_num_in_str(arg: str):
         int(arg)
         return True
     except ValueError:
+        return False
+
+
+def is_timezone(arg: str):
+    """
+    Checks if the timezone in argument is correct timezone
+
+    :param arg: timezone but in string
+    :return: True if it, False if not
+    """
+    try:
+        timezone(arg)
+        return True
+    except exceptions.UnknownTimeZoneError:
         return False
 
 
