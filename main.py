@@ -21,18 +21,24 @@ if __name__ == "__main__":
 
 @bot.event
 async def on_connect():
+    # Connecting to Redis
     await Cache.connect()
+    # Purging all the data in Redis
+    await Cache.purge()
 
+    # Connecting to database
     await Database.connect({
         "user": cfg["DATABASE"]["USER"], "password": cfg["DATABASE"]["PASSWORD"],
         "database": cfg["DATABASE"]["DATABASE"], "host": cfg["DATABASE"]["HOST"],
         "port": cfg["DATABASE"]["PORT"]
     })
 
+    # Updating data in memory cahche and redis
     for guild in bot.guilds:
         bot.loop.create_task(bot.update_prefix(guild.id))
         bot.loop.create_task(Cache.update_timezone(guild.id))
 
+    # Loading cogs
     for file in os.listdir(join(dirname(__file__), "./src/cogs")):
         if file.endswith(".py") and not file.endswith(".disabled.py"):
             bot.load_extension(f"src.cogs.{file[:-3]}")

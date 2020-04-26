@@ -14,13 +14,14 @@ class Cache:
     @classmethod
     async def purge(cls):
         with await cls.redis as conn:
-            
+            await conn.execute("FLUSHALL")
+            print("[REDIS] Database has been purged.")
 
     @classmethod
     async def get(cls, key):
         with await cls.redis as conn:
-            val = await conn.get(str(key))
-            return val
+            val: bytes = await conn.execute("GET", str(key))
+            return val.decode(encoding="utf-8")
 
     @classmethod
     async def set(cls, key, value):
