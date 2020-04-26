@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord import ActivityType, Activity
 from src.utils.database import Database
 from src.utils.base import current_time_with_tz
+from src.utils.cache import Cache
 import os
 import logging
 
@@ -15,12 +16,13 @@ bot = DefraBot(command_prefix=Config.get_prefix)
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     load_dotenv(join(dirname(__file__), ".env"))
-
     converters.init(bot)
 
 
 @bot.event
 async def on_connect():
+    await Cache.connect()
+
     await Database.connect({
         "user": cfg["DATABASE"]["USER"], "password": cfg["DATABASE"]["PASSWORD"],
         "database": cfg["DATABASE"]["DATABASE"], "host": cfg["DATABASE"]["HOST"],
@@ -29,7 +31,7 @@ async def on_connect():
 
     for guild in bot.guilds:
         bot.loop.create_task(bot.update_prefix(guild.id))
-        bot.loop.create_task(bot.update_timezone(guild.id))
+        bot.loop.create_task(Cache.update_timezone(guild.id))
 
     for file in os.listdir(join(dirname(__file__), "./src/cogs")):
         if file.endswith(".py") and not file.endswith(".disabled.py"):

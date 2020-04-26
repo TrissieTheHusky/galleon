@@ -7,6 +7,7 @@ from src.utils.converters import DiscordUser
 from src.utils.base import DefraEmbed
 from src.typings import BotType
 from src.utils.database import Database
+from src.utils.cache import Cache
 
 import discord
 import sys
@@ -64,7 +65,7 @@ class Other(commands.Cog):
         karma_points, _ = await Database.get_karma(user.id)
         e.add_field(name="Karma Points", value=f"{karma_points if karma_points is not None else 0}")
 
-        guild_timezone = self.bot.timezones.get(ctx.guild.id, "UTC") if ctx.guild is not None else "UTC"
+        guild_timezone = await Cache.get_timezone(ctx.guild.id) if ctx.guild is not None else "UTC"
 
         if member is not None:
             e.colour = member.top_role.colour

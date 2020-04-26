@@ -4,6 +4,7 @@ from src.typings import BotType
 from src.utils.database import Database
 from src.utils.base import is_timezone
 from src.utils.checks import is_server_manager_or_bot_owner
+from src.utils.cache import Cache
 
 
 class ServerAdmin(commands.Cog):
@@ -46,16 +47,16 @@ class ServerAdmin(commands.Cog):
         Changes timezone for logs and other bot functionality that involves time
         """
         if new_timezone is None:
-            current_tz = self.bot.timezones.get(ctx.guild.id)
+            current_tz = await Cache.get_timezone(str(ctx.guild.id))
             return await ctx.send(f":ok_hand: Current timezone: **`{current_tz}`**")
 
         if is_timezone(new_timezone) is False:
             return await ctx.send(":warning: Got invalid timezone argument!")
 
         await Database.set_timezone(ctx.guild.id, new_timezone)
-        await self.bot.update_timezone(ctx.guild.id)
+        await Cache.update_timezone(str(ctx.guild.id))
 
-        if self.bot.timezones.get(ctx.guild.id) == new_timezone:
+        if await Cache.get_timezone(str(ctx.guild.id)) == new_timezone:
             await ctx.send(f":ok_hand: Server's timezone has been updated to `{new_timezone}`")
         else:
             await ctx.send(f":x: It looks like something went wrong and server's timezone didn't update. "

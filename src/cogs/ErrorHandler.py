@@ -92,7 +92,14 @@ class ErrorHandler(commands.Cog):
             e.add_field(name="Guild", value=f"{ctx.guild} (`{ctx.guild.id}`)")
 
         await self.bot.dev_channel.send(f"{self.bot.owner.mention}", embed=e)
-        await ctx.send(':x: Unexpected error, developer was informed about it.')
+        await ctx.send(
+
+            embed=discord.Embed(
+                title=":x: Unexpected error has occurred! Developer was informed about it btw.",
+                color=discord.Color.red(),
+                description=f"```py\n{error}\n```"
+            )
+        )
         e.clear_fields()
         print('---------\nIgnoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
