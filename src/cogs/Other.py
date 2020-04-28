@@ -35,7 +35,7 @@ class Other(commands.Cog):
             description=f"**Bot Author:** {self.bot.owner} ({self.bot.owner.mention})\n"
                         f"**discord.py version:** {discord.__version__}\n"
                         f"**Python version:** {'.'.join(map(str, sys.version_info[:3]))}\n\n"
-                        "**Source Code:** [Click to open](https://github.com/runic-tears/def-bot)"
+                        "**Source Code:** [Click to open](https://github.com/defracted/def-bot)"
         )
         await ctx.send(embed=e)
 
