@@ -2,7 +2,7 @@ from discord.ext.commands import when_mentioned_or
 from discord import Message
 from os.path import join, dirname
 
-from src.typings import ConfigType, BotType
+from src.typings import ConfigType
 
 import json
 
@@ -22,7 +22,7 @@ class Config:
             cfg = json.load(master_config)
 
     @staticmethod
-    async def get_prefix(client: BotType, message: Message):
+    async def get_prefix(client, message: Message):
         """
         :param client: Bot instance
         :param message: Received message

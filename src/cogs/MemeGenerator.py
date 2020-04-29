@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 from functools import partial
 from io import BytesIO
 
-from src.typings import BotType
+from src.utils.custom_bot_class import DefraBot
 
 import discord
 import aiohttp
@@ -15,7 +15,7 @@ import textwrap
 class MemeGenerator(commands.Cog, name="Memes"):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
-        self.bot: BotType = bot
+        self.bot: DefraBot = bot
         self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"),
                                             size=75, encoding="utf-8")
 

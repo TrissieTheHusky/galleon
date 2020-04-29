@@ -1,10 +1,5 @@
-from typing import TypedDict, Optional, Union, List
-from src.utils.custom_bot_class import DefraBot
-from discord import AutoShardedClient, Client
+from typing import TypedDict, Optional, List
 from datetime import datetime
-
-BotType = Union[DefraBot, AutoShardedClient, Client]
-
 
 class WebhookConfig(TypedDict):
     NAME: Optional[str]

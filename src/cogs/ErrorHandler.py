@@ -2,6 +2,7 @@ from datetime import datetime
 from discord.ext import commands
 
 from src.utils.custom_bot_class import DefraBot
+from src.utils.premade_embeds import error_embed, warn_embed
 
 import discord
 import traceback
@@ -29,12 +30,6 @@ class ErrorHandler(commands.Cog):
             if isinstance(error, ignored):
                 return
 
-        async def send_here(message: str):
-            await ctx.send(message)
-
-        async def send_here_no_perms():
-            await ctx.send(f":lock: You don't have enough power to run `{ctx.command}`")
-
         # """"
         # Reference: isinstance(error, event)
         # """
@@ -46,29 +41,39 @@ class ErrorHandler(commands.Cog):
             return await ctx.send(f'`{ctx.command}` is disabled.')
 
         elif isinstance(error, commands.MissingPermissions):
-            return await send_here_no_perms()
-
-        elif isinstance(error, commands.MissingRequiredArgument):
-            return await send_here(
-                ":warning: You've missed some important argument!.\n"
-                f"\N{SPIRAL NOTE PAD} Command syntax: "
-                f"`{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`"
-            )
+            return await ctx.send(embed=warn_embed(
+                title=":warning: Permission denied.", text="You don't have enough power to use this command."))
 
         elif isinstance(error, commands.errors.NotOwner):
-            return await send_here_no_perms()
-
-        elif isinstance(error, commands.BotMissingPermissions):
-            return await ctx.send(f":x: I don't have enough permissions to perform this.")
+            return await ctx.send(embed=warn_embed(
+                title=":warning: Permission denied.", text="This command owner-only."))
 
         elif isinstance(error, commands.CheckFailure):
-            return await send_here_no_perms()
+            return await ctx.send(embed=warn_embed(
+                title=":warning: Permission denied.", text="You don't have enough power to run this command."
+            ))
+
+        elif isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(embed=warn_embed(
+                title=":warning: Syntax error.",
+                text="Required command argument is missing.\n"
+                     f"Command syntax: `{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`"))
+
+        elif isinstance(error, commands.BadArgument):
+            if ctx.command.qualified_name == "userinfo":
+                return await ctx.send(embed=warn_embed(
+                    title=":warning: Bad command argument", text="You have provided an invalid User ID"))
 
         elif isinstance(error, commands.NoPrivateMessage):
             return await ctx.author.send(f":x: {ctx.command} can only be used on a server.")
 
+        elif isinstance(error, commands.BotMissingPermissions):
+            return await ctx.send(
+                embed=error_embed(text="It looks like I don't have enough permissions to perform this command."))
+
         elif isinstance(error, discord.Forbidden):
-            return await ctx.send(f":x: I don't have enough permissions to perform this.")
+            return await ctx.send(
+                embed=error_embed(text="It looks like I don't have enough permissions to perform this command."))
 
         # ==== COOLDOWN CHECKS ====
 

@@ -1,5 +1,5 @@
-from discord.ext.commands import Cog, command, Context, is_owner
-from src.typings import BotType
+from discord.ext.commands import Cog, command, Context
+from src.utils.custom_bot_class import DefraBot
 from discord.ext import menus
 from typing import List, Optional
 
@@ -14,7 +14,7 @@ class MySource(menus.ListPageSource):
 
 class TestCog(Cog, command_attrs={"hidden": True}):
     def __init__(self, bot):
-        self.bot: BotType = bot
+        self.bot: DefraBot = bot
 
     async def cog_check(self, ctx: Context):
         return await ctx.bot.is_owner(ctx.author)

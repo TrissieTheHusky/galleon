@@ -2,10 +2,9 @@ from discord.ext import commands
 from datetime import datetime
 from pytz import timezone
 
-from src.utils.configuration import cfg
 from src.utils.converters import DiscordUser
 from src.utils.base import DefraEmbed
-from src.typings import BotType
+from src.utils.custom_bot_class import DefraBot
 from src.utils.database import Database
 from src.utils.cache import Cache
 
@@ -15,7 +14,7 @@ import sys
 
 class Other(commands.Cog):
     def __init__(self, bot):
-        self.bot: BotType = bot
+        self.bot: DefraBot = bot
         self.info_emojis = dict(
             staff="<:staff_badge:704986283008851975>",
             partner="<:partner_badge:704986283189075968>",
@@ -32,10 +31,10 @@ class Other(commands.Cog):
     @commands.command(name="whatprefix", aliases=["prefix", "currentprefix"])
     async def what_prefix(self, ctx):
         if ctx.guild is None:
-            return await ctx.send(f"Current prefix is `{cfg['DEFAULT_PREFIX']}`")
+            return await ctx.send(f"Current prefix is `{self.bot.cfg['DEFAULT_PREFIX']}`")
 
-        prefix = self.bot.prefixes.get(ctx.guild.id, cfg['DEFAULT_PREFIX'])
-        await ctx.send(f"Current prefix is `{prefix if prefix is not None else cfg['DEFAULT_PREFIX']}`")
+        prefix = self.bot.prefixes.get(ctx.guild.id, self.bot.cfg['DEFAULT_PREFIX'])
+        await ctx.send(f"Current prefix is `{prefix if prefix is not None else self.bot.cfg['DEFAULT_PREFIX']}`")
 
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)

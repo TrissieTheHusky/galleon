@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from src.typings import BotType
+from src.utils.custom_bot_class import DefraBot
 from src.utils.database import Database
 from src.utils.base import is_timezone
 from src.utils.checks import is_server_manager_or_bot_owner
@@ -9,7 +9,7 @@ from src.utils.cache import Cache
 
 class ServerAdmin(commands.Cog):
     def __init__(self, bot):
-        self.bot: BotType = bot
+        self.bot: DefraBot = bot
 
     @commands.guild_only()
     @is_server_manager_or_bot_owner()

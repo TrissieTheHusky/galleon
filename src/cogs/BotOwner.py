@@ -2,8 +2,7 @@ from discord.ext import commands
 from discord import Forbidden, User, Embed, ActivityType, Activity
 from contextlib import redirect_stdout
 
-from src.utils.configuration import cfg
-from src.typings import BotType
+from src.utils.custom_bot_class import DefraBot
 
 import io
 import asyncio
@@ -13,7 +12,7 @@ import textwrap
 
 class BotOwner(commands.Cog, name='Bot Owner'):
     def __init__(self, bot):
-        self.bot: BotType = bot
+        self.bot: DefraBot = bot
         self._last_result = None
         self.sessions = set()
 
@@ -120,7 +119,7 @@ class BotOwner(commands.Cog, name='Bot Owner'):
         await self.bot.change_presence(activity=stat)
         await asyncio.sleep(0.5)
         await self.bot.change_presence(
-            activity=Activity(name=cfg['DEFAULT_PRESENCE'], type=ActivityType.playing))
+            activity=Activity(name=self.bot.cfg['DEFAULT_PRESENCE'], type=ActivityType.playing))
 
         del stat
         return await ctx.send(":ok_hand: Статус успешно сброшен.")

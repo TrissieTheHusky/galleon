@@ -2,7 +2,7 @@ from discord.ext import commands
 from typing import Optional
 
 from src.utils.base import is_num_in_str
-from src.typings import BotType
+from src.utils.custom_bot_class import DefraBot
 from src.utils.base import DefraEmbed
 from src.utils.jokes import Jokes
 
@@ -11,7 +11,7 @@ import random
 
 class Fun(commands.Cog):
     def __init__(self, bot):
-        self.bot: BotType = bot
+        self.bot: DefraBot = bot
 
     @commands.command()
     async def coinflip(self, ctx: commands.Context, times: Optional[str] = None):

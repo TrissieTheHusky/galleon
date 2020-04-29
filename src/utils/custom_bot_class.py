@@ -2,14 +2,15 @@ from discord.ext.commands import AutoShardedBot
 from discord import User, TextChannel
 from typing import Dict, Optional
 
+from src.utils.configuration import cfg
 from src.utils.database import Database
 
 
 class DefraBot(AutoShardedBot):
     def __init__(self, command_prefix, **options):
         super().__init__(command_prefix, **options)
+        self.cfg = cfg
         self.prefixes: Dict[int, str] = {}
-
         self.owner: Optional[User] = None
         self.dev_channel: Optional[TextChannel] = None
 

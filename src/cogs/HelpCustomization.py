@@ -1,5 +1,4 @@
 from discord.ext import commands
-from src.typings import BotType
 
 
 class MyHelpCommand(commands.DefaultHelpCommand):
@@ -8,7 +7,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 
 
 class HelpCustomization(commands.Cog, name='Помощь'):
-    def __init__(self, client: BotType):
+    def __init__(self, client):
         self._original_help_command = client.help_command
         client.help_command = MyHelpCommand(
             indent=3,

@@ -5,14 +5,15 @@ from datetime import datetime
 
 from src.utils.base import DefraEmbed, current_time_with_tz
 from src.utils.database import Database
-from src.typings import BotType
+from src.utils.custom_bot_class import DefraBot
 
 import pytz
 
 
 class Events(commands.Cog):
     def __init__(self, bot):
-        self.bot: BotType = bot
+        self.bot: DefraBot = bot
+        self.karma_phrases = bot.cfg.get("KARMA_PHRASES", [])
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
@@ -24,9 +25,7 @@ class Events(commands.Cog):
                 await self.bot.dev_channel.send(
                     f":warning: **`[{current_time_with_tz().strftime('%d.%m.%Y %H:%M:%S')}]`** "
                     f"Received a request to delete this message, sent by **{m.author}**: \n{utils.escape_markdown(m.content)}\n")
-                await m.edit(content=":warning: This message was requested to get deleted by my owner."
-                                     "\n:hammer: Deletion in 5 seconds...", embed=None)
-                await m.delete(delay=5)
+                await m.delete()
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: Guild):
@@ -61,9 +60,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: Message):
-
         # Adding karma points when people being nice to each other
-        if any(element in message.clean_content.lower() for element in ["have a nice day", "хорошего дня"]):
+        if any(element in message.clean_content.lower() for element in self.karma_phrases):
             karma, modified_at = await Database.get_karma(message.author.id)
 
             if karma is None or modified_at is None:

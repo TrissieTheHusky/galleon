@@ -2,11 +2,11 @@ from discord.ext.commands import UserConverter, BadArgument, Converter
 from discord import HTTPException
 from typing import Optional
 
-from src.typings import BotType
+from src.utils.custom_bot_class import DefraBot
 
 import re
 
-BOT: Optional[BotType] = None
+BOT: Optional[DefraBot] = None
 
 
 def init(actual_bot):
