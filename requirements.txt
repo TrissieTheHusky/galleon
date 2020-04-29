@@ -1,4 +1,4 @@
-git+https://github.com/Rapptz/discord.py@master#egg=discord.py
+git+https://github.com/defracted/discord.py@master#egg=discord.py
 python-dotenv>=0.13.0
 pep8
 asyncpg>=0.20.1

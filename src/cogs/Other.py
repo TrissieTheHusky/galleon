@@ -16,6 +16,18 @@ import sys
 class Other(commands.Cog):
     def __init__(self, bot):
         self.bot: BotType = bot
+        self.info_emojis = dict(
+            staff="<:staff_badge:704986283008851975>",
+            partner="<:partner_badge:704986283189075968>",
+            hse="<:hypesquad_events_badge:704989654033629205>",
+            bravery="<:bravery_badge:704986283231019079>",
+            brilliance="<:brilliance_badge:704986283386208289>",
+            balance="<:balance_badge:704986283243601970>",
+            bh="<:bug_hunter_badge:704986283273093200>",
+            bh_t2="<:bug_hunter_badge_t2:704989653903736925>",
+            early="<:early_supporter_badge:704986283398660106>",
+            verified_bot_dev="<:verified_developer_badge:704986283369562112>"
+        )
 
     @commands.command(name="whatprefix", aliases=["prefix", "currentprefix"])
     async def what_prefix(self, ctx):
@@ -56,11 +68,27 @@ class Other(commands.Cog):
             url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
         e.add_field(name='Name', value=f'{user}', inline=False)
         e.add_field(name='ID', value=str(user.id), inline=False)
+
+        if user.public_flags > 0:
+            badges_field_val = f"{(self.info_emojis['staff'] + ' ') if user.is_discord_employee else ''}" \
+                               f"{(self.info_emojis['partner'] + ' ') if user.is_discord_partner else ''}" \
+                               f"{(self.info_emojis['hse'] + ' ') if user.is_hypesquad_events_member else ''}" \
+                               f"{(self.info_emojis['bravery'] + ' ') if user.is_house_bravery else ''}" \
+                               f"{(self.info_emojis['brilliance'] + ' ') if user.is_house_brilliance else ''}" \
+                               f"{(self.info_emojis['balance'] + ' ') if user.is_house_balance else ''}" \
+                               f"{(self.info_emojis['bh'] + ' ') if user.is_bug_hunter else ''}" \
+                               f"{(self.info_emojis['bh_t2'] + ' ') if user.is_golden_bug_hunter else ''}" \
+                               f"{(self.info_emojis['verified_bot_dev'] + ' ') if user.is_verified_bot_developer else ''}" \
+                               f"{(self.info_emojis['early'] + ' ') if user.is_early_supporter else ''}"
+
+            e.add_field(name="Badges", value=badges_field_val)
+
         e.add_field(name='Avatar',
                     value=f"[Go to URL]({user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')})",
                     inline=False)
 
-        e.description = '\N{HEAVY BLACK HEART} This is my creator!' if user == self.bot.owner else None
+        if user == self.bot.owner:
+            e.description = '\n\N{HEAVY BLACK HEART} This is my creator!'
 
         karma_points, _ = await Database.get_karma(user.id)
         e.add_field(name="Karma Points", value=f"{karma_points if karma_points is not None else 0}")
