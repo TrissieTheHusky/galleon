@@ -17,6 +17,9 @@
   },
   "KARMA_PHRASES": [
     "have a nice day"
-  ]
+  ],
+  "API_KEYS": {
+    "CATS": "asdasd"
+  }
 }
   

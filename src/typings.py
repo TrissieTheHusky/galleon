@@ -16,6 +16,10 @@ class DatabaseCredentials(TypedDict):
     PORT: Optional[str]
 
 
+class ConfigApiKeys(TypedDict):
+    CATS: str
+
+
 class ConfigType(TypedDict):
     DEFAULT_TZ: str
     DEFAULT_PRESENCE: str
@@ -23,6 +27,8 @@ class ConfigType(TypedDict):
     DEV_LOG_CHANNEL_ID: int
     WEBHOOK: WebhookConfig
     DATABASE: Optional[DatabaseCredentials]
+    KARMA_PHRASES: List[str]
+    API_KEYS: ConfigApiKeys
 
 
 class InfractionRow(TypedDict):
