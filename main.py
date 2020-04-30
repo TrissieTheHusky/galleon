@@ -1,24 +1,21 @@
+import logging
+import os
 from os.path import join, dirname
-from dotenv import load_dotenv
-from discord.ext import commands
-from discord import ActivityType, Activity
 
-from src.utils.configuration import Config
-from src.utils.custom_bot_class import DefraBot
-import src.utils.converters as converters
-from src.utils.database import Database
+from discord import ActivityType, Activity
+from dotenv import load_dotenv
+
 from src.utils.base import current_time_with_tz
 from src.utils.cache import Cache
-
-import os
-import logging
+from src.utils.configuration import Config
+from src.utils.custom_bot_class import DefraBot
+from src.utils.database import Database
 
 bot = DefraBot(command_prefix=Config.get_prefix)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     load_dotenv(join(dirname(__file__), ".env"))
-    converters.init(bot)
 
 
 @bot.event

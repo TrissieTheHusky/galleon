@@ -1,8 +1,9 @@
-from src.utils.configuration import cfg
+from datetime import datetime
 
 from discord import Embed
-from datetime import datetime
 from pytz import timezone, exceptions
+
+from src.utils.configuration import cfg
 
 
 def current_time_with_tz(tz_name=cfg['DEFAULT_TZ']) -> datetime:

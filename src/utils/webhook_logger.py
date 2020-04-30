@@ -1,7 +1,9 @@
-from discord import Webhook, AsyncWebhookAdapter, Embed
-import aiohttp
-from src.utils.configuration import cfg
 from typing import NoReturn
+
+import aiohttp
+from discord import Webhook, AsyncWebhookAdapter, Embed
+
+from src.utils.configuration import cfg
 
 
 class WebhookLogger:

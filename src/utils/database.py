@@ -1,8 +1,9 @@
-from asyncpg.pool import Pool, create_pool
-from typing import Optional, Tuple
-from socket import gaierror
-from random import randint
 from datetime import datetime
+from random import randint
+from socket import gaierror
+from typing import Optional, Tuple
+
+from asyncpg.pool import Pool, create_pool
 
 
 class DatabaseException(Exception):

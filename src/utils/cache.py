@@ -1,6 +1,8 @@
-from src.utils.database import Database
 from typing import Optional
+
 import aioredis
+
+from src.utils.database import Database
 
 
 class Cache:

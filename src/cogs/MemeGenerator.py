@@ -1,15 +1,15 @@
-from discord.ext import commands
-from discord.ext.commands.cooldowns import BucketType
-from os.path import join, dirname
-from PIL import Image, ImageDraw, ImageFont
+import textwrap
 from functools import partial
 from io import BytesIO
+from os.path import join, dirname
+
+import aiohttp
+import discord
+from PIL import Image, ImageDraw, ImageFont
+from discord.ext import commands
+from discord.ext.commands.cooldowns import BucketType
 
 from src.utils.custom_bot_class import DefraBot
-
-import discord
-import aiohttp
-import textwrap
 
 
 class MemeGenerator(commands.Cog, name="Memes"):

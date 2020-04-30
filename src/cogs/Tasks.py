@@ -1,5 +1,6 @@
-from discord.ext import commands, tasks
 from discord import VoiceChannel, Guild
+from discord.ext import commands, tasks
+
 from src.utils.custom_bot_class import DefraBot
 
 

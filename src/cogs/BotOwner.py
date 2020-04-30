@@ -1,13 +1,11 @@
-from discord.ext import commands
-from discord import Forbidden, User, Embed, ActivityType, Activity
-from contextlib import redirect_stdout
-
-from src.utils.custom_bot_class import DefraBot
-
-import io
 import asyncio
-import traceback
+import io
 import textwrap
+import traceback
+from contextlib import redirect_stdout
+from discord import Forbidden, User, Embed, ActivityType, Activity
+from discord.ext import commands
+from src.utils.custom_bot_class import DefraBot
 
 
 class BotOwner(commands.Cog, name='Bot Owner'):

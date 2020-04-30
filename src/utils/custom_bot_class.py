@@ -1,6 +1,7 @@
-from discord.ext.commands import AutoShardedBot
-from discord import User, TextChannel
 from typing import Dict, Optional
+
+from discord import User, TextChannel
+from discord.ext.commands import AutoShardedBot
 
 from src.utils.configuration import cfg
 from src.utils.database import Database

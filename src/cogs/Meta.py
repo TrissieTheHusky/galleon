@@ -1,15 +1,15 @@
-from discord.ext import commands
+import sys
 from datetime import datetime
-from pytz import timezone
 from typing import Union
 
-from src.utils.converters import DiscordUser
-from src.utils.base import DefraEmbed
-from src.utils.custom_bot_class import DefraBot
-from src.utils.cache import Cache
-
 import discord
-import sys
+from discord.ext import commands
+from pytz import timezone
+
+from src.utils.base import DefraEmbed
+from src.utils.cache import Cache
+from src.utils.converters import NotCachedUser
+from src.utils.custom_bot_class import DefraBot
 
 
 class Meta(commands.Cog):
@@ -43,7 +43,7 @@ class Meta(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def avatar(self, ctx, user: Union[discord.Member, DiscordUser] = None):
+    async def avatar(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
         """Shows user's avatar"""
         user = user or ctx.author
 
@@ -72,7 +72,7 @@ class Meta(commands.Cog):
     @commands.command(aliases=["info"])
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.max_concurrency(10, commands.BucketType.default, wait=True)
-    async def userinfo(self, ctx, user: Union[discord.Member, DiscordUser] = None):
+    async def userinfo(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
         """Shows information summary about discord users"""
         if user is None:
             user = member = ctx.author

@@ -1,12 +1,10 @@
+import sys
+import traceback
 from datetime import datetime
+import discord
 from discord.ext import commands
-
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import error_embed, warn_embed
-
-import discord
-import traceback
-import sys
 
 
 class ErrorHandler(commands.Cog):
