@@ -2,7 +2,6 @@ from datetime import datetime
 from random import randint
 from socket import gaierror
 from typing import Optional, Tuple
-
 from asyncpg.pool import Pool, create_pool
 
 

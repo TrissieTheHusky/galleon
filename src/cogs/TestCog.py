@@ -1,8 +1,6 @@
 from typing import List, Optional
-
 from discord.ext import menus
 from discord.ext.commands import Cog, command, Context
-
 from src.utils.custom_bot_class import DefraBot
 
 
