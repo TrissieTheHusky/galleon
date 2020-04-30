@@ -42,15 +42,15 @@ class ErrorHandler(commands.Cog):
 
         elif isinstance(error, commands.MissingPermissions):
             return await ctx.send(embed=warn_embed(
-                title=":warning: Permission denied.", text="You don't have enough power to use this command."))
+                title=":warning: Permission denied", text="You don't have enough power to use this command"))
 
         elif isinstance(error, commands.errors.NotOwner):
             return await ctx.send(embed=warn_embed(
-                title=":warning: Permission denied.", text="This command owner-only."))
+                title=":warning: Permission denied", text="This command owner-only"))
 
         elif isinstance(error, commands.CheckFailure):
             return await ctx.send(embed=warn_embed(
-                title=":warning: Permission denied.", text="You don't have enough power to run this command."
+                title=":warning: Permission denied", text="You don't have enough power to run this command"
             ))
 
         elif isinstance(error, commands.MissingRequiredArgument):
@@ -59,10 +59,10 @@ class ErrorHandler(commands.Cog):
                 text="Required command argument is missing.\n"
                      f"Command syntax: `{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`"))
 
-        elif isinstance(error, commands.BadArgument):
-            if ctx.command.qualified_name == "userinfo":
+        elif isinstance(error, commands.BadUnionArgument):
+            if ctx.command.qualified_name == "userinfo" or ctx.command.qualified_name == "avatar":
                 return await ctx.send(embed=warn_embed(
-                    title=":warning: Bad command argument", text="You have provided an invalid User ID"))
+                    title=":warning: Bad Argument", text="You have provided an invalid User ID"))
 
         elif isinstance(error, commands.NoPrivateMessage):
             return await ctx.author.send(f":x: {ctx.command} can only be used on a server.")
@@ -81,8 +81,9 @@ class ErrorHandler(commands.Cog):
             if await ctx.bot.is_owner(ctx.message.author):
                 return await ctx.reinvoke()
 
-            return await ctx.send(
-                f'Please, wait **{round(error.retry_after, 2)}** seconds before running this command.')
+            return await ctx.send(embed=warn_embed(
+                title=":alarm_clock: You're on cooldown!",
+                text=f"Please, wait **{round(error.retry_after, 2)}** seconds before running this command."))
 
         e = discord.Embed(
             color=0xFF0000,
@@ -98,9 +99,8 @@ class ErrorHandler(commands.Cog):
 
         await self.bot.dev_channel.send(f"{self.bot.owner.mention}", embed=e)
         await ctx.send(
-
             embed=discord.Embed(
-                title=":x: Unexpected error has occurred! Developer was informed about it btw.",
+                title=":x: Unexpected error has occurred! Developer has been informed.",
                 color=discord.Color.red(),
                 description=f"```py\n{error}\n```"
             )

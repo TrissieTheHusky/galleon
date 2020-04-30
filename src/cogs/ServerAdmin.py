@@ -11,6 +11,14 @@ class ServerAdmin(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
 
+    @commands.command(name="whatprefix", aliases=["prefix", "currentprefix"])
+    async def what_prefix(self, ctx):
+        if ctx.guild is None:
+            return await ctx.send(f"Current prefix is `{self.bot.cfg['DEFAULT_PREFIX']}`")
+
+        prefix = self.bot.prefixes.get(ctx.guild.id, self.bot.cfg['DEFAULT_PREFIX'])
+        await ctx.send(f"Current prefix is `{prefix if prefix is not None else self.bot.cfg['DEFAULT_PREFIX']}`")
+
     @commands.guild_only()
     @is_server_manager_or_bot_owner()
     @commands.group(aliases=["cfg"])

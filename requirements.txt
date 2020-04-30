@@ -3,7 +3,7 @@ python-dotenv>=0.13.0
 pep8
 asyncpg>=0.20.1
 autopep8
-pytz>=2019.3
+pytz>=2020.1
 Pillow>=7.1.2
 git+https://github.com/Rapptz/discord-ext-menus
 aiohttp>=3.6.2

@@ -1,13 +1,15 @@
-from src.utils.custom_bot_class import DefraBot
-import src.utils.converters as converters
-from src.utils.configuration import Config
 from os.path import join, dirname
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import ActivityType, Activity
+
+from src.utils.configuration import Config
+from src.utils.custom_bot_class import DefraBot
+import src.utils.converters as converters
 from src.utils.database import Database
 from src.utils.base import current_time_with_tz
 from src.utils.cache import Cache
+
 import os
 import logging
 
@@ -25,6 +27,8 @@ async def on_connect():
     await Cache.connect()
     # Purging all the data in Redis
     await Cache.purge()
+    # Loading jsk
+    bot.load_extension('jishaku')
 
     # Connecting to database
     await Database.connect({
@@ -57,27 +61,6 @@ async def on_ready():
         f"\U0001f527 **`[{current_time_with_tz(bot.cfg.get('DEFAULT_TZ')).strftime('%d.%M.%Y %H:%M')}]`** I am ready!")
 
     print(f"[{bot.user.name.upper()}] Ready.")
-
-
-@bot.group(name="cogs", aliases=["cog"])
-@commands.is_owner()
-async def cog(ctx: commands.Context):
-    if ctx.invoked_subcommand is None:
-        await ctx.send("You didn't specify the subcommand")
-
-
-@cog.command(name="load")
-@commands.is_owner()
-async def load(ctx: commands.Context, cog: str):
-    bot.load_extension(f"src.cogs.{cog}")
-    await ctx.send(f":white_check_mark: Loaded `{cog}`")
-
-
-@cog.command(name="unload")
-@commands.is_owner()
-async def unload(ctx: commands.Context, cog: str):
-    bot.unload_extension(f"src.cogs.{cog}")
-    await ctx.send(f":white_check_mark: Unloaded `{cog}`")
 
 
 bot.run(os.environ.get("TOKEN"))
