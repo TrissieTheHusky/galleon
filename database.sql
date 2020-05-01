@@ -9,7 +9,8 @@ create table if not exists bot.guilds
     admin_roles   bigint[] default '{}'::bigint[],
     mod_roles     bigint[] default '{}'::bigint[],
     trusted_roles bigint[] default '{}'::bigint[],
-    _timezone     text     default 'UTC'::text not null
+    _timezone     text     default 'UTC'::text not null,
+    language      text
 );
 
 comment on table bot.guilds is 'Settings of every guild';

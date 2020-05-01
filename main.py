@@ -10,12 +10,16 @@ from src.utils.cache import Cache
 from src.utils.configuration import Config
 from src.utils.custom_bot_class import DefraBot
 from src.utils.database import Database
+from src.utils.translator import Translator
 
 bot = DefraBot(command_prefix=Config.get_prefix)
+bot.remove_command("help")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     load_dotenv(join(dirname(__file__), ".env"))
+    # Pass bot to Translator
+    Translator.set_bot(bot)
 
 
 @bot.event
@@ -34,18 +38,21 @@ async def on_connect():
         "port": bot.cfg["DATABASE"]["PORT"]
     })
 
-    # Updating data in memory cahche and redis
+    # Loading languages
+    for file in os.listdir(join(dirname(__file__), "./src/translations")):
+        await Translator.load_translation_file(file[:-5])
+
+    # Updating data in memory cache and redis
     for guild in bot.guilds:
         bot.loop.create_task(bot.update_prefix(guild.id))
+        bot.loop.create_task(bot.update_language(guild.id))
         bot.loop.create_task(Cache.update_timezone(guild.id))
 
     # Loading cogs
     for file in os.listdir(join(dirname(__file__), "./src/cogs")):
         if file.endswith(".py") and not file.endswith(".disabled.py"):
             bot.load_extension(f"src.cogs.{file[:-3]}")
-            print(f"* {file[:-3]} loaded")
-
-    print("--------------")
+            print(f"[COG] {file[:-3]} loaded")
 
 
 @bot.event

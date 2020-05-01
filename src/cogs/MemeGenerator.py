@@ -1,18 +1,17 @@
-import textwrap
 from functools import partial
 from io import BytesIO
 from os.path import join, dirname
-
-import aiohttp
-import discord
 from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
-
 from src.utils.custom_bot_class import DefraBot
+from src.utils.translator import Translator
+import aiohttp
+import discord
+import textwrap
 
 
-class MemeGenerator(commands.Cog, name="Memes"):
+class MemeGenerator(commands.Cog):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot: DefraBot = bot
@@ -64,11 +63,10 @@ class MemeGenerator(commands.Cog, name="Memes"):
     @commands.cooldown(1, 10, BucketType.user)
     @commands.max_concurrency(2, BucketType.default)
     async def shpaklevka_meme(self, ctx, *, body: str):
-        """Minecraft is just beautiful"""
         msg = await ctx.send("Your meme is being generated")
 
         if len(body) > 90:
-            return await msg.edit(content=":x: Text length must be 90 characters or less!")
+            return await msg.edit(content=Translator.translate("CONTENT_LENGTH_90_MAX", ctx))
 
         fn = partial(self.generate_meme, "shpaklevka", body)
         meme = await self.bot.loop.run_in_executor(None, fn)
@@ -81,7 +79,6 @@ class MemeGenerator(commands.Cog, name="Memes"):
     @commands.cooldown(1, 10, BucketType.user)
     @commands.max_concurrency(2, BucketType.default)
     async def surprised_pika(self, ctx, *, body: str):
-        """wow"""
         msg = await ctx.send("Generating your HQ meme...")
 
         fn = partial(self.generate_meme, "pika", body)

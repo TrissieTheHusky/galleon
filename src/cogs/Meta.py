@@ -6,8 +6,8 @@ from src.utils.base import DefraEmbed
 from src.utils.cache import Cache
 from src.utils.converters import NotCachedUser
 from src.utils.custom_bot_class import DefraBot
+from src.utils.translator import Translator
 import discord
-import sys
 
 
 class Meta(commands.Cog):
@@ -34,20 +34,23 @@ class Meta(commands.Cog):
 
     @commands.command()
     async def invite(self, ctx):
-        """Send an invitation URL of the bot"""
-        embed = DefraEmbed(title="Invite the bot")
-        embed.description = f"[Click to invite]({discord.utils.oauth_url(self.bot.user.id)})"
+        """INVITE_HELP"""
+        embed = DefraEmbed(title=Translator.translate("INVITE_BOT", ctx))
+        embed.description = Translator.translate("INVITE_BOT_URL", ctx, url=discord.utils.oauth_url(self.bot.user.id))
         await ctx.send(embed=embed)
 
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def avatar(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
-        """Shows user's avatar"""
+        """AVATAR_HELP"""
         user = user or ctx.author
 
         avatar_url = user.avatar_url_as(static_format="png")
 
-        embed = DefraEmbed(title=f"{user} avatar", description=f"[See full size]({avatar_url})")
+        embed = DefraEmbed(
+            title=Translator.translate("AVATAR_TITLE", ctx, user=user),
+            description=Translator.translate("AVATAR_DESCRIPTION", ctx, url=avatar_url)
+        )
         embed.set_image(url=avatar_url)
 
         await ctx.send(embed=embed)
@@ -55,14 +58,14 @@ class Meta(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def about(self, ctx):
+        """ABOUT_TITLE"""
         e = DefraEmbed(
-            title="Bot Info",
-            footer_text=f"Requested by {ctx.author}",
+            title=Translator.translate("ABOUT_TITLE", ctx),
+            footer_text=Translator.translate("ABOUT_FOOTER", ctx, user=ctx.author),
             footer_icon_url=ctx.author.avatar_url,
-            description=f"**Bot Author:** {self.bot.owner} ({self.bot.owner.mention})\n"
-                        f"**discord.py version:** {discord.__version__}\n"
-                        f"**Python version:** {'.'.join(map(str, sys.version_info[:3]))}\n\n"
-                        "**Source Code:** [Click to open](https://github.com/defracted/def-bot)"
+            description=Translator.translate('ABOUT_DESCRIPTION', ctx,
+                                             owner=self.bot.owner,
+                                             lib_version=f"discord.py {discord.__version__}")
         )
         await ctx.send(embed=e)
 
@@ -71,7 +74,7 @@ class Meta(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.max_concurrency(5, commands.BucketType.default, wait=True)
     async def userinfo(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
-        """Shows information summary about discord users"""
+        """USERINFO_HELP"""
         if user is None:
             user = member = ctx.author
 
@@ -81,7 +84,7 @@ class Meta(commands.Cog):
         e = discord.Embed(colour=0x3498db)
         e.set_thumbnail(
             url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
-        e.add_field(name='**Name**', value=f'{user}', inline=False)
+        e.add_field(name=f'**{Translator.translate("NAME", ctx)}**', value=f'{user}', inline=False)
         e.add_field(name='**ID**', value=str(user.id), inline=False)
 
         if len(user.public_flags.all) > 0:
@@ -118,38 +121,45 @@ class Meta(commands.Cog):
                 badges_field_val += self.info_emojis['early'] + ' **Early Supporter**\n'
 
             if len(badges_field_val) > 0:
-                e.add_field(name="**Badges**", value=badges_field_val)
+                e.add_field(name=f"**{Translator.translate('BADGES', ctx)}**", value=badges_field_val)
 
-        e.add_field(name='**Avatar**',
-                    value=f"[Go to URL]({user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')})",
-                    inline=False)
+        e.add_field(
+            name=f'**{Translator.translate("AVATAR", ctx)}**',
+            value=Translator.translate(
+                "CLICK_TO_OPEN", ctx,
+                url=user.avatar_url_as(format='png') if not user.is_avatar_animated() \
+                    else user.avatar_url_as(format='gif')),
+            inline=False
+        )
 
         if user == self.bot.owner:
-            e.description = '\n\N{HEAVY BLACK HEART} This is my creator!'
+            e.description = Translator.translate("OWNER_NOTICE", ctx)
 
         guild_timezone = await Cache.get_timezone(ctx.guild.id) if ctx.guild is not None else "UTC"
 
         if member is not None:
             e.colour = member.top_role.color
-            e.set_field_at(0, name='**Name**', value=f'{self.user_status_icon(user.status)} {user}', inline=False)
+            e.set_field_at(0, name=f'**{Translator.translate("NAME", ctx)}**',
+                           value=f'{self.user_status_icon(user.status)} {user}', inline=False)
 
             if member.bot is not True:
                 if member.activity is not None:
                     for activity in member.activities:
                         if int(activity.type) == 0:
-                            e.add_field(name="**Playing**", value=f'{activity.name}', inline=False)
+                            e.add_field(name=f"**{Translator.translate('ACTIVITY_PLAYING', ctx)}**",
+                                        value=f'{activity.name}', inline=False)
 
                         if issubclass(type(activity), discord.activity.Spotify):
                             track_url = f"https://open.spotify.com/track/{activity.track_id}"
-                            e.add_field(name="**Listening**",
+                            e.add_field(name=f"**{Translator.translate('ACTIVITY_LISTENING', ctx)}**",
                                         value=f'[\N{MUSICAL NOTE} {", ".join(activity.artists)} \N{EM DASH} {activity.title}]({track_url})',
                                         inline=False)
 
-            e.add_field(name=f'**Joined at ({guild_timezone})**',
+            e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone})**',
                         value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
                         inline=False)
 
-        e.add_field(name=f'**Account created at ({guild_timezone})**',
+        e.add_field(name=f'**{Translator.translate("ACCOUNT_CREATED_AT", ctx)} ({guild_timezone})**',
                     value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
                     inline=False)
 

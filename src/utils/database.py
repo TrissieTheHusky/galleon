@@ -21,6 +21,29 @@ class Database:
             raise DatabaseException("Unable to connect to the database")
 
     @classmethod
+    async def get_language(cls, guild_id: int) -> Optional[str]:
+        """
+        Gets guild's language
+
+        :param guild_id: Discord Guild ID
+        :return: 'en_US' if None
+        """
+        async with cls.pool.acquire() as db:
+            guild_lang = await db.fetchval("SELECT language FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
+            return guild_lang or 'en_US'
+
+    @classmethod
+    async def set_language(cls, guild_id: int, new_lang: str):
+        """
+        Sets guild's language
+
+        :param guild_id: Discord Guild ID
+        :param new_lang: new lang code
+        """
+        async with cls.pool.acquire() as db:
+            await db.execute("UPDATE bot.guilds SET language = $2 WHERE guild_id = $1;", guild_id, new_lang)
+
+    @classmethod
     async def get_karma(cls, user_id: int) -> Tuple[Optional[int], Optional[datetime]]:
         """
         Gets users karma points and datetime when they received some
