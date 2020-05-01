@@ -1,15 +1,13 @@
-import sys
 from datetime import datetime
 from typing import Union
-
-import discord
 from discord.ext import commands
 from pytz import timezone
-
 from src.utils.base import DefraEmbed
 from src.utils.cache import Cache
 from src.utils.converters import NotCachedUser
 from src.utils.custom_bot_class import DefraBot
+import discord
+import sys
 
 
 class Meta(commands.Cog):
@@ -69,9 +67,9 @@ class Meta(commands.Cog):
         await ctx.send(embed=e)
 
     @commands.guild_only()
-    @commands.command(aliases=["info"])
+    @commands.command(aliases=["info", "ui"])
     @commands.cooldown(1, 10, commands.BucketType.user)
-    @commands.max_concurrency(10, commands.BucketType.default, wait=True)
+    @commands.max_concurrency(5, commands.BucketType.default, wait=True)
     async def userinfo(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
         """Shows information summary about discord users"""
         if user is None:
@@ -132,7 +130,7 @@ class Meta(commands.Cog):
         guild_timezone = await Cache.get_timezone(ctx.guild.id) if ctx.guild is not None else "UTC"
 
         if member is not None:
-            e.colour = member.top_role.colour
+            e.colour = member.top_role.color
             e.set_field_at(0, name='**Name**', value=f'{self.user_status_icon(user.status)} {user}', inline=False)
 
             if member.bot is not True:
@@ -142,9 +140,9 @@ class Meta(commands.Cog):
                             e.add_field(name="**Playing**", value=f'{activity.name}', inline=False)
 
                         if issubclass(type(activity), discord.activity.Spotify):
-                            track_url = f"https://open.spotify.com/track/{member.activity.track_id}"
+                            track_url = f"https://open.spotify.com/track/{activity.track_id}"
                             e.add_field(name="**Listening**",
-                                        value=f'[\N{MUSICAL NOTE} {", ".join(member.activity.artists)} \N{EM DASH} {member.activity.title}]({track_url})',
+                                        value=f'[\N{MUSICAL NOTE} {", ".join(activity.artists)} \N{EM DASH} {activity.title}]({track_url})',
                                         inline=False)
 
             e.add_field(name=f'**Joined at ({guild_timezone})**',

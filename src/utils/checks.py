@@ -7,7 +7,6 @@ def is_server_manager_or_bot_owner():
     """
 
     def predicate(ctx: commands.Context):
-        return (ctx.message.author.id == ctx.bot.owner.id) or \
-               ((ctx.guild.get_member(ctx.message.author.id).guild_permissions.value & 0x20) == 0x20)
+        return (ctx.author.id == ctx.bot.owner.id) or ((ctx.author.guild_permissions.value & 0x20) == 0x20)
 
     return commands.check(predicate)

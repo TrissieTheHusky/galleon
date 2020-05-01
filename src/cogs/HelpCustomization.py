@@ -6,7 +6,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
         return f'Use {self.clean_prefix}help [command | cog], to learn more.'
 
 
-class HelpCustomization(commands.Cog, name='Помощь'):
+class HelpCustomization(commands.Cog):
     def __init__(self, client):
         self._original_help_command = client.help_command
         client.help_command = MyHelpCommand(

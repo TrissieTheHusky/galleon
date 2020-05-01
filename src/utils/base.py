@@ -1,8 +1,6 @@
 from datetime import datetime
-
 from discord import Embed
 from pytz import timezone, exceptions
-
 from src.utils.configuration import cfg
 
 

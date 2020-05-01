@@ -51,6 +51,14 @@ class ErrorHandler(commands.Cog):
                 title=":warning: Permission denied", text="You don't have enough power to run this command"
             ))
 
+        elif isinstance(error, commands.CommandOnCooldown):
+            if await ctx.bot.is_owner(ctx.message.author):
+                return await ctx.reinvoke()
+
+            return await ctx.send(embed=warn_embed(
+                title=":alarm_clock: You're on cooldown!",
+                text=f"Please, wait **{round(error.retry_after, 2)}** seconds before running this command."))
+
         elif isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(embed=warn_embed(
                 title=":warning: Syntax error.",
@@ -72,16 +80,6 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, discord.Forbidden):
             return await ctx.send(
                 embed=error_embed(text="It looks like I don't have enough permissions to perform this command."))
-
-        # ==== COOLDOWN CHECKS ====
-
-        elif isinstance(error, commands.CommandOnCooldown):
-            if await ctx.bot.is_owner(ctx.message.author):
-                return await ctx.reinvoke()
-
-            return await ctx.send(embed=warn_embed(
-                title=":alarm_clock: You're on cooldown!",
-                text=f"Please, wait **{round(error.retry_after, 2)}** seconds before running this command."))
 
         e = discord.Embed(
             color=0xFF0000,
