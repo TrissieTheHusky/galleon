@@ -27,7 +27,7 @@ class ServerAdmin(commands.Cog):
     async def config(self, ctx: commands.Context):
         """CONFIG_HELP"""
         if ctx.invoked_subcommand is None:
-            await ctx.send(Translator.translate("NO_SUBCOMMAND", ctx, help=f"{ctx.prefix}{ctx.command} {ctx.command_signature}"))
+            await ctx.send(Translator.translate("NO_SUBCOMMAND", ctx, help=f"{ctx.prefix}{ctx.command} {ctx.command.signature}"))
 
     @config.command()
     @commands.cooldown(1, 5, commands.BucketType.guild)
