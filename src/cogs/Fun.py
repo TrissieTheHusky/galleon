@@ -37,9 +37,9 @@ class Fun(commands.Cog):
         """COINFLIP_HELP"""
         if times is None:
             if bool(random.getrandbits(1)) is True:
-                return await ctx.send(Translator.translate("HEADS", ctx))
+                return await ctx.send(Translator.translate("HEADS", ctx, heads=1))
             else:
-                return await ctx.send(Translator.translate("TAILS", ctx))
+                return await ctx.send(Translator.translate("TAILS", ctx, tails=1))
 
         if times is not None:
             if not is_num_in_str(times):
@@ -52,8 +52,8 @@ class Fun(commands.Cog):
             success = sum(res is True for res in flips)
             fails = sum(res is False for res in flips)
 
-            return await ctx.send(f"**{Translator.translate('HEADS', ctx)}:** {success}"
-                                  f"\n**{Translator.translate('TAILS', ctx)}:** {fails}")
+            return await ctx.send(Translator.translate('HEADS', ctx, heads=success) + "\n" +
+                                  Translator.translate('TAILS', ctx, tails=fails))
 
     @commands.command()
     async def joke(self, ctx):
