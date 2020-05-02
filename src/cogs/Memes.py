@@ -1,14 +1,16 @@
+import textwrap
 from functools import partial
 from io import BytesIO
 from os.path import join, dirname
+
+import aiohttp
+import discord
 from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
+
 from src.utils.custom_bot_class import DefraBot
 from src.utils.translator import Translator
-import aiohttp
-import discord
-import textwrap
 
 
 class Memes(commands.Cog):

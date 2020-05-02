@@ -3,8 +3,10 @@ import io
 import textwrap
 import traceback
 from contextlib import redirect_stdout
+
 from discord import Forbidden, User, Embed, ActivityType, Activity
 from discord.ext import commands
+
 from src.utils.custom_bot_class import DefraBot
 
 

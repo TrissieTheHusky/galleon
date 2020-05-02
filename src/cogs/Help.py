@@ -1,6 +1,7 @@
-from discord.ext import commands
-from src.utils.translator import Translator
 import discord
+from discord.ext import commands
+
+from src.utils.translator import Translator
 
 
 class Help(commands.Cog, command_attrs=dict(hidden=True)):

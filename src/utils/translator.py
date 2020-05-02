@@ -1,7 +1,9 @@
-import pyseeyou
 import json
 from os.path import join, dirname
 from typing import Optional
+
+import pyseeyou
+
 from src.utils.custom_bot_class import DefraBot
 
 
