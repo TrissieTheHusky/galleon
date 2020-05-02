@@ -149,13 +149,13 @@ class Owner(commands.Cog):
 
     # ==== GUILD COMMANDS ==== #
 
-    @commands.group(name='guild')
-    async def _guild(self, ctx: commands.Context):
+    @commands.group()
+    async def guild(self, ctx: commands.Context):
         """Manipulations with guilds"""
         if ctx.invoked_subcommand is None:
             return await ctx.send('Pls, use some subcommand')
 
-    @_guild.command(name='list')
+    @guild.command(name='list')
     async def _guild_list(self, ctx: commands.Context):
         guilds_ls = self.bot.guilds
         resulting_txt = "```xl\n"
@@ -166,7 +166,7 @@ class Owner(commands.Cog):
         del guilds_ls
         return await ctx.send(resulting_txt)
 
-    @_guild.command(name='leave')
+    @guild.command(name='leave')
     async def _guild_leave(self, ctx: commands.Context, guild_id):
         guild = self.bot.get_guild(int(guild_id))
         await guild.leave()
