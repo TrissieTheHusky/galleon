@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Union
 from discord.ext import commands
 from pytz import timezone
-from src.utils.base import DefraEmbed
+from src.utils.base import DefraEmbed, escape_hyperlinks
 from src.utils.cache import Cache
 from src.utils.converters import NotCachedUser
 from src.utils.custom_bot_class import DefraBot
@@ -84,7 +84,8 @@ class Meta(commands.Cog):
         e = discord.Embed(colour=0x3498db)
         e.set_thumbnail(
             url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
-        e.add_field(name=f'**{Translator.translate("NAME", ctx)}**', value=f'{user}', inline=False)
+        e.add_field(name=f'**{Translator.translate("NAME", ctx)}**',
+                    value=f'{escape_hyperlinks(discord.utils.escape_markdown(str(user)))}', inline=False)
         e.add_field(name='**ID**', value=str(user.id), inline=False)
 
         if len(user.public_flags.all) > 0:
@@ -145,9 +146,15 @@ class Meta(commands.Cog):
             if member.bot is not True:
                 if member.activity is not None:
                     for activity in member.activities:
+                        if issubclass(type(activity), discord.activity.CustomActivity):
+                            if activity.name is not None:
+                                e.add_field(name=f'{Translator.translate("ACTIVITY_CUSTOM", ctx)}',
+                                            value=discord.utils.escape_markdown(escape_hyperlinks(member.activity.name)))
+
                         if int(activity.type) == 0:
                             e.add_field(name=f"**{Translator.translate('ACTIVITY_PLAYING', ctx)}**",
-                                        value=f'{activity.name}', inline=False)
+                                        value=escape_hyperlinks(discord.utils.escape_markdown(activity.name)),
+                                        inline=False)
 
                         if issubclass(type(activity), discord.activity.Spotify):
                             track_url = f"https://open.spotify.com/track/{activity.track_id}"

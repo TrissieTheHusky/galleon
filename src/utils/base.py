@@ -2,6 +2,7 @@ from datetime import datetime
 from discord import Embed
 from pytz import timezone, exceptions
 from src.utils.configuration import cfg
+import re
 
 
 def current_time_with_tz(tz_name=cfg['DEFAULT_TZ']) -> datetime:
@@ -38,6 +39,11 @@ def is_timezone(arg: str):
         return True
     except exceptions.UnknownTimeZoneError:
         return False
+
+
+def escape_hyperlinks(text):
+    hyperlinks_pattern = r"(\[(.*)]\((?P<url><[^: >]+:\/[^ >]+>|(?:https?|steam):\/\/[^\s<]+[^<.,:;\"\'\]\s])\))"
+    return re.sub(hyperlinks_pattern, r'[REDACTED]', text)
 
 
 class DefraEmbed(Embed):
