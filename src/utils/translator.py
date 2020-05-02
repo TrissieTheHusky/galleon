@@ -1,6 +1,7 @@
 import json
 from os.path import join, dirname
 from typing import Optional
+from src.utils.logger import logger
 
 import pyseeyou
 
@@ -19,7 +20,7 @@ class Translator:
     async def load_translation_file(cls, language_code):
         with open(join(dirname(__file__), f"../translations/{language_code}.json"), encoding="utf-8") as lang_file:
             cls.languages.update({language_code: json.load(lang_file)})
-            print(f"[TRANSLATOR] Language file for {language_code} was loaded.")
+            logger.info(f"Language file for {language_code} was loaded.")
 
     @classmethod
     def translate(cls, query_string, ctx=None, **kwargs) -> str:

@@ -2,6 +2,7 @@ from typing import Optional
 
 import aioredis
 
+from src.utils.logger import logger
 from src.utils.database import Database
 
 
@@ -11,13 +12,13 @@ class Cache:
     @classmethod
     async def connect(cls):
         cls.redis = await aioredis.create_redis_pool('redis://localhost')
-        print("[CACHE] Connection to Redis established.")
+        logger.info("Connection to Redis established.")
 
     @classmethod
     async def purge(cls):
         with await cls.redis as conn:
             await conn.execute("FLUSHALL")
-            print("[CACHE] Database has been purged.")
+            logger.info("Database has been purged.")
 
     @classmethod
     async def get(cls, key):
@@ -40,10 +41,10 @@ class Cache:
     async def set_timezone(cls, guild_id, timezone: str):
         with await cls.redis as conn:
             await conn.set(f"timezone_{str(guild_id)}", str(timezone))
-            print(f"[CACHE] Updated timezone value for GUILD ID {str(guild_id)}")
+            logger.info(f"Updated timezone value for GUILD ID {str(guild_id)}")
 
     @classmethod
     async def update_timezone(cls, guild_id):
         timezone = await Database.get_timezone(int(guild_id))
         await cls.set_timezone(guild_id, str(timezone))
-        print(f"[CACHE] Refreshed timezone value for GUILD ID {str(guild_id)}")
+        logger.info(f"Refreshed timezone value for GUILD ID {str(guild_id)}")

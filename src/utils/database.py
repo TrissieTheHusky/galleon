@@ -2,7 +2,7 @@ from datetime import datetime
 from random import randint
 from socket import gaierror
 from typing import Optional, Tuple
-
+from src.utils.logger import logger
 from asyncpg.pool import Pool, create_pool
 
 
@@ -17,7 +17,7 @@ class Database:
     async def connect(cls, credentials) -> None:
         try:
             cls.pool = await create_pool(**credentials)
-            print("[DB] Connection pool created.")
+            logger.info("[DB] Connection pool created.")
         except gaierror:
             raise DatabaseException("Unable to connect to the database")
 

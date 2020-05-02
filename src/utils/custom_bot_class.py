@@ -1,5 +1,5 @@
 from typing import Dict, Optional
-
+from src.utils.logger import logger
 from discord import User, TextChannel
 from discord.ext.commands import AutoShardedBot
 
@@ -16,6 +16,7 @@ class DefraBot(AutoShardedBot):
         self.cfg = cfg
         self.prefixes: Dict[int, str] = {}
         self.languages: Dict[int, str] = {}
+        self.logger = logger
 
     async def update_language(self, guild_id: int):
         """
@@ -25,7 +26,7 @@ class DefraBot(AutoShardedBot):
         """
         lang = await Database.get_language(guild_id)
         self.languages.update({guild_id: lang})
-        print(f"[CACHE] Language cache has been updated for Guild ID {guild_id}")
+        self.logger.info(f"Language cache has been updated for Guild ID {guild_id}")
 
     async def update_prefix(self, guild_id: int):
         """
@@ -35,4 +36,4 @@ class DefraBot(AutoShardedBot):
         """
         prefix = await Database.get_prefix(guild_id)
         self.prefixes.update({guild_id: prefix})
-        print(f"[CACHE] Prefix cache has been updated for Guild ID {guild_id}")
+        self.logger.info(f"Prefix cache has been updated for Guild ID {guild_id}")

@@ -1,4 +1,3 @@
-import logging
 import os
 from os.path import join, dirname
 
@@ -19,7 +18,6 @@ SHARD_COUNT = cfg['SHARD_COUNT']
 bot = DefraBot(command_prefix=Config.get_prefix, shard_count=SHARD_COUNT, shard_ids=SHARD_IDS)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     load_dotenv(join(dirname(__file__), ".env"))
     # Pass bot to Translator
     Translator.set_bot(bot)
@@ -52,7 +50,7 @@ async def on_ready():
         # Loading cogs
         for cog_name in bot.cfg.get("COGS"):
             bot.load_extension(cog_name)
-            print(f"[COG] {cog_name} loaded")
+            bot.logger.info(f"{cog_name} loaded")
 
         # Fetching bot owner and logging channel
         bot.owner = await bot.fetch_user(576322791129743361)
@@ -76,7 +74,7 @@ async def on_ready():
 
 @bot.event
 async def on_shard_ready(shard_id=SHARD_IDS[len(SHARD_IDS) - 1]):
-    print(f"[BOT] Shard #{shard_id} is ready.")
+    bot.logger.info(f"Shard #{shard_id} is ready.")
 
 
 bot.run(os.environ.get("TOKEN"))
