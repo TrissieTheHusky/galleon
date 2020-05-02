@@ -11,13 +11,13 @@ class Cache:
     @classmethod
     async def connect(cls):
         cls.redis = await aioredis.create_redis_pool('redis://localhost')
-        print("[REDIS 0] Connection to Redis established.")
+        print("[CACHE] Connection to Redis established.")
 
     @classmethod
     async def purge(cls):
         with await cls.redis as conn:
             await conn.execute("FLUSHALL")
-            print("[REDIS 0] Database has been purged.")
+            print("[CACHE] Database has been purged.")
 
     @classmethod
     async def get(cls, key):
@@ -40,9 +40,10 @@ class Cache:
     async def set_timezone(cls, guild_id, timezone: str):
         with await cls.redis as conn:
             await conn.set(f"timezone_{str(guild_id)}", str(timezone))
-            print(f"[REDIS 0] Updated timezone value for GUILD ID {str(guild_id)}")
+            print(f"[CACHE] Updated timezone value for GUILD ID {str(guild_id)}")
 
     @classmethod
     async def update_timezone(cls, guild_id):
         timezone = await Database.get_timezone(int(guild_id))
         await cls.set_timezone(guild_id, str(timezone))
+        print(f"[CACHE] Refreshed timezone value for GUILD ID {str(guild_id)}")
