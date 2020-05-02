@@ -25,6 +25,8 @@ class ConfigType(TypedDict):
     DEFAULT_PRESENCE: str
     DEFAULT_PREFIX: str
     DEV_LOG_CHANNEL_ID: int
+    SHARD_COUNT: int
+    SHARD_IDS: List[int]
     COGS: List[str]
     WEBHOOK: WebhookConfig
     DATABASE: Optional[DatabaseCredentials]
