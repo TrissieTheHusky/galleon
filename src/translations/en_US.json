@@ -7,7 +7,7 @@
   "AVATAR_DESCRIPTION": "[See full size]({url})",
   "ABOUT_TITLE": "Bot Info",
   "ABOUT_FOOTER": "Requested by {user}",
-  "ABOUT_DESCRIPTION": "**Bot Owner:** {owner}\n**Library:** {lib_version}\n\n**Source Code:** [Click to view](https://github.com/defracted/def-bot)",
+  "ABOUT_DESCRIPTION": "**Bot Owner:** {owner}\n**Library:** {lib_version}\n**Support server:** [Click to join](https://discord.gg/DhA3k6B)\n\n**Source Code:** [Click to view](https://github.com/defracted/def-bot)",
   "USERINFO_HELP": "Shows information about discord user",
   "NAME": "Name",
   "ID": "ID",

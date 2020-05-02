@@ -7,7 +7,7 @@
   "AVATAR_DESCRIPTION": "[Посмотреть в полном разрешении]({url})",
   "ABOUT_TITLE": "Информация о боте",
   "ABOUT_FOOTER": "Запрошено пользователем {user}",
-  "ABOUT_DESCRIPTION": "**Владелец бота:** {owner}\n**Бибилиотека:** {lib_version}\n\n**Исходный код:** [Click to view](https://github.com/defracted/def-bot)",
+  "ABOUT_DESCRIPTION": "**Владелец бота:** {owner}\n**Бибилиотека:** {lib_version}\n**Сервер поддержки:** [Присоединиться к серверу](https://discord.gg/DhA3k6B)\n\n**Исходный код:** [Нажмите, чтобы просмотреть](https://github.com/defracted/def-bot)",
   "USERINFO_HELP": "Выводит информацию о пользователях Discord",
   "NAME": "Имя",
   "ID": "ID",
