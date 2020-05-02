@@ -22,6 +22,11 @@ class Database:
             raise DatabaseException("Unable to connect to the database")
 
     @classmethod
+    async def safe_add_guild(cls, guild_id: int):
+        async with cls.pool.acquire() as db:
+            await db.execute("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING;", guild_id)
+
+    @classmethod
     async def get_language(cls, guild_id: int) -> Optional[str]:
         """
         Gets guild's language

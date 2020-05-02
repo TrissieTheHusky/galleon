@@ -53,8 +53,8 @@ class Events(commands.Cog):
                 name="Channels count", value=f"{len(guild.channels)}"
             ))
 
-        # Adding the guild to database of settinga
-        await Database.execute("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING;", guild.id)
+        # Adding the guild to database of settings
+        await Database.safe_add_guild(guild.id)
         # Refreshing bot's cache for the guild
         await self.bot.update_prefix(guild.id)
 
