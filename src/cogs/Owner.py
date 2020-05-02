@@ -8,7 +8,7 @@ from discord.ext import commands
 from src.utils.custom_bot_class import DefraBot
 
 
-class BotOwner(commands.Cog):
+class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
         self._last_result = None
@@ -222,4 +222,4 @@ class BotOwner(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(BotOwner(bot))
+    bot.add_cog(Owner(bot))

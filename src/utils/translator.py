@@ -20,7 +20,7 @@ class Translator:
             print(f"[TRANSLATOR] Language file for {language_code} was loaded.")
 
     @classmethod
-    def translate(cls, query_string, ctx=None, **kwargs):
+    def translate(cls, query_string, ctx=None, **kwargs) -> str:
         if ctx is not None:
             current_lang = cls.bot.languages.get(ctx.guild.id, 'en_US') if ctx.guild is not None else 'en_US'
         else:

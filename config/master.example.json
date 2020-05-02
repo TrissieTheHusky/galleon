@@ -8,6 +8,18 @@
     "AVATAR_URL": "",
     "LOGGING_URL": "https://discordapp.com/api/webhooks/000000000000/asdasdasdas1q234123dsgdfcg"
   },
+  "COGS": [
+    "src.cogs.Events",
+    "src.cogs.ErrorHandler",
+    "src.cogs.TestCog",
+    "src.cogs.ServerAdmin",
+    "src.cogs.Owner",
+    "src.cogs.Meta",
+    "src.cogs.ToDo",
+    "src.cogs.Fun",
+    "src.cogs.Memes",
+    "src.cogs.Help"
+  ],
   "DATABASE": {
     "USER": "username",
     "PASSWORD": "password",

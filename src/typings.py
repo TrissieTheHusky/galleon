@@ -25,6 +25,7 @@ class ConfigType(TypedDict):
     DEFAULT_PRESENCE: str
     DEFAULT_PREFIX: str
     DEV_LOG_CHANNEL_ID: int
+    COGS: List[str]
     WEBHOOK: WebhookConfig
     DATABASE: Optional[DatabaseCredentials]
     KARMA_PHRASES: List[str]

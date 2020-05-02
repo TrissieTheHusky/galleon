@@ -11,7 +11,7 @@ import discord
 import textwrap
 
 
-class MemeGenerator(commands.Cog):
+class Memes(commands.Cog):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot: DefraBot = bot
@@ -90,4 +90,4 @@ class MemeGenerator(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(MemeGenerator(bot))
+    bot.add_cog(Memes(bot))

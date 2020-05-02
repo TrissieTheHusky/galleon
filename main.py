@@ -13,7 +13,6 @@ from src.utils.database import Database
 from src.utils.translator import Translator
 
 bot = DefraBot(command_prefix=Config.get_prefix)
-bot.remove_command("help")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
@@ -49,10 +48,9 @@ async def on_connect():
         bot.loop.create_task(Cache.update_timezone(guild.id))
 
     # Loading cogs
-    for file in os.listdir(join(dirname(__file__), "./src/cogs")):
-        if file.endswith(".py") and not file.endswith(".disabled.py"):
-            bot.load_extension(f"src.cogs.{file[:-3]}")
-            print(f"[COG] {file[:-3]} loaded")
+    for cog_name in bot.cfg.get("COGS"):
+        bot.load_extension(cog_name)
+        print(f"[COG] {cog_name} loaded")
 
 
 @bot.event
