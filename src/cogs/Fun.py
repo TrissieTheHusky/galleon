@@ -34,7 +34,7 @@ class Fun(commands.Cog):
 
     @commands.command()
     async def coinflip(self, ctx, times: Optional[str] = None):
-        """Heads or Tails"""
+        """COINFLIP_HELP"""
         if times is None:
             if bool(random.getrandbits(1)) is True:
                 return await ctx.send("Heads!")
@@ -56,24 +56,24 @@ class Fun(commands.Cog):
 
     @commands.command()
     async def joke(self, ctx):
-        """Very funny jokes in Russian"""
+        """JOKE_HELP"""
         await ctx.send(embed=DefraEmbed(description=Jokes.get(), title="Анекдоты)"))
 
     @commands.command(aliases=["reverse"])
     async def reverse_text(self, ctx, *, body: commands.clean_content):
-        """Reverses your text input"""
+        """REVERSE_HELP"""
         await ctx.send(embed=DefraEmbed(description=body[::-1], title="Reversed text"))
 
     @commands.command(name="rate")
     async def _rate(self, ctx, *, body: commands.clean_content):
-        """Rates something"""
+        """RATE_HELP"""
         rating = random.randint(0, 10)
         await ctx.send(embed=DefraEmbed(description=f"I would rate `{body}` by **{rating} / 10**.",
                                         title="The Best Opinion of the Universe"))
 
-    @commands.command(name="compare", usage="thing | another thing | and another thing")
-    async def _compare(self, ctx, things: commands.clean_content):
-        """Compares something"""
+    @commands.command(usage="thing | another thing | and another thing")
+    async def compare(self, ctx, things: commands.clean_content):
+        """COMPARE_HELP"""
         things = "".join(str(things)).split("|")
         things = [thing.strip(' ') for thing in things]
 
@@ -82,7 +82,7 @@ class Fun(commands.Cog):
 
     @commands.command()
     async def yesno(self, ctx, *, body: commands.clean_content):
-        """Answers with yes or no"""
+        """YESNO_HELP"""
         ans = random.choice((":white_check_mark:", ":x:"))
         await ctx.send(embed=DefraEmbed(
             description=f"**{ctx.author.name}:** {body}\n**{self.bot.user.name}:** {ans}",
