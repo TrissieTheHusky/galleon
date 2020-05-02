@@ -67,6 +67,7 @@ class Meta(commands.Cog):
                                              owner=self.bot.owner,
                                              lib_version=f"discord.py {discord.__version__}")
         )
+        e.set_thumbnail(url=self.bot.user.avatar_url_as(format="png"))
         await ctx.send(embed=e)
 
     @commands.guild_only()
@@ -149,7 +150,8 @@ class Meta(commands.Cog):
                         if issubclass(type(activity), discord.activity.CustomActivity):
                             if activity.name is not None:
                                 e.add_field(name=f'{Translator.translate("ACTIVITY_CUSTOM", ctx)}',
-                                            value=discord.utils.escape_markdown(escape_hyperlinks(member.activity.name)))
+                                            value=discord.utils.escape_markdown(
+                                                escape_hyperlinks(member.activity.name)))
 
                         if int(activity.type) == 0:
                             e.add_field(name=f"**{Translator.translate('ACTIVITY_PLAYING', ctx)}**",
