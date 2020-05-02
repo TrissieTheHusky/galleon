@@ -151,7 +151,7 @@ class Meta(commands.Cog):
                     for activity in member.activities:
                         if issubclass(type(activity), discord.activity.CustomActivity):
                             if activity.name is not None:
-                                e.add_field(name=f'{Translator.translate("ACTIVITY_CUSTOM", ctx)}',
+                                e.add_field(name=f'**{Translator.translate("ACTIVITY_CUSTOM", ctx)}**',
                                             value=discord.utils.escape_markdown(
                                                 escape_hyperlinks(member.activity.name)))
 
