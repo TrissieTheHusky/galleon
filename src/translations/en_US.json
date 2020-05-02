@@ -15,6 +15,7 @@
   "AVATAR": "Avatar",
   "CLICK_TO_OPEN": "[Click to Open]({url})",
   "OWNER_NOTICE": ":heart: This is my creator!",
+  "ACTIVITY_CUSTOM": "Custom Status",
   "ACTIVITY_PLAYING": "Playing",
   "ACTIVITY_LISTENING": "Listening",
   "JOINED_AT": "Joined at",
@@ -36,5 +37,5 @@
   "CONFIG_LANGUAGE_BAD_LANGUAGE": "You can only use these languages: {languages}",
   "CONFIG_LANGUAGE_UPDATED": "Server language was updated to ``{language}``",
   "CONTENT_LENGTH_90_MAX": ":x: Text length must be 90 characters or less!",
-  "HELP_TITLE_GENERAL": "List of available commands"
+  "HELP_ENDING_NOTE": "Use {prefix}help [command] to learn more about the command or module."
 }

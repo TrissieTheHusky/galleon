@@ -15,6 +15,7 @@
   "AVATAR": "Аватар",
   "CLICK_TO_OPEN": "[Нажмите, чтобы открыть]({url})",
   "OWNER_NOTICE": ":heart: Это мой создатель!",
+  "ACTIVITY_CUSTOM": "Статус",
   "ACTIVITY_PLAYING": "Играет в",
   "ACTIVITY_LISTENING": "Слушает",
   "JOINED_AT": "Присоединился в",
@@ -36,5 +37,5 @@
   "CONFIG_LANGUAGE_BAD_LANGUAGE": "Вы можете использовать только эти языки: {languages}",
   "CONFIG_LANGUAGE_UPDATED": "Язык сервера обновлён на ``{language}``",
   "CONTENT_LENGTH_90_MAX": ":x: Количество символов не должно превышать 90!",
-  "HELP_BOTTOM_INFO": "Используйте {prefix}help [command | cog], чтобы узнать больше о команде или модуле."
+  "HELP_ENDING_NOTE": "Используйте {prefix}help [command], чтобы узнать больше о команде или модуле."
 }
