@@ -6,7 +6,6 @@ from discord.ext import commands
 from pytz import timezone
 
 from src.utils.base import DefraEmbed, escape_hyperlinks
-from src.utils.cache import Cache
 from src.utils.converters import NotCachedUser
 from src.utils.custom_bot_class import DefraBot
 from src.utils.translator import Translator
@@ -139,7 +138,7 @@ class Meta(commands.Cog):
         if user == self.bot.owner:
             e.description = Translator.translate("OWNER_NOTICE", ctx)
 
-        guild_timezone = await Cache.get_timezone(ctx.guild.id) if ctx.guild is not None else "UTC"
+        guild_timezone = self.bot.cache.timezones.get(ctx.guild.id) if ctx.guild is not None else "UTC"
 
         if member is not None:
             e.colour = member.top_role.color

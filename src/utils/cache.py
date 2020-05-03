@@ -1,50 +1,27 @@
-from typing import Optional
-
-import aioredis
-
+from typing import Dict
 from src.utils.logger import logger
 from src.utils.database import Database
 
 
 class Cache:
-    redis: Optional[aioredis.Redis]
+    prefixes: Dict[int, str] = {}
+    languages: Dict[int, str] = {}
+    timezones: Dict[int, str] = {}
 
     @classmethod
-    async def connect(cls):
-        cls.redis = await aioredis.create_redis_pool('redis://localhost')
-        logger.info("Connection to Redis established.")
+    async def refresh_prefix(cls, guild_id: int):
+        val = await Database.get_prefix(guild_id)
+        cls.prefixes.update({guild_id: val})
+        logger.info(f"Prefix for Guild {guild_id} has been refreshed")
 
     @classmethod
-    async def purge(cls):
-        with await cls.redis as conn:
-            await conn.execute("FLUSHALL")
-            logger.info("Database has been purged.")
+    async def refresh_language(cls, guild_id: int):
+        val = await Database.get_language(guild_id)
+        cls.languages.update({guild_id: val})
+        logger.info(f"Language for Guild {guild_id} has been refreshed")
 
     @classmethod
-    async def get(cls, key):
-        with await cls.redis as conn:
-            val: bytes = await conn.execute("GET", str(key))
-            return val.decode(encoding="utf-8")
-
-    @classmethod
-    async def set(cls, key, value):
-        with await cls.redis as conn:
-            await conn.set(str(key), str(value))
-
-    @classmethod
-    async def get_timezone(cls, guild_id):
-        with await cls.redis as conn:
-            val: bytes = await conn.execute("GET", f"timezone_{str(guild_id)}")
-            return val.decode(encoding="utf-8")
-
-    @classmethod
-    async def set_timezone(cls, guild_id, timezone: str):
-        with await cls.redis as conn:
-            await conn.set(f"timezone_{str(guild_id)}", str(timezone))
-            logger.info(f"Updated timezone value for GUILD ID {str(guild_id)}")
-
-    @classmethod
-    async def update_timezone(cls, guild_id):
-        timezone = await Database.get_timezone(int(guild_id))
-        await cls.set_timezone(guild_id, str(timezone))
-        logger.info(f"Refreshed timezone value for GUILD ID {str(guild_id)}")
+    async def refresh_timezone(cls, guild_id: int):
+        val = await Database.get_timezone(guild_id)
+        cls.timezones.update({guild_id: val})
+        logger.info(f"Timezone for Guild {guild_id} has been refreshed")

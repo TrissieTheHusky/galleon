@@ -1,39 +1,34 @@
 import json
 from os.path import join, dirname
-from typing import Optional
 from src.utils.logger import logger
 
 import pyseeyou
 
-from src.utils.custom_bot_class import DefraBot
+from src.utils.cache import Cache
 
 
 class Translator:
-    bot: Optional[DefraBot] = None
-    languages = {}
-
-    @classmethod
-    def set_bot(cls, bot: DefraBot):
-        cls.bot = bot
+    translations = {}
 
     @classmethod
     async def load_translation_file(cls, language_code):
         with open(join(dirname(__file__), f"../translations/{language_code}.json"), encoding="utf-8") as lang_file:
-            cls.languages.update({language_code: json.load(lang_file)})
+            cls.translations.update({language_code: json.load(lang_file)})
             logger.info(f"Language file for {language_code} was loaded.")
 
     @classmethod
-    def translate(cls, query_string, ctx=None, **kwargs) -> str:
-        if ctx is not None:
-            current_lang = cls.bot.languages.get(ctx.guild.id, 'en_US') if ctx.guild is not None else 'en_US'
-        else:
-            current_lang = 'en_US'
+    def translate(cls, query_string, context=None, **kwargs) -> str:
+        current_lang = 'en_US'
+
+        if context is not None:
+            if context.guild is not None:
+                current_lang = Cache.languages.get(context.guild.id, 'en_US')
 
         try:
-            translation = pyseeyou.format(cls.languages[current_lang][query_string], kwargs, current_lang)
+            translation = pyseeyou.format(cls.translations[current_lang][query_string], kwargs, current_lang)
         except KeyError:
             try:
-                translation = cls.languages['en_US'][query_string]
+                translation = cls.translations['en_US'][query_string]
             except KeyError:
                 translation = ""
 
