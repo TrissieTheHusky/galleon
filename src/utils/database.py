@@ -22,6 +22,21 @@ class Database:
             raise DatabaseException("Unable to connect to the database")
 
     @classmethod
+    async def execute(cls, execute_string, *args):
+        async with cls.pool.acquire() as db:
+            return await db.execute(execute_string, *args)
+
+    @classmethod
+    async def fetch_row(cls, query_string, *args):
+        async with cls.pool.acquire() as db:
+            return await db.fetchrow(query_string, *args)
+
+    @classmethod
+    async def fetch(cls, query_string, *args):
+        async with cls.pool.acquire() as db:
+            return await db.fetch(query_string, *args)
+
+    @classmethod
     async def safe_add_guild(cls, guild_id: int):
         async with cls.pool.acquire() as db:
             await db.execute("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING;", guild_id)
@@ -130,16 +145,17 @@ class Database:
             await db.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)
 
     @classmethod
-    async def execute(cls, execute_string, *args):
+    async def get_todos(cls, user_id: int):
         async with cls.pool.acquire() as db:
-            return await db.execute(execute_string, *args)
+            val = await db.fetch("SELECT * FROM bot.todos WHERE user_id = $1", user_id)
+            return val
 
     @classmethod
-    async def fetch_row(cls, query_string, *args):
+    async def add_todo(cls, user_id: int, text: str):
         async with cls.pool.acquire() as db:
-            return await db.fetchrow(query_string, *args)
+            await db.execute("INSERT INTO bot.todos (user_id, content) VALUES($1, $2)", user_id, text)
 
     @classmethod
-    async def fetch(cls, query_string, *args):
+    async def remove_todo(cls, id: int, user_id: int):
         async with cls.pool.acquire() as db:
-            return await db.fetch(query_string, *args)
+            await db.execute("DELETE FROM bot.todos WHERE id = $1 AND user_id = $2", id, user_id)
