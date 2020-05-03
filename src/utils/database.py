@@ -2,8 +2,10 @@ from datetime import datetime
 from random import randint
 from socket import gaierror
 from typing import Optional, Tuple
-from src.utils.logger import logger
+
 from asyncpg.pool import Pool, create_pool
+
+from src.utils.logger import logger
 
 
 class DatabaseException(Exception):
@@ -153,9 +155,19 @@ class Database:
     @classmethod
     async def add_todo(cls, user_id: int, text: str):
         async with cls.pool.acquire() as db:
-            await db.execute("INSERT INTO bot.todos (user_id, content) VALUES($1, $2)", user_id, text)
+            is_added = await db.fetchval(
+                "INSERT INTO bot.todos (user_id, content) VALUES($1, $2) RETURNING True", user_id, text)
+            return is_added
 
     @classmethod
     async def remove_todo(cls, id: int, user_id: int):
         async with cls.pool.acquire() as db:
-            await db.execute("DELETE FROM bot.todos WHERE id = $1 AND user_id = $2", id, user_id)
+            is_deleted = await db.fetchval(
+                "DELETE FROM bot.todos WHERE id = $1 AND user_id = $2 RETURNING True", id, user_id)
+            return is_deleted
+
+    @classmethod
+    async def purge_todos(cls, user_id: int):
+        async with cls.pool.acquire() as db:
+            is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE id = $1 RETURNING True", user_id)
+            return is_deleted

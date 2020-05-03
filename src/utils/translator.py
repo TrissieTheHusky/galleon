@@ -1,10 +1,10 @@
 import json
 from os.path import join, dirname
-from src.utils.logger import logger
 
 import pyseeyou
 
 from src.utils.cache import Cache
+from src.utils.logger import logger
 
 
 class Translator:
