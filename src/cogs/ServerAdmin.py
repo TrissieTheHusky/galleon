@@ -4,7 +4,6 @@ from src.utils.base import is_timezone
 from src.utils.cache import Cache
 from src.utils.checks import is_server_manager_or_bot_owner
 from src.utils.custom_bot_class import DefraBot
-from src.utils.database import Database
 from src.utils.translator import Translator
 
 
@@ -37,7 +36,7 @@ class ServerAdmin(commands.Cog):
         if new_prefix is None:
             return await ctx.send(Translator.translate("CONFIG_PREFIX_NO_NEW"))
 
-        await Database.set_prefix(ctx.guild.id, new_prefix)
+        await self.bot.db.set_prefix(ctx.guild.id, new_prefix)
         await self.bot.cache.refresh_prefix(ctx.guild.id)
 
         if self.bot.cache.prefixes.get(ctx.guild.id) == new_prefix:
@@ -56,7 +55,7 @@ class ServerAdmin(commands.Cog):
         if is_timezone(new_timezone) is False:
             return await ctx.send(Translator.translate("CONFIG_TIMEZONE_BAD_TIMEZONE", ctx))
 
-        await Database.set_timezone(ctx.guild.id, new_timezone)
+        await self.bot.db.set_timezone(ctx.guild.id, new_timezone)
         await self.bot.cache.refresh_timezone(ctx.guild.id)
 
         if await self.bot.cache.timezones(ctx.guild.id) == new_timezone:
@@ -74,9 +73,9 @@ class ServerAdmin(commands.Cog):
 
         if new_language not in Translator.translations.keys():
             return await ctx.send(Translator.translate("CONFIG_LANGUAGE_BAD_LANGUAGE", ctx,
-                                                       languages=", ".join(list(Translator.languages.keys()))))
+                                                       languages=", ".join(list(Translator.translations.keys()))))
 
-        await Database.set_language(ctx.guild.id, new_language)
+        await self.bot.db.set_language(ctx.guild.id, new_language)
         await self.bot.cache.refresh_language(ctx.guild.id)
 
         await ctx.send(Translator.translate("CONFIG_LANGUAGE_UPDATED", ctx, language=new_language))
