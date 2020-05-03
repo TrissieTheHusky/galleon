@@ -1,9 +1,5 @@
 master.json
-token.json
-token.env
 .idea/
-guilds/
-!guilds/template.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
