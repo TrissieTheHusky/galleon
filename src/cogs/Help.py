@@ -19,7 +19,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
     def __init__(self, **options):
         super().__init__(**options)
 
-        self.embed = discord.Embed(color=0x4285F4)
+        self.embed = discord.Embed(color=0x008081)
 
     async def prepare_help_command(self, ctx, command):
         # i18n

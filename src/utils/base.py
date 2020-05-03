@@ -55,7 +55,7 @@ class DefraEmbed(Embed):
         try:
             colour = kwargs["colour"]
         except KeyError:
-            colour = kwargs.get("color", 0x3498db)
+            colour = kwargs.get("color", 0x008081)
 
         footer_text = kwargs.get("footer_text", None)
         footer_icon_url = kwargs.get("footer_icon_url", "")
