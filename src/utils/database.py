@@ -169,5 +169,5 @@ class Database:
     @classmethod
     async def purge_todos(cls, user_id: int):
         async with cls.pool.acquire() as db:
-            is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE id = $1 RETURNING True", user_id)
+            is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE user_id = $1 RETURNING True", user_id)
             return is_deleted
