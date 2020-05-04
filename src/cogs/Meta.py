@@ -57,7 +57,7 @@ class Meta(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def about(self, ctx):
         """ABOUT_TITLE"""
         e = DefraEmbed(
@@ -71,9 +71,40 @@ class Meta(commands.Cog):
         e.set_thumbnail(url=self.bot.user.avatar_url_as(format="png"))
         await ctx.send(embed=e)
 
+    @commands.command(aliases=["server", "guildinfo", "si", "gi"])
+    @commands.guild_only()
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def serverinfo(self, ctx, server_id: Union[discord.Guild, int] = None):
+        """SERVERINFO_HELP"""
+        if server_id is None:
+            guild = ctx.guild
+        else:
+            guild = self.bot.get_guild(server_id)
+
+        if guild is None:
+            return await ctx.send(Translator.translate('SERVERINFO_NOT_FOUND', ctx, id=str(server_id)))
+
+        guild_features = "\n".join(guild.features) if len(guild.features) > 0 else None
+        guild_emojis = " ".join([f"<:{emoji.name}:{emoji.id}>" for emoji in guild.emojis])
+
+        embed = DefraEmbed(title=f"{guild.name}")
+        embed.set_thumbnail(url=guild.icon_url)
+        embed.add_field(name="**ID**", value=str(guild.id), inline=False)
+        embed.add_field(name=Translator.translate("SERVERINFO_OWNER", ctx), value=str(guild.owner), inline=False)
+        embed.add_field(name=Translator.translate("SERVERINFO_MEMBERS", ctx),
+                        value=str(guild.member_count), inline=False)
+
+        if guild_features is not None:
+            embed.add_field(name=Translator.translate("SERVERINFO_FEATURES", ctx), value=guild_features, inline=False)
+
+        embed.add_field(name=Translator.translate("SERVERINFO_EMOJILIST", ctx),
+                        value=guild_emojis[0:1000], inline=False)
+
+        await ctx.send(embed=embed)
+
     @commands.guild_only()
     @commands.command(aliases=["info", "ui"])
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.max_concurrency(5, commands.BucketType.default, wait=True)
     async def userinfo(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
         """USERINFO_HELP"""
@@ -86,7 +117,7 @@ class Meta(commands.Cog):
         e = discord.Embed(colour=0x3498db)
         e.set_thumbnail(
             url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
-        e.add_field(name=f'**{Translator.translate("NAME", ctx)}**',
+        e.add_field(name=Translator.translate("USERINFO_NAME", ctx),
                     value=f'{escape_hyperlinks(discord.utils.escape_markdown(str(user)))}', inline=False)
         e.add_field(name='**ID**', value=str(user.id), inline=False)
 
@@ -124,16 +155,15 @@ class Meta(commands.Cog):
                 badges_field_val += self.info_emojis['early'] + ' **Early Supporter**\n'
 
             if len(badges_field_val) > 0:
-                e.add_field(name=f"**{Translator.translate('BADGES', ctx)}**", value=badges_field_val)
+                e.add_field(name=Translator.translate('USERINFO_BADGES', ctx), value=badges_field_val)
 
-        e.add_field(
-            name=f'**{Translator.translate("AVATAR", ctx)}**',
-            value=Translator.translate(
-                "CLICK_TO_OPEN", ctx,
-                url=user.avatar_url_as(format='png') if not user.is_avatar_animated() \
-                    else user.avatar_url_as(format='gif')),
-            inline=False
-        )
+        if not user.is_avatar_animated():
+            avatar_url = user.avatar_url_as(format='png')
+        else:
+            avatar_url = user.avatar_url_as(format='gif')
+
+        e.add_field(name=Translator.translate('USERINFO_AVATAR', ctx),
+                    value=Translator.translate("CLICK_TO_OPEN", ctx, url=avatar_url), inline=False)
 
         if user == self.bot.owner:
             e.description = Translator.translate("OWNER_NOTICE", ctx)
@@ -142,7 +172,7 @@ class Meta(commands.Cog):
 
         if member is not None:
             e.colour = member.top_role.color
-            e.set_field_at(0, name=f'**{Translator.translate("NAME", ctx)}**',
+            e.set_field_at(0, name=Translator.translate('USERINFO_NAME', ctx),
                            value=f'{self.user_status_icon(user.status)} {user}', inline=False)
 
             if member.bot is not True:
@@ -150,26 +180,27 @@ class Meta(commands.Cog):
                     for activity in member.activities:
                         if issubclass(type(activity), discord.activity.CustomActivity):
                             if activity.name is not None:
-                                e.add_field(name=f'**{Translator.translate("ACTIVITY_CUSTOM", ctx)}**',
+                                e.add_field(name=Translator.translate('USERINFO_ACTIVITY_CUSTOM', ctx),
                                             value=discord.utils.escape_markdown(
                                                 escape_hyperlinks(member.activity.name)))
 
                         if int(activity.type) == 0:
-                            e.add_field(name=f"**{Translator.translate('ACTIVITY_PLAYING', ctx)}**",
+                            e.add_field(name=Translator.translate('USERINFO_ACTIVITY_PLAYING', ctx),
                                         value=escape_hyperlinks(discord.utils.escape_markdown(activity.name)),
                                         inline=False)
 
                         if issubclass(type(activity), discord.activity.Spotify):
                             track_url = f"https://open.spotify.com/track/{activity.track_id}"
-                            e.add_field(name=f"**{Translator.translate('ACTIVITY_LISTENING', ctx)}**",
+                            e.add_field(name=Translator.translate('USERINFO_ACTIVITY_LISTENING', ctx),
                                         value=f'[\N{MUSICAL NOTE} {", ".join(activity.artists)} \N{EM DASH} {activity.title}]({track_url})',
                                         inline=False)
-
-            e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone})**',
+            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx),
+                        value=", ".join(role.mention for role in member.roles), inline=False)
+            e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',
                         value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
                         inline=False)
 
-        e.add_field(name=f'**{Translator.translate("ACCOUNT_CREATED_AT", ctx)} ({guild_timezone})**',
+        e.add_field(name=f'**{Translator.translate("ACCOUNT_CREATED_AT", ctx)} ({guild_timezone.upper()})**',
                     value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
                     inline=False)
 

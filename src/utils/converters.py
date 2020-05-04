@@ -14,4 +14,4 @@ class NotCachedUser(Converter):
         except NotFound:
             raise BadArgument('{0} not found'.format(argument)) from None
         except HTTPException:
-            raise BadArgument('Fetching {0} user ID failed'.format(argument)) from None
+            raise BadArgument('Fetching USER {0} failed'.format(argument)) from None

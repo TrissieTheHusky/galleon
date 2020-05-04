@@ -72,6 +72,10 @@ class ErrorHandler(commands.Cog):
                 return await ctx.send(embed=warn_embed(
                     title=":warning: Bad Argument", text="You have provided an invalid User ID"))
 
+            elif ctx.command.qualified_name == "serverinfo":
+                return await ctx.send(embed=warn_embed(
+                    title=":warning: Bad Argument", text="You have provided an invalid Server ID"))
+
         elif isinstance(error, commands.NoPrivateMessage):
             return await ctx.author.send(f":x: {ctx.command} can only be used on a server.")
 
