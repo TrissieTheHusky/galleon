@@ -64,9 +64,7 @@ class Meta(commands.Cog):
             title=Translator.translate("ABOUT_TITLE", ctx),
             footer_text=Translator.translate("ABOUT_FOOTER", ctx, user=ctx.author),
             footer_icon_url=ctx.author.avatar_url,
-            description=Translator.translate('ABOUT_DESCRIPTION', ctx,
-                                             owner=self.bot.owner,
-                                             lib_version=f"discord.py {discord.__version__}")
+            description=Translator.translate('ABOUT_DESCRIPTION', ctx, owner=self.bot.owner, lib_version=f"discord.py {discord.__version__}")
         )
         e.set_thumbnail(url=self.bot.user.avatar_url_as(format="png"))
         await ctx.send(embed=e)
@@ -91,8 +89,7 @@ class Meta(commands.Cog):
         embed.set_thumbnail(url=guild.icon_url)
         embed.add_field(name="**ID**", value=str(guild.id), inline=False)
         embed.add_field(name=Translator.translate("SERVERINFO_OWNER", ctx), value=str(guild.owner), inline=False)
-        embed.add_field(name=Translator.translate("SERVERINFO_MEMBERS", ctx),
-                        value=str(guild.member_count), inline=False)
+        embed.add_field(name=Translator.translate("SERVERINFO_MEMBERS", ctx), value=str(guild.member_count), inline=False)
 
         if guild_features is not None:
             embed.add_field(name=Translator.translate("SERVERINFO_FEATURES", ctx), value=guild_features, inline=False)
@@ -181,13 +178,11 @@ class Meta(commands.Cog):
                         if issubclass(type(activity), discord.activity.CustomActivity):
                             if activity.name is not None:
                                 e.add_field(name=Translator.translate('USERINFO_ACTIVITY_CUSTOM', ctx),
-                                            value=discord.utils.escape_markdown(
-                                                escape_hyperlinks(member.activity.name)))
+                                            value=discord.utils.escape_markdown(escape_hyperlinks(member.activity.name)))
 
                         if int(activity.type) == 0:
                             e.add_field(name=Translator.translate('USERINFO_ACTIVITY_PLAYING', ctx),
-                                        value=escape_hyperlinks(discord.utils.escape_markdown(activity.name)),
-                                        inline=False)
+                                        value=escape_hyperlinks(discord.utils.escape_markdown(activity.name)), inline=False)
 
                         if issubclass(type(activity), discord.activity.Spotify):
                             track_url = f"https://open.spotify.com/track/{activity.track_id}"
