@@ -1,6 +1,7 @@
 import sys
 import traceback
 from datetime import datetime
+from src.utils.translator import Translator
 
 import discord
 from discord.ext import commands
@@ -37,55 +38,51 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return
 
+        elif isinstance(error, commands.CommandOnCooldown):
+            if ctx.author.id == self.bot.owner.id:
+                return await ctx.reinvoke()
+
+            return await ctx.send(
+                embed=warn_embed(title=Translator.translate("ERROR_HANDLER_ON_COOLDOWN", ctx),
+                                 text=Translator.translate("ERROR_HANDLER_ON_COOLDOWN_WAIT", ctx, wait_more=str(round(error.retry_after, 2)))))
+
         elif isinstance(error, commands.DisabledCommand):
             return await ctx.send(f'`{ctx.command}` is disabled.')
 
         elif isinstance(error, commands.MissingPermissions):
-            return await ctx.send(embed=warn_embed(
-                title=":warning: Permission denied", text="You don't have enough power to use this command"))
+            return await ctx.send(embed=warn_embed(title=Translator.translate("ERROR_HANDLER_NO_PERMS", ctx)))
 
         elif isinstance(error, commands.errors.NotOwner):
-            return await ctx.send(embed=warn_embed(
-                title=":warning: Permission denied", text="This command owner-only"))
+            return await ctx.send(embed=warn_embed(title=Translator.translate("ERROR_HANDLER_NO_PERMS", ctx)))
 
         elif isinstance(error, commands.CheckFailure):
-            return await ctx.send(embed=warn_embed(
-                title=":warning: Permission denied", text="You don't have enough power to run this command"
-            ))
-
-        elif isinstance(error, commands.CommandOnCooldown):
-            if await ctx.bot.is_owner(ctx.message.author):
-                return await ctx.reinvoke()
-
-            return await ctx.send(embed=warn_embed(
-                title=":alarm_clock: You're on cooldown!",
-                text=f"Please, wait **{round(error.retry_after, 2)}** seconds before running this command."))
+            return await ctx.send(embed=warn_embed(title=Translator.translate("ERROR_HANDLER_NO_PERMS", ctx)))
 
         elif isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(embed=warn_embed(
-                title=":warning: Syntax error.",
-                text="Required command argument is missing.\n"
-                     f"Command syntax: `{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`"))
+                title=Translator.translate("ERROR_HANDLER_SYNTAX_ERR", ctx),
+                text=Translator.translate("ERROR_HANDLER_MISSING_ARG", ctx,
+                                          syntax=f"{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}")))
 
         elif isinstance(error, commands.BadUnionArgument):
             if ctx.command.qualified_name == "userinfo" or ctx.command.qualified_name == "avatar":
                 return await ctx.send(embed=warn_embed(
-                    title=":warning: Bad Argument", text="You have provided an invalid User ID"))
+                    title=Translator.translate("ERROR_HANDLER_BAD_ARGUMENT", ctx),
+                    text=Translator.translate("ERROR_HANDLER_USERINFO_INVALID_ARG", ctx)))
 
             elif ctx.command.qualified_name == "serverinfo":
                 return await ctx.send(embed=warn_embed(
-                    title=":warning: Bad Argument", text="You have provided an invalid Server ID"))
+                    title=Translator.translate("ERROR_HANDLER_BAD_ARGUMENT", ctx),
+                    text=Translator.translate('ERROR_HANDLER_SERVERINFO_INVALID_ARG', ctx)))
 
         elif isinstance(error, commands.NoPrivateMessage):
-            return await ctx.author.send(f":x: {ctx.command} can only be used on a server.")
+            return await ctx.author.send(Translator.translate("ERROR_HANDLER_SERVER_ONLY", ctx, command=str(ctx.command)))
 
         elif isinstance(error, commands.BotMissingPermissions):
-            return await ctx.send(
-                embed=error_embed(text="It looks like I don't have enough permissions to perform this command."))
+            return await ctx.send(embed=error_embed(text=Translator.translate("ERROR_HANDLER_BOT_MISSING_PERMS", ctx)))
 
         elif isinstance(error, discord.Forbidden):
-            return await ctx.send(
-                embed=error_embed(text="It looks like I don't have enough permissions to perform this command."))
+            return await ctx.send(embed=error_embed(text=Translator.translate("ERROR_HANDLER_BOT_MISSING_PERMS", ctx)))
 
         e = discord.Embed(
             color=0xFF0000,
@@ -98,11 +95,12 @@ class ErrorHandler(commands.Cog):
 
         if ctx.guild is not None:
             e.add_field(name="Guild", value=f"{ctx.guild} (`{ctx.guild.id}`)")
+            e.add_field(name="Message URL", value=f"[Jump to error](https://discord.com/channels/{ctx.guild.id}/{ctx.channel.id}/{ctx.message.id})")
 
         await self.bot.dev_channel.send(f"{self.bot.owner.mention}", embed=e)
         await ctx.send(
             embed=discord.Embed(
-                title=":x: Unexpected error has occurred! Developer has been informed.",
+                title=Translator.translate("ERROR_HANDLER_UNEXPECTED", ctx),
                 color=discord.Color.red(),
                 description=f"```py\n{error}\n```"
             )

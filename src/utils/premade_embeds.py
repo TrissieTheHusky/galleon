@@ -10,5 +10,8 @@ def error_embed(title=":x: Something went wrong",
     return Embed(title=title, description=text, color=0xFF0000)
 
 
-def warn_embed(text, title=":warning: Notice!", ):
-    return Embed(title=title, description=text, color=0xF1C40F)
+def warn_embed(text=None, title=":warning: Notice!"):
+    e = Embed(title=title, color=0xF1C40F)
+    if text is not None:
+        e.description = text
+    return e
