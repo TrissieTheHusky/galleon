@@ -38,6 +38,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
         self.embed.title = None
 
     async def prepare_help_command(self, ctx, command):
+        await ctx.trigger_typing()
         # i18n
         self.aliases_heading = Translator.translate("ALIASES", self.context)
         self.commands_heading = Translator.translate("COMMANDS", self.context)

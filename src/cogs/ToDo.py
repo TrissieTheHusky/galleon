@@ -25,11 +25,12 @@ class ToDo(commands.Cog):
                                           help=f"{ctx.prefix}help {ctx.command.qualified_name}")
             ))
 
-    @todo.command()
+    @todo.command(aliases=["ls"])
     async def list(self, ctx):
         """TODO_LIST_HELP"""
-        current_todos = await self.bot.db.get_todos(ctx.author.id)
+        await ctx.trigger_typing()
 
+        current_todos = await self.bot.db.get_todos(ctx.author.id)
         if len(current_todos) <= 0:
             await ctx.send(Translator.translate("TODOS_EMPTY", ctx))
         else:
@@ -45,6 +46,8 @@ class ToDo(commands.Cog):
     @todo.command()
     async def add(self, ctx, *, task: str = None):
         """TODO_ADD_HELP"""
+        await ctx.trigger_typing()
+
         if task is None:
             return await ctx.send(embed=warn_embed(title=Translator.translate("TODO_MISSING_ARG", ctx), text=""))
 
@@ -52,9 +55,11 @@ class ToDo(commands.Cog):
         if resp is True:
             await ctx.send(Translator.translate("TODO_ADDED", ctx))
 
-    @todo.command()
+    @todo.command(aliases=["rmv", "del", "delete"])
     async def remove(self, ctx, todo_id):
         """TODO_REMOVE_HELP"""
+        await ctx.trigger_typing()
+
         if not todo_id.isdigit():
             return await ctx.send(Translator.translate("TODO_MUST_BE_INT", ctx))
 
@@ -68,6 +73,7 @@ class ToDo(commands.Cog):
     @todo.command()
     async def purge(self, ctx):
         """TODO_PURGE_HELP"""
+        await ctx.trigger_typing()
 
         # TODO: Implement confirmation message
 

@@ -17,6 +17,7 @@ class Fun(commands.Cog):
     @commands.command()
     async def fox(self, ctx):
         """FOX_HELP"""
+        await ctx.trigger_typing()
         some_cat = await APIs.get_fox()
 
         embed = DefraEmbed(title=":fox: " + Translator.translate("THIS_FOX", ctx))
@@ -27,6 +28,7 @@ class Fun(commands.Cog):
     @commands.command()
     async def cat(self, ctx):
         """CAT_HELP"""
+        await ctx.trigger_typing()
         some_cat = await APIs.get_cat(self.bot.cfg['API_KEYS']['CATS'])
 
         embed = DefraEmbed(title=":cat: " + Translator.translate("THIS_CAT", ctx))
