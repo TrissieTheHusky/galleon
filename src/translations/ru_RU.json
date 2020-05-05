@@ -110,5 +110,6 @@
   "ERROR_HANDLER_SERVER_ONLY": ":x: {command} можно использовать только на серверах.",
   "HELP_COMMAND_NOT_FOUND": "Команда ``{command}`` не найдена.",
   "HELP_COMMAND_SUBCOMMAND_NOT_FOUND": "У команды ``{command}`` нет субкоманды с именем ``{element}``.",
-  "HELP_COMMAND_NO_SUBCOMMANDS": "У команды ``{command}`` отсутствуют субкоманды."
+  "HELP_COMMAND_NO_SUBCOMMANDS": "У команды ``{command}`` отсутствуют субкоманды.",
+  "DAYS_AGO": "{days, plural, one {# день} few {# дня} other {# дней}} назад"
 }

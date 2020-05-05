@@ -110,5 +110,6 @@
   "ERROR_HANDLER_SERVER_ONLY": ":x: {command} can only be used on a server.",
   "HELP_COMMAND_NOT_FOUND": "Command ``{command}`` was not found.",
   "HELP_COMMAND_SUBCOMMAND_NOT_FOUND": "Command ``{command}`` has no subcommand named ``{element}``.",
-  "HELP_COMMAND_NO_SUBCOMMANDS": "Command ``{command}`` has no subcommands."
+  "HELP_COMMAND_NO_SUBCOMMANDS": "Command ``{command}`` has no subcommands.",
+  "DAYS_AGO": "{days, plural, one {# day} other {# days}} ago"
 }

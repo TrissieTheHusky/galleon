@@ -189,15 +189,17 @@ class Meta(commands.Cog):
                             e.add_field(name=Translator.translate('USERINFO_ACTIVITY_LISTENING', ctx),
                                         value=f'[\N{MUSICAL NOTE} {", ".join(activity.artists)} \N{EM DASH} {activity.title}]({track_url})',
                                         inline=False)
-            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx),
-                        value=", ".join(role.mention for role in member.roles), inline=False)
-            e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',
-                        value=f'{(datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
-                        inline=False)
+            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx), value=", ".join(role.mention for role in reversed(member.roles)), inline=False)
 
+            member_joined_days_ago = (datetime.utcnow() - member.joined_at).days
+            e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',
+                        value=Translator.translate("DAYS_AGO", ctx, days=member_joined_days_ago) +
+                              f' (`{member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)', inline=False)
+
+        user_created_days_ago = (datetime.utcnow() - user.created_at).days
         e.add_field(name=f'**{Translator.translate("ACCOUNT_CREATED_AT", ctx)} ({guild_timezone.upper()})**',
-                    value=f'{(datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)',
-                    inline=False)
+                    value=Translator.translate("DAYS_AGO", ctx, days=user_created_days_ago) +
+                          f' (`{user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)', inline=False)
 
         await ctx.send(embed=e)
         del e
