@@ -18,8 +18,24 @@ class Help(commands.Cog, command_attrs=dict(hidden=True)):
 class MyHelpCommand(commands.MinimalHelpCommand):
     def __init__(self, **options):
         super().__init__(**options)
-
         self.embed = discord.Embed(color=0x008081)
+
+    def command_not_found(self, string):
+        return Translator.translate("HELP_COMMAND_NOT_FOUND", self.context, command=string)
+
+    def subcommand_not_found(self, command, string):
+        if isinstance(command, commands.Group) and len(command.all_commands) > 0:
+            return Translator.translate("HELP_COMMAND_SUBCOMMAND_NOT_FOUND", self.context, command=command.qualified_name, element=string)
+        return Translator.translate("HELP_COMMAND_NO_SUBCOMMANDS", self.context, command=command.qualified_name)
+
+    async def send_error_message(self, error):
+        destination = self.get_destination()
+        self.embed.title = error
+        await destination.send(embed=self.embed)
+
+    def prepare_embed(self):
+        self.embed.description = None
+        self.embed.title = None
 
     async def prepare_help_command(self, ctx, command):
         # i18n
@@ -27,8 +43,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
         self.commands_heading = Translator.translate("COMMANDS", self.context)
         # Original class methods
         self.paginator.clear()
-        self.embed.description = ""
-        self.embed.title = None
+        self.prepare_embed()
         await super().prepare_help_command(ctx, command)
 
     # Formatter for the embed
