@@ -28,7 +28,7 @@ class Translator:
             translation = pyseeyou.format(cls.translations[current_lang][query_string], kwargs, current_lang)
         except KeyError:
             try:
-                translation = cls.translations['en_US'][query_string]
+                translation = pyseeyou.format(cls.translations['en_US'][query_string], kwargs, current_lang)
             except KeyError:
                 translation = ""
 
