@@ -189,7 +189,12 @@ class Meta(commands.Cog):
                             e.add_field(name=Translator.translate('USERINFO_ACTIVITY_LISTENING', ctx),
                                         value=f'[\N{MUSICAL NOTE} {", ".join(activity.artists)} \N{EM DASH} {activity.title}]({track_url})',
                                         inline=False)
-            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx), value=", ".join(role.mention for role in reversed(member.roles)), inline=False)
+
+            def walk_roles(roles):
+                for r in roles:
+                    yield r.mention
+
+            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx), value=", ".join(walk_roles(reversed(member.roles))), inline=False)
 
             member_joined_days_ago = (datetime.utcnow() - member.joined_at).days
             e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',
