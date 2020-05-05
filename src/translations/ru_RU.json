@@ -96,5 +96,19 @@
   "SERVERINFO_FEATURES": "**Специальные возможности**",
   "SERVERINFO_EMOJILIST": "**Эмодзи**",
   "SERVERINFO_ONLY_INT_IDS": ":warning: ID сервера должно быть целочисленным значением!",
-  "SERVERINFO_NOT_FOUND": ":x: Сервер с ID ``{id}`` не найден."
+  "SERVERINFO_NOT_FOUND": ":x: Сервер с ID ``{id}`` не найден.",
+  "ERROR_HANDLER_UNEXPECTED": ":x: Произошла ошибка! \n:incoming_envelope: Разработчик бота был оповещён об этом.",
+  "ERROR_HANDLER_SYNTAX_ERR": ":warning: Синтаксическая ошибка!",
+  "ERROR_HANDLER_MISSING_ARG": "Пропущен необходимый аргумент команды.\nСинтаксис: ``{syntax}``",
+  "ERROR_HANDLER_NO_PERMS": ":warning: Недостаточно прав!",
+  "ERROR_HANDLER_ON_COOLDOWN": ":alarm_clock: Полегче, не флудите!!",
+  "ERROR_HANDLER_ON_COOLDOWN_WAIT": "Пожалуйтса, подождите ещё **{wait_more}** секунд, чтобы использовать эту команду.",
+  "ERROR_HANDLER_BAD_ARGUMENT": ":warning: Неверный аргумент команды!",
+  "ERROR_HANDLER_USERINFO_INVALID_ARG": "Вы указали некорректный или несуществующий ID пользователя.",
+  "ERROR_HANDLER_SERVERINFO_INVALID_ARG": "Вы указали некорректный ID сервера.",
+  "ERROR_HANDLER_BOT_MISSING_PERMS": ":x: Мне не хватает прав, чтобы выполнить это!.",
+  "ERROR_HANDLER_SERVER_ONLY": ":x: {command} можно использовать только на серверах.",
+  "HELP_COMMAND_NOT_FOUND": "Команда ``{command}`` не найдена.",
+  "HELP_COMMAND_SUBCOMMAND_NOT_FOUND": "У команды ``{command}`` нет субкоманды с именем ``{element}``.",
+  "HELP_COMMAND_NO_SUBCOMMANDS": "У команды ``{command}`` отсутствуют субкоманды."
 }

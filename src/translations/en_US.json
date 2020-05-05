@@ -96,5 +96,19 @@
   "SERVERINFO_FEATURES": "**Special Features**",
   "SERVERINFO_EMOJILIST": "**Emojis**",
   "SERVERINFO_ONLY_INT_IDS": ":warning: Server ID has to be an integer number!",
-  "SERVERINFO_NOT_FOUND": ":x: Server with ID ``{id}`` was not found."
+  "SERVERINFO_NOT_FOUND": ":x: Server with ID ``{id}`` was not found.",
+  "ERROR_HANDLER_UNEXPECTED": ":x: An unexpected error has occurred! \n:incoming_envelope: Bot developer received a notification about this.",
+  "ERROR_HANDLER_SYNTAX_ERR": ":warning: Syntax error!",
+  "ERROR_HANDLER_MISSING_ARG": "Required command argument is missing.\nSyntax: ``{syntax}``",
+  "ERROR_HANDLER_NO_PERMS": ":warning: Insufficient Permissions!",
+  "ERROR_HANDLER_ON_COOLDOWN": ":alarm_clock: You're on cooldown!",
+  "ERROR_HANDLER_ON_COOLDOWN_WAIT": "Please, wait **{wait_more}** seconds before running this command.",
+  "ERROR_HANDLER_BAD_ARGUMENT": ":warning: Bad Command Argument!",
+  "ERROR_HANDLER_USERINFO_INVALID_ARG": "You have provided an invalid User ID",
+  "ERROR_HANDLER_SERVERINFO_INVALID_ARG": "You have provided an invalid Server ID",
+  "ERROR_HANDLER_BOT_MISSING_PERMS": ":x: I don't have enough permissions to do this.",
+  "ERROR_HANDLER_SERVER_ONLY": ":x: {command} can only be used on a server.",
+  "HELP_COMMAND_NOT_FOUND": "Command ``{command}`` was not found.",
+  "HELP_COMMAND_SUBCOMMAND_NOT_FOUND": "Command ``{command}`` has no subcommand named ``{element}``.",
+  "HELP_COMMAND_NO_SUBCOMMANDS": "Command ``{command}`` has no subcommands."
 }
