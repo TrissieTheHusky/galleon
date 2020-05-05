@@ -1,5 +1,6 @@
-from discord.ext.menus import MenuPages, ListPageSource, button, First, Last
 from discord import Embed
+from discord.ext.menus import MenuPages, ListPageSource, button, First, Last
+
 from src.utils.translator import Translator
 
 

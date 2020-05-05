@@ -1,9 +1,9 @@
 from discord.ext import commands
 
 from src.utils.custom_bot_class import DefraBot
+from src.utils.menus import MyPagesMenu, MyPagesSource
 from src.utils.premade_embeds import warn_embed
 from src.utils.translator import Translator
-from src.utils.menus import MyPagesMenu, MyPagesSource
 
 
 class TodosSource(MyPagesSource):

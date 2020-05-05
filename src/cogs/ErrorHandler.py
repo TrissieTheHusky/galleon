@@ -1,13 +1,13 @@
 import sys
 import traceback
 from datetime import datetime
-from src.utils.translator import Translator
 
 import discord
 from discord.ext import commands
 
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import error_embed, warn_embed
+from src.utils.translator import Translator
 
 
 class ErrorHandler(commands.Cog):
