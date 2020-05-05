@@ -41,7 +41,8 @@ class Database:
     @classmethod
     async def safe_add_guild(cls, guild_id: int):
         async with cls.pool.acquire() as db:
-            await db.execute("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING;", guild_id)
+            async with db.transaction():
+                await db.execute("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING;", guild_id)
 
     @classmethod
     async def get_language(cls, guild_id: int) -> Optional[str]:
@@ -64,7 +65,8 @@ class Database:
         :param new_lang: new lang code
         """
         async with cls.pool.acquire() as db:
-            await db.execute("UPDATE bot.guilds SET language = $2 WHERE guild_id = $1;", guild_id, new_lang)
+            async with db.transaction():
+                await db.execute("UPDATE bot.guilds SET language = $2 WHERE guild_id = $1;", guild_id, new_lang)
 
     @classmethod
     async def get_karma(cls, user_id: int) -> Tuple[Optional[int], Optional[datetime]]:
@@ -121,9 +123,8 @@ class Database:
         :param new_timezone: Timezone string
         """
         async with cls.pool.acquire() as db:
-            await db.execute("UPDATE bot.guilds SET _timezone = $2 WHERE guild_id = $1;",
-                             guild_id,
-                             new_timezone)
+            async with db.transaction():
+                await db.execute("UPDATE bot.guilds SET _timezone = $2 WHERE guild_id = $1;", guild_id, new_timezone)
 
     @classmethod
     async def get_prefix(cls, guild_id: int) -> str:
@@ -144,7 +145,8 @@ class Database:
         :param new_prefix: prefix that user wants to set
         """
         async with cls.pool.acquire() as db:
-            await db.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)
+            async with db.transaction():
+                await db.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)
 
     @classmethod
     async def get_todos(cls, user_id: int):
@@ -155,19 +157,20 @@ class Database:
     @classmethod
     async def add_todo(cls, user_id: int, text: str):
         async with cls.pool.acquire() as db:
-            is_added = await db.fetchval(
-                "INSERT INTO bot.todos (user_id, content) VALUES($1, $2) RETURNING True", user_id, text)
-            return is_added
+            async with db.transaction():
+                is_added = await db.fetchval("INSERT INTO bot.todos (user_id, content) VALUES($1, $2) RETURNING True", user_id, text)
+                return is_added
 
     @classmethod
     async def remove_todo(cls, id: int, user_id: int):
         async with cls.pool.acquire() as db:
-            is_deleted = await db.fetchval(
-                "DELETE FROM bot.todos WHERE id = $1 AND user_id = $2 RETURNING True", id, user_id)
-            return is_deleted
+            async with db.transaction():
+                is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE id = $1 AND user_id = $2 RETURNING True", id, user_id)
+                return is_deleted
 
     @classmethod
     async def purge_todos(cls, user_id: int):
         async with cls.pool.acquire() as db:
-            is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE user_id = $1 RETURNING True", user_id)
-            return is_deleted
+            async with db.transaction():
+                is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE user_id = $1 RETURNING True", user_id)
+                return is_deleted
