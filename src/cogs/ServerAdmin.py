@@ -58,7 +58,7 @@ class ServerAdmin(commands.Cog):
         await self.bot.db.set_timezone(ctx.guild.id, new_timezone)
         await self.bot.cache.refresh_timezone(ctx.guild.id)
 
-        if await self.bot.cache.timezones(ctx.guild.id) == new_timezone:
+        if self.bot.cache.timezones.get(ctx.guild.id) == new_timezone:
             await ctx.send(Translator.translate("CONFIG_TIMEZONE_UPDATED", ctx, timezone=new_timezone))
         else:
             await ctx.send(Translator.translate("CONFIG_UPDATE_ERROR", ctx))
