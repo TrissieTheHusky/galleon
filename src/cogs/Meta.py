@@ -22,7 +22,8 @@ class Meta(commands.Cog):
             brilliance="<:brilliance_badge:704986283386208289>", balance="<:balance_badge:704986283243601970>",
             bh="<:bug_hunter_badge:704986283273093200>", bh_t2="<:bug_hunter_badge_t2:704989653903736925>",
             early="<:early_supporter_badge:704986283398660106>",
-            verified_bot_dev="<:verified_developer_badge:704986283369562112>"
+            verified_bot_dev="<:verified_developer_badge:704986283369562112>",
+            verified_bot="<:verified_bot1:707676558332002455><:verified_bot2:707676277787590686>"
         )
 
     def user_status_icon(self, status: discord.Status):
@@ -122,6 +123,9 @@ class Meta(commands.Cog):
         if len(user.public_flags.all) > 0:
             badges_field_val = ""
 
+            if user.public_flags.verified_bot:
+                badges_field_val += self.info_emojis['verified_bot'] + ' **Verified Bot**\n'
+
             if user.public_flags.staff:
                 badges_field_val += self.info_emojis['staff'] + ' **Discord Staff**\n'
 
@@ -191,7 +195,9 @@ class Meta(commands.Cog):
                                         value=f'[\N{MUSICAL NOTE} {", ".join(activity.artists)} \N{EM DASH} {activity.title}]({track_url})',
                                         inline=False)
 
-            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx), value=", ".join(walk_role_mentions(reversed(member.roles))), inline=False)
+            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx),
+                        value=", ".join(walk_role_mentions(reversed(member.roles), member.guild.id)),
+                        inline=False)
 
             member_joined_days_ago = (datetime.utcnow() - member.joined_at).days
             e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',

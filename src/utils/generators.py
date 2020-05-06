@@ -1,7 +1,8 @@
-def walk_role_mentions(roles):
+def walk_role_mentions(roles, guild_id):
     """Role mention iterator"""
     for r in roles:
-        yield r.mention
+        if r.id != guild_id:
+            yield r.mention
 
 
 def walk_emojis(emojis):
