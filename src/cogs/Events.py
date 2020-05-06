@@ -5,9 +5,10 @@ from discord import Guild, Color
 from discord import RawReactionActionEvent, TextChannel, Message, utils
 from discord.ext import commands
 
-from src.utils.base import DefraEmbed, current_time_with_tz
+from src.utils.base import current_time_with_tz
 from src.utils.custom_bot_class import DefraBot
 from src.utils.database import Database
+from src.utils.premade_embeds import DefraEmbed
 
 
 class Events(commands.Cog):

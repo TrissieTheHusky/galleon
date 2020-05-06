@@ -15,6 +15,7 @@ class DefraBot(AutoShardedBot):
         self.owner: Optional[User] = None
         self.dev_channel: Optional[TextChannel] = None
         self.logger = logger
+        self.primary_color = 0x008081
 
         self.cfg = cfg
         self.cache = Cache

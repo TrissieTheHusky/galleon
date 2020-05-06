@@ -4,10 +4,11 @@ from typing import Optional
 from discord.ext import commands
 
 from src.utils.apis import APIs
-from src.utils.base import DefraEmbed, is_num_in_str
+from src.utils.base import is_num_in_str
 from src.utils.custom_bot_class import DefraBot
 from src.utils.jokes import Jokes
 from src.utils.translator import Translator
+from src.utils.premade_embeds import DefraEmbed
 
 
 class Fun(commands.Cog):
