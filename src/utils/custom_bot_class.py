@@ -20,3 +20,9 @@ class DefraBot(AutoShardedBot):
         self.cfg = cfg
         self.cache = Cache
         self.db = Database
+
+    async def refresh_cache(self):
+        for guild in self.guilds:
+            await self.cache.refresh_language(guild.id)
+            await self.cache.refresh_prefix(guild.id)
+            await self.cache.refresh_timezone(guild.id)

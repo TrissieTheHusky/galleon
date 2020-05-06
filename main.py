@@ -60,10 +60,7 @@ async def on_ready():
         await Database.safe_add_guild(guild.id)
 
     # Updating data in cache
-    for guild in bot.guilds:
-        await bot.cache.refresh_language(guild.id)
-        await bot.cache.refresh_prefix(guild.id)
-        await bot.cache.refresh_timezone(guild.id)
+    await bot.refresh_cache()
 
 
 @bot.event
