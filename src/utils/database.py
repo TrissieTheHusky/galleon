@@ -40,9 +40,28 @@ class Database:
 
     @classmethod
     async def safe_add_guild(cls, guild_id: int):
+        """Adds a guild to settings table if it's not there"""
         async with cls.pool.acquire() as db:
             async with db.transaction():
-                await db.execute("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING;", guild_id)
+                return await db.fetchval("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True;", guild_id)
+
+    @classmethod
+    async def get_admin_roles(cls, guild_id: int):
+        async with cls.pool.acquire() as db:
+            async with db.transaction():
+                return await db.fetchval("SELECT admin_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
+
+    @classmethod
+    async def get_mod_roles(cls, guild_id: int):
+        async with cls.pool.acquire() as db:
+            async with db.transaction():
+                return await db.fetchval("SELECT mod_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
+
+    @classmethod
+    async def get_trusted_roles(cls, guild_id: int):
+        async with cls.pool.acquire() as db:
+            async with db.transaction():
+                return await db.fetchval("SELECT trusted_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
 
     @classmethod
     async def get_language(cls, guild_id: int) -> Optional[str]:
