@@ -49,6 +49,7 @@
   "ToDo": ":pen_fountain: ToDo",
   "Help": ":scroll: Help",
   "Jishaku": ":lock: Jishaku",
+  "CuteStuff": ":heart: CuteStuff",
   "ServerAdmin": ":gear: ServerAdmin",
   "FOX_HELP": "Sends random fox in a chat",
   "CAT_HELP": "Sends random cat in a chat",
@@ -111,5 +112,8 @@
   "HELP_COMMAND_NOT_FOUND": "Command ``{command}`` was not found.",
   "HELP_COMMAND_SUBCOMMAND_NOT_FOUND": "Command ``{command}`` has no subcommand named ``{element}``.",
   "HELP_COMMAND_NO_SUBCOMMANDS": "Command ``{command}`` has no subcommands.",
-  "DAYS_AGO": "{days, plural, one {# day} other {# days}} ago"
+  "DAYS_AGO": "{days, plural, one {# day} other {# days}} ago",
+  "ERROR_HANDLER_HUG_NOT_FOUND": "Server member ``{target}`` was not found.",
+  "HUG_HELP": "Give a hug to someone in the server!",
+  "HUG_MESSAGE_1": "{target}, **{author}** just gave you a big-big hug!"
 }

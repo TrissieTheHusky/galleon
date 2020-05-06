@@ -3,39 +3,16 @@ from typing import Optional
 
 from discord.ext import commands
 
-from src.utils.apis import APIs
 from src.utils.base import is_num_in_str
 from src.utils.custom_bot_class import DefraBot
 from src.utils.jokes import Jokes
-from src.utils.translator import Translator
 from src.utils.premade_embeds import DefraEmbed
+from src.utils.translator import Translator
 
 
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
-
-    @commands.command()
-    async def fox(self, ctx):
-        """FOX_HELP"""
-        await ctx.trigger_typing()
-        some_cat = await APIs.get_fox()
-
-        embed = DefraEmbed(title=":fox: " + Translator.translate("THIS_FOX", ctx))
-        embed.set_image(url=some_cat)
-
-        await ctx.send(embed=embed)
-
-    @commands.command()
-    async def cat(self, ctx):
-        """CAT_HELP"""
-        await ctx.trigger_typing()
-        some_cat = await APIs.get_cat(self.bot.cfg['API_KEYS']['CATS'])
-
-        embed = DefraEmbed(title=":cat: " + Translator.translate("THIS_CAT", ctx))
-        embed.set_image(url=some_cat)
-
-        await ctx.send(embed=embed)
 
     @commands.command(aliases=("cf",))
     async def coinflip(self, ctx, times: Optional[str] = None):

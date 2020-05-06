@@ -48,6 +48,7 @@
   "Meta": ":file_folder: Meta",
   "ToDo": ":pen_fountain: ToDo",
   "Help": ":scroll: Help",
+  "CuteStuff": ":heart: CuteStuff",
   "Jishaku": ":lock: Jishaku",
   "ServerAdmin": ":gear: ServerAdmin",
   "FOX_HELP": "Отпрвляет лису в чат",
@@ -111,5 +112,8 @@
   "HELP_COMMAND_NOT_FOUND": "Команда ``{command}`` не найдена.",
   "HELP_COMMAND_SUBCOMMAND_NOT_FOUND": "У команды ``{command}`` нет субкоманды с именем ``{element}``.",
   "HELP_COMMAND_NO_SUBCOMMANDS": "У команды ``{command}`` отсутствуют субкоманды.",
-  "DAYS_AGO": "{days, plural, one {# день} few {# дня} other {# дней}} назад"
+  "DAYS_AGO": "{days, plural, one {# день} few {# дня} other {# дней}} назад",
+  "ERROR_HANDLER_HUG_NOT_FOUND": "Участник сервера ``{target}`` не найден.",
+  "HUG_HELP": "Обнять кого-нибудь на сервере.",
+  "HUG_MESSAGE_1": "{target}, **{author}** крепко-крепко вас обнимает!"
 }
