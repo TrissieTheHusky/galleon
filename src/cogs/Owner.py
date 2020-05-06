@@ -26,17 +26,11 @@ class Owner(commands.Cog):
 
     @commands.command(name="pull", aliases=("update",))
     async def pull(self, ctx: commands.Context):
-
-        proc = await asyncio.create_subprocess_shell(
-            'git pull origin master',
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE)
-
+        proc = await asyncio.create_subprocess_shell('git pull origin master', stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         stdout, stderr = await proc.communicate()
 
         if stdout:
             return await ctx.send('```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
-
         if stderr:
             return await ctx.send('```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
@@ -44,9 +38,9 @@ class Owner(commands.Cog):
     async def refresh_prefixes(self, ctx: commands.Context, target):
         if "all" in target:
             for guild in self.bot.guilds:
-                await self.bot.update_prefix(guild.id)
+                await self.bot.cache.refresh_prefix(guild.id)
         else:
-            await self.bot.update_prefix(int(target))
+            await self.bot.cache.refresh_prefix(int(target))
 
         await ctx.send(":ok_hand: Done.")
 

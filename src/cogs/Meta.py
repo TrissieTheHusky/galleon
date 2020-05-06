@@ -9,6 +9,7 @@ from src.utils.base import DefraEmbed, escape_hyperlinks
 from src.utils.converters import NotCachedUser
 from src.utils.custom_bot_class import DefraBot
 from src.utils.translator import Translator
+from src.utils.generators import walk_emojis, walk_role_mentions
 
 
 class Meta(commands.Cog):
@@ -69,7 +70,7 @@ class Meta(commands.Cog):
         e.set_thumbnail(url=self.bot.user.avatar_url_as(format="png"))
         await ctx.send(embed=e)
 
-    @commands.command(aliases=["server", "guildinfo", "si", "gi"])
+    @commands.command(aliases=("server", "guildinfo", "si", "gi"))
     @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def serverinfo(self, ctx, server_id: Union[discord.Guild, int] = None):
@@ -83,7 +84,7 @@ class Meta(commands.Cog):
             return await ctx.send(Translator.translate('SERVERINFO_NOT_FOUND', ctx, id=str(server_id)))
 
         guild_features = "\n".join(guild.features) if len(guild.features) > 0 else None
-        guild_emojis = " ".join([f"<:{emoji.name}:{emoji.id}>" for emoji in guild.emojis])
+        guild_emojis = " ".join(walk_emojis(guild.emojis))
 
         embed = DefraEmbed(title=f"{guild.name}")
         embed.set_thumbnail(url=guild.icon_url)
@@ -94,13 +95,12 @@ class Meta(commands.Cog):
         if guild_features is not None:
             embed.add_field(name=Translator.translate("SERVERINFO_FEATURES", ctx), value=guild_features, inline=False)
 
-        embed.add_field(name=Translator.translate("SERVERINFO_EMOJILIST", ctx),
-                        value=guild_emojis[0:1000], inline=False)
+        embed.add_field(name=Translator.translate("SERVERINFO_EMOJILIST", ctx), value=guild_emojis[0:1000], inline=False)
 
         await ctx.send(embed=embed)
 
     @commands.guild_only()
-    @commands.command(aliases=["info", "ui"])
+    @commands.command(aliases=("info", "ui"))
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.max_concurrency(5, commands.BucketType.default, wait=True)
     async def userinfo(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
@@ -112,10 +112,10 @@ class Meta(commands.Cog):
             member: discord.Member = None if ctx.guild is None else ctx.guild.get_member(user.id)
 
         e = discord.Embed(colour=0x3498db)
-        e.set_thumbnail(
-            url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
+        e.set_thumbnail(url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
         e.add_field(name=Translator.translate("USERINFO_NAME", ctx),
-                    value=f'{escape_hyperlinks(discord.utils.escape_markdown(str(user)))}', inline=False)
+                    value=f'{escape_hyperlinks(discord.utils.escape_markdown(str(user)))}',
+                    inline=False)
         e.add_field(name='**ID**', value=str(user.id), inline=False)
 
         if len(user.public_flags.all) > 0:
@@ -190,11 +190,7 @@ class Meta(commands.Cog):
                                         value=f'[\N{MUSICAL NOTE} {", ".join(activity.artists)} \N{EM DASH} {activity.title}]({track_url})',
                                         inline=False)
 
-            def walk_roles(roles):
-                for r in roles:
-                    yield r.mention
-
-            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx), value=", ".join(walk_roles(reversed(member.roles))), inline=False)
+            e.add_field(name=Translator.translate('USERINFO_ROLES', ctx), value=", ".join(walk_role_mentions(reversed(member.roles))), inline=False)
 
             member_joined_days_ago = (datetime.utcnow() - member.joined_at).days
             e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',

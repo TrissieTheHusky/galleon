@@ -36,7 +36,7 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=["cf"])
+    @commands.command(aliases=("cf",))
     async def coinflip(self, ctx, times: Optional[str] = None):
         """COINFLIP_HELP"""
         if times is None:
@@ -64,7 +64,7 @@ class Fun(commands.Cog):
         """JOKE_HELP"""
         await ctx.send(embed=DefraEmbed(description=Jokes.get(), title="Анекдоты)"))
 
-    @commands.command(aliases=["reverse"])
+    @commands.command(aliases=("reverse",))
     async def reverse_text(self, ctx, *, body: commands.clean_content):
         """REVERSE_HELP"""
         await ctx.send(embed=DefraEmbed(description=body[::-1], title=Translator.translate("REVERSED_TEXT", ctx)))

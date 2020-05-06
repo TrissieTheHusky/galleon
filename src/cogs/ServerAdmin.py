@@ -11,7 +11,7 @@ class ServerAdmin(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
 
-    @commands.command(name="whatprefix", aliases=["prefix", "currentprefix"])
+    @commands.command(name="whatprefix", aliases=("prefix", "currentprefix"))
     async def what_prefix(self, ctx):
         """WHATPREFIX_HELP"""
         if ctx.guild is None:
@@ -22,7 +22,7 @@ class ServerAdmin(commands.Cog):
 
     @commands.guild_only()
     @is_server_manager_or_bot_owner()
-    @commands.group(aliases=["cfg"])
+    @commands.group(aliases=("cfg",))
     async def config(self, ctx: commands.Context):
         """CONFIG_HELP"""
         if ctx.invoked_subcommand is None:
@@ -63,7 +63,7 @@ class ServerAdmin(commands.Cog):
         else:
             await ctx.send(Translator.translate("CONFIG_UPDATE_ERROR", ctx))
 
-    @config.command(aliases=["lang"])
+    @config.command(aliases=("lang",))
     @commands.cooldown(1, 5, commands.BucketType.guild)
     async def language(self, ctx, new_language=None):
         """CONFIG_LANGUAGE_HELP"""

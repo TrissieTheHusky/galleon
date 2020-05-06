@@ -76,7 +76,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
                                            Translator.translate(command.short_doc, self.context)))
 
     def add_aliases_formatting(self, aliases):
-        self.paginator.add_line('**%s** %s' % (self.aliases_heading, ', '.join([f"`{alias}`" for alias in aliases])),
+        self.paginator.add_line('**%s** %s' % (self.aliases_heading, ', '.join((f"`{alias}`" for alias in aliases))),
                                 empty=True)
 
     def add_command_formatting(self, command):

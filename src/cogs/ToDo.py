@@ -19,13 +19,11 @@ class ToDo(commands.Cog):
     async def todo(self, ctx):
         """TODO_HELP"""
         if ctx.invoked_subcommand is None:
-            await ctx.send(embed=warn_embed(
-                title=Translator.translate("EMBED_NO_SUBCOMMAND_TITLE", ctx),
-                text=Translator.translate("EMBED_NO_SUBCOMMAND_DESCRIPTION", ctx,
-                                          help=f"{ctx.prefix}help {ctx.command.qualified_name}")
-            ))
+            await ctx.send(embed=warn_embed(title=Translator.translate("EMBED_NO_SUBCOMMAND_TITLE", ctx),
+                                            text=Translator.translate("EMBED_NO_SUBCOMMAND_DESCRIPTION", ctx,
+                                                                      help=f"{ctx.prefix}help {ctx.command.qualified_name}")))
 
-    @todo.command(aliases=["ls"])
+    @todo.command(aliases=("ls",))
     async def list(self, ctx):
         """TODO_LIST_HELP"""
         await ctx.trigger_typing()
@@ -55,7 +53,7 @@ class ToDo(commands.Cog):
         if resp is True:
             await ctx.send(Translator.translate("TODO_ADDED", ctx))
 
-    @todo.command(aliases=["rmv", "del", "delete"])
+    @todo.command(aliases=("rmv", "del", "delete"))
     async def remove(self, ctx, todo_id):
         """TODO_REMOVE_HELP"""
         await ctx.trigger_typing()
