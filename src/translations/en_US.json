@@ -57,7 +57,7 @@
   "JOKE_HELP": "Throws some random stupid joke",
   "REVERSE_HELP": "Reverses your input",
   "RATE_HELP": "Rates things",
-  "COMPARE_HELP": "Compares things",
+  "COMPARE_HELP": "Compares things\nTo include a phrase wrap it with double quotes: \"two words\"",
   "YESNO_HELP": "Answers with a yes or no",
   "THIS_FOX": "This is a fox!",
   "THIS_CAT": "This is a cat!",

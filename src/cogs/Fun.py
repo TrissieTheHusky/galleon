@@ -34,8 +34,7 @@ class Fun(commands.Cog):
             success = sum(res is True for res in flips)
             fails = sum(res is False for res in flips)
 
-            return await ctx.send(Translator.translate('HEADS', ctx, heads=success) + "\n" +
-                                  Translator.translate('TAILS', ctx, tails=fails))
+            return await ctx.send(Translator.translate('HEADS', ctx, heads=success) + "\n" + Translator.translate('TAILS', ctx, tails=fails))
 
     @commands.command()
     async def joke(self, ctx):
@@ -55,12 +54,9 @@ class Fun(commands.Cog):
             description=Translator.translate("RATE_DESCRIPTION", ctx, thing=thing, rating=rating),
             title=Translator.translate("RATE_TITLE", ctx)))
 
-    @commands.command()
-    async def compare(self, ctx, things: commands.clean_content):
+    @commands.command(aliases=("choose",))
+    async def compare(self, ctx, *things: commands.clean_content):
         """COMPARE_HELP"""
-        things = "".join(str(things)).split("|")
-        things = [thing.strip(' ') for thing in things]
-
         await ctx.send(embed=DefraEmbed(
             description=Translator.translate("COMPARE_DESCRIPTION", ctx, thing=random.choice(things)),
             title=Translator.translate("RATE_TITLE", ctx)))
@@ -70,8 +66,7 @@ class Fun(commands.Cog):
         """YESNO_HELP"""
         ans = random.choice((Translator.translate("YES", ctx), Translator.translate("NO", ctx)))
         await ctx.send(embed=DefraEmbed(
-            description=Translator.translate("YES_OR_NO_ANSWER", ctx,
-                                             author=ctx.author.name, text=text, bot=self.bot.user.name, answer=ans),
+            description=Translator.translate("YES_OR_NO_ANSWER", ctx, author=ctx.author.name, text=text, bot=self.bot.user.name, answer=ans),
             title=Translator.translate("YES_OR_NO", ctx)))
 
 
