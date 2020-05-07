@@ -119,5 +119,9 @@
   "BINARY_HELP": "Converts your input to binary and vise versa.",
   "YANDEX_TRANSLATE_NOTICE": "Translations provided by Yandex.Translate",
   "YANDEX_TRANSLATE_FAILED": ":x: Yandex.Translate returned an error!",
-  "TRANSLATE_HELP": "Translates your text"
+  "TRANSLATE_HELP": "Translates your text",
+  "WHO_HELP": "Small game where you have to guess the server member name by their avatar in 10 seconds",
+  "WHO_TITLE": "Guess who this is! You have 10 seconds!",
+  "WHO_CORRECT_ANSWER_WAS": "Looks like nobody managed to guess that it was ``{user}``.",
+  "WHO_ANSWER_IS_CORRECT": ":tada: {author}, this is [correct answer]({message_url})! :tada:"
 }

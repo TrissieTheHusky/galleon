@@ -1,9 +1,11 @@
+import asyncio
 import random
 from typing import Optional
 
 from discord.ext import commands
+from discord import Status
 
-from src.utils.base import is_num_in_str
+from src.utils.base import is_num_in_str, text_from_bits, text_to_bits
 from src.utils.custom_bot_class import DefraBot
 from src.utils.jokes import Jokes
 from src.utils.premade_embeds import DefraEmbed
@@ -14,21 +16,35 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
 
-    def text_to_bits(self, text: str, encoding='utf-8', errors='surrogatepass'):
-        bits = bin(int.from_bytes(text.encode(encoding, errors), 'big'))[2:]
-        return '0b' + bits.zfill(8 * ((len(bits) + 7) // 8))
+    @commands.command()
+    @commands.cooldown(2, 5, commands.BucketType.guild)
+    async def who(self, ctx):
+        """WHO_HELP"""
+        picked_member = random.choice(tuple(filter(lambda m: True if m.status is not Status.offline else False, ctx.guild.members)))
 
-    def text_from_bits(self, bits, encoding='utf-8', errors='surrogatepass'):
-        n = int(bits, 2)
-        return n.to_bytes((n.bit_length() + 7) // 8, 'big').decode(encoding, errors) or '\0'
+        e = DefraEmbed()
+        e.title = Translator.translate('WHO_TITLE', ctx)
+        e.set_image(url=picked_member.avatar_url)
+
+        def check(m):
+            return picked_member.name.lower() in m.content.lower() or picked_member.display_name.lower() in m.content.lower()
+
+        try:
+            await ctx.send(embed=e)
+            msg = await self.bot.wait_for('message', check=check, timeout=10.0)
+        except asyncio.TimeoutError:
+            await ctx.send(Translator.translate('WHO_CORRECT_ANSWER_WAS', ctx, user=picked_member.display_name))
+        else:
+            await ctx.send(embed=DefraEmbed(
+                now_time=False, description=Translator.translate('WHO_ANSWER_IS_CORRECT', ctx, author=msg.author.mention, message_url=msg.jump_url)))
 
     @commands.command(aliases=('bin',))
     async def binary(self, ctx, *, text: str):
         """BINARY_HELP"""
         if text.startswith("0b"):
-            await ctx.send(embed=DefraEmbed(description=self.text_from_bits(text)))
+            await ctx.send(embed=DefraEmbed(description=text_from_bits(text)))
         else:
-            await ctx.send(embed=DefraEmbed(description=self.text_to_bits(text)))
+            await ctx.send(embed=DefraEmbed(description=text_to_bits(text)))
 
     @commands.command(aliases=("cf",))
     async def coinflip(self, ctx, times: Optional[str] = None):

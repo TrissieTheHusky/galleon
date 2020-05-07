@@ -119,5 +119,9 @@
   "BINARY_HELP": "Конвертирует ваш ввод в двоичный код и наоброт.",
   "YANDEX_TRANSLATE_NOTICE": "Перевод предоставляет Yandex.Translate",
   "YANDEX_TRANSLATE_FAILED": ":x: Yandex.Translate вернул ошибку!",
-  "TRANSLATE_HELP": "Переводит ваш текст"
+  "TRANSLATE_HELP": "Переводит ваш текст",
+  "WHO_HELP": "Небольшая игра: вы должны угадать имя участника сервера по аватарке за 10 секунд!",
+  "WHO_TITLE": "Угадайте кто это! У вас есть 10 секунд!",
+  "WHO_CORRECT_ANSWER_WAS": "Похоже, никто не угадал, что это ``{user}``.",
+  "WHO_ANSWER_IS_CORRECT": ":tada: {author}, это [верный ответ]({message_url})! :tada:"
 }
