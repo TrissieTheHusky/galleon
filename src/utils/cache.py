@@ -8,6 +8,7 @@ class Cache:
     prefixes: Dict[int, str] = {}
     languages: Dict[int, str] = {}
     timezones: Dict[int, str] = {}
+    blacklisted_users = []
 
     @classmethod
     async def refresh_prefix(cls, guild_id: int):
