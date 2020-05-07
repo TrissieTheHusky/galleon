@@ -116,5 +116,8 @@
   "ERROR_HANDLER_HUG_NOT_FOUND": "Участник сервера ``{target}`` не найден.",
   "HUG_HELP": "Обнять кого-нибудь на сервере.",
   "HUG_MESSAGE_1": "{target}, **{author}** крепко-крепко вас обнимает!",
-  "BINARY_HELP": "Конвертирует ваш ввод в двоичный код и наоброт."
+  "BINARY_HELP": "Конвертирует ваш ввод в двоичный код и наоброт.",
+  "YANDEX_TRANSLATE_NOTICE": "Перевод предоставляет Yandex.Translate",
+  "YANDEX_TRANSLATE_FAILED": ":x: Yandex.Translate вернул ошибку!",
+  "TRANSLATE_HELP": "Переводит ваш текст"
 }

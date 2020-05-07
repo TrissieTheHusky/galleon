@@ -9,8 +9,9 @@ from src.utils.base import escape_hyperlinks
 from src.utils.converters import NotCachedUser
 from src.utils.custom_bot_class import DefraBot
 from src.utils.generators import walk_emojis, walk_role_mentions
-from src.utils.premade_embeds import DefraEmbed
+from src.utils.premade_embeds import DefraEmbed, error_embed
 from src.utils.translator import Translator
+from src.utils.apis import APIs
 
 
 class Meta(commands.Cog):
@@ -35,6 +36,20 @@ class Meta(commands.Cog):
             return "<:dnd:705378474608558112>"
         elif status == discord.Status.offline:
             return "<:offline:705378474373677107>"
+
+    @commands.command(aliases=('tr',))
+    async def translate(self, ctx, transalte_from, translate_to, *, text: str):
+        """TRANSLATE_HELP"""
+        data = await APIs.yandex_translate(text=text, tr_to=translate_to, tr_from=transalte_from)
+
+        if data['code'] != 200:
+            await ctx.send(embed=error_embed(title=Translator.translate('YANDEX_TRANSLATE_FAILED', ctx), text=data['message']))
+        elif data['code'] == 200:
+            e = DefraEmbed()
+            e.description = data['text'][0]
+            e.set_footer(text=Translator.translate('YANDEX_TRANSLATE_NOTICE', ctx), icon_url="https://translate.yandex.ru/icons/favicon.png")
+
+            await ctx.send(embed=e)
 
     @commands.command()
     async def invite(self, ctx):

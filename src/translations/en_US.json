@@ -116,5 +116,8 @@
   "ERROR_HANDLER_HUG_NOT_FOUND": "Server member ``{target}`` was not found.",
   "HUG_HELP": "Give a hug to someone in the server!",
   "HUG_MESSAGE_1": "{target}, **{author}** just gave you a big-big hug!",
-  "BINARY_HELP": "Converts your input to binary and vise versa."
+  "BINARY_HELP": "Converts your input to binary and vise versa.",
+  "YANDEX_TRANSLATE_NOTICE": "Translations provided by Yandex.Translate",
+  "YANDEX_TRANSLATE_FAILED": ":x: Yandex.Translate returned an error!",
+  "TRANSLATE_HELP": "Translates your text"
 }

@@ -18,6 +18,7 @@ class DatabaseCredentials(TypedDict):
 
 class ConfigApiKeys(TypedDict):
     CATS: str
+    YANDEX: str
 
 
 class ConfigType(TypedDict):

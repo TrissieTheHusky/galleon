@@ -1,7 +1,11 @@
 import aiohttp
+from src.utils.configuration import cfg
 
 
 class APIs:
+    yandex_translate_url = 'https://translate.yandex.net/api/v1.5/tr.json'
+    yandex_key = cfg['API_KEYS']['YANDEX']
+
     @staticmethod
     async def get_cat(token):
         """Returns image URL with cats"""
@@ -17,3 +21,17 @@ class APIs:
             async with cs.get('https://randomfox.ca/floof/') as r:
                 data = await r.json()
                 return data.get('image', None)
+
+    @classmethod
+    async def yandex_translate(cls, tr_from=None, tr_to="en", text="hello"):
+        """Translates input to desired language"""
+        async with aiohttp.ClientSession() as cs:
+            if tr_from is None:
+                async with cs.get(f'{cls.yandex_translate_url}/translate?lang={tr_to}&key={cls.yandex_key}&text={text}') as res:
+                    data = await res.json()
+                    return data
+
+            elif tr_from is not None:
+                async with cs.get(f'{cls.yandex_translate_url}/translate?lang={tr_from}-{tr_to}&key={cls.yandex_key}&text={text}') as res:
+                    data = await res.json()
+                    return data
