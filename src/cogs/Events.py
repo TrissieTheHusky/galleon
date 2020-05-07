@@ -57,7 +57,7 @@ class Events(commands.Cog):
         # Adding the guild to database of settings
         await Database.safe_add_guild(guild.id)
         # Refreshing bot's cache for the guild
-        await self.bot.update_prefix(guild.id)
+        await self.bot.cache.refresh_prefix(guild.id)
 
     @commands.Cog.listener()
     async def on_message(self, message: Message):
