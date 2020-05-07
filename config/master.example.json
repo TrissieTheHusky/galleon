@@ -3,6 +3,7 @@
   "DEFAULT_PRESENCE": "with toy soldier",
   "DEFAULT_PREFIX": "d?",
   "DEV_LOG_CHANNEL_ID": 123,
+  "OWNER_ID": 576322791129743361,
   "WEBHOOK": {
     "NAME": "Defrabot",
     "AVATAR_URL": "",

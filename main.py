@@ -46,7 +46,7 @@ async def on_ready():
             bot.logger.info(f"{cog_name} loaded")
 
         # Fetching bot owner and logging channel
-        bot.owner = await bot.fetch_user(576322791129743361)
+        bot.owner = await bot.fetch_user(bot.cfg.get("OWNER_ID", 576322791129743361))
         bot.dev_channel = await bot.fetch_channel(bot.cfg["DEV_LOG_CHANNEL_ID"])
 
         # Informing bot dev
