@@ -36,4 +36,6 @@ class DefraEmbed(Embed):
 
         self.color = colour
         self.colour = colour
-        self.timestamp = datetime.utcnow()
+
+        if kwargs.get('now_time', True):
+            self.timestamp = datetime.utcnow()
