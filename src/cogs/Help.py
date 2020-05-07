@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import itertools
 
 from src.utils.translator import Translator
 
@@ -98,6 +99,32 @@ class MyHelpCommand(commands.MinimalHelpCommand):
                     self.paginator.add_line(line)
                 self.paginator.add_line()
 
+    async def send_bot_help(self, mapping):
+        ctx = self.context
+        bot = ctx.bot
+
+        if bot.description:
+            self.paginator.add_line(bot.description, empty=True)
+
+        no_category = '\u200b{0.no_category}'.format(self)
+
+        def get_category(command, *, no_category=no_category):
+            cog = command.cog
+            return cog.qualified_name if cog is not None else no_category
+
+        filtered = await self.filter_commands(bot.commands, sort=True, key=get_category)
+        to_iterate = itertools.groupby(filtered, key=get_category)
+
+        for category, commands in to_iterate:
+            commands = sorted(commands, key=lambda c: c.name) if self.sort_commands else list(commands)
+            self.add_bot_commands_formatting(commands, category)
+
+        note = self.get_ending_note()
+        if note:
+            self.embed.set_footer(text=note)
+
+        await self.send_pages()
+
     async def send_cog_help(self, cog):
         bot = self.context.bot
         if bot.description:
@@ -114,8 +141,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
 
             note = self.get_ending_note()
             if note:
-                self.paginator.add_line()
-                self.paginator.add_line(note)
+                self.embed.set_footer(text=note)
 
         await self.send_pages()
 
@@ -130,8 +156,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
 
             note = self.get_ending_note()
             if note:
-                self.paginator.add_line()
-                self.paginator.add_line(note)
+                self.embed.set_footer(text=note)
 
         await self.send_pages()
 
