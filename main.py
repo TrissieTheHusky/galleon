@@ -21,6 +21,9 @@ if __name__ == "__main__":
     # Loading jsk
     bot.load_extension('jishaku')
 
+@bot.check
+async def check_blacklist(ctx):
+    return ctx.author.id not in ctx.bot.cache.blacklisted_users
 
 @bot.event
 async def on_ready():
