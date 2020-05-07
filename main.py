@@ -9,6 +9,7 @@ from src.utils.configuration import Config, cfg
 from src.utils.custom_bot_class import DefraBot
 from src.utils.database import Database
 from src.utils.translator import Translator
+from sec.utils.checks import BlacklistedUser
 
 FIRST_CONNECTION = True
 SHARD_IDS = cfg['SHARD_IDS']
@@ -23,7 +24,10 @@ if __name__ == "__main__":
 
 @bot.check
 async def check_blacklist(ctx):
-    return ctx.author.id not in ctx.bot.cache.blacklisted_users
+    if ctx.author.id in ctx.bot.cache.blacklisted_users:
+        raise BlacklistedUser(f"{ctx.author.id} is blacklisted!") from None
+
+    return True
 
 @bot.event
 async def on_ready():
