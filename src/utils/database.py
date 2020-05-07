@@ -170,7 +170,7 @@ class Database:
     @classmethod
     async def get_todos(cls, user_id: int):
         async with cls.pool.acquire() as db:
-            val = await db.fetch("SELECT * FROM bot.todos WHERE user_id = $1", user_id)
+            val = await db.fetch("SELECT * FROM bot.todos WHERE user_id = $1 ORDER BY timestamp DESC LIMIT 200;", user_id)
             return val
 
     @classmethod
@@ -181,10 +181,10 @@ class Database:
                 return is_added
 
     @classmethod
-    async def remove_todo(cls, id: int, user_id: int):
+    async def remove_todo(cls, timestamp: datetime, user_id: int):
         async with cls.pool.acquire() as db:
             async with db.transaction():
-                is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE id = $1 AND user_id = $2 RETURNING True", id, user_id)
+                is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE timestamp = $1 AND user_id = $2 RETURNING True", timestamp, user_id)
                 return is_deleted
 
     @classmethod

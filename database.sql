@@ -84,3 +84,16 @@ alter table bot.karma
 create unique index if not exists karma_user_id_uindex
     on bot.karma (user_id);
 
+
+-- Todos table --
+
+
+create table if not exists bot.todos
+(
+    user_id   bigint not null,
+    content   text   not null,
+    timestamp timestamp default (now())::timestamp without time zone
+);
+
+alter table bot.todos
+    owner to defrabot;
