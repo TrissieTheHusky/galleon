@@ -1,6 +1,7 @@
+import itertools
+
 import discord
 from discord.ext import commands
-import itertools
 
 from src.utils.translator import Translator
 

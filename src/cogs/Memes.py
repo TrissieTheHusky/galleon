@@ -17,8 +17,7 @@ class Memes(commands.Cog):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot: DefraBot = bot
-        self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"),
-                                            size=75, encoding="utf-8")
+        self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"), size=75, encoding="utf-8")
 
     def generate_meme(self, meme: str, text: str) -> BytesIO:
         buffer = BytesIO()
@@ -61,10 +60,10 @@ class Memes(commands.Cog):
         buffer.seek(0)
         return buffer
 
-    @commands.command(name="shpaklevka")
+    @commands.command()
     @commands.cooldown(1, 10, BucketType.user)
     @commands.max_concurrency(2, BucketType.default)
-    async def shpaklevka_meme(self, ctx, *, body: str):
+    async def shpaklevka(self, ctx, *, body: str):
         msg = await ctx.send("Your meme is being generated")
 
         if len(body) > 90:
@@ -77,10 +76,10 @@ class Memes(commands.Cog):
         await ctx.send(file=file, content=f"{ctx.author.mention}")
         return await msg.delete()
 
-    @commands.command(name="pika")
+    @commands.command()
     @commands.cooldown(1, 10, BucketType.user)
     @commands.max_concurrency(2, BucketType.default)
-    async def surprised_pika(self, ctx, *, body: str):
+    async def pika(self, ctx, *, body: str):
         msg = await ctx.send("Generating your HQ meme...")
 
         fn = partial(self.generate_meme, "pika", body)

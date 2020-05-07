@@ -1,4 +1,5 @@
 import aiohttp
+
 from src.utils.configuration import cfg
 
 
