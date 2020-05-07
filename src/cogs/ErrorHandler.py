@@ -9,6 +9,7 @@ from discord.ext import commands
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import error_embed, warn_embed
 from src.utils.translator import Translator
+from src.utils.checks import BlacklistedUser
 
 
 class ErrorHandler(commands.Cog):
@@ -36,7 +37,11 @@ class ErrorHandler(commands.Cog):
         # Reference: isinstance(error, event)
         # """
 
-        if isinstance(error, commands.CommandNotFound):
+
+        if isinstance(error, BlacklistedUser)
+            return
+
+        elif isinstance(error, commands.CommandNotFound):
             return
 
         elif isinstance(error, commands.CommandOnCooldown):
