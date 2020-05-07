@@ -9,7 +9,7 @@ from src.utils.configuration import Config, cfg
 from src.utils.custom_bot_class import DefraBot
 from src.utils.database import Database
 from src.utils.translator import Translator
-from sec.utils.checks import BlacklistedUser
+from src.utils.checks import BlacklistedUser
 
 FIRST_CONNECTION = True
 SHARD_IDS = cfg['SHARD_IDS']
