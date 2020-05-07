@@ -8,4 +8,4 @@ def walk_role_mentions(roles, guild_id):
 def walk_emojis(emojis):
     """Custom emojis iterator"""
     for emoji in emojis:
-        yield f"<:{emoji.name}:{emoji.id}>"
+        yield str(emoji)
