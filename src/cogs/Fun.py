@@ -14,6 +14,22 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
 
+    def text_to_bits(self, text: str, encoding='utf-8', errors='surrogatepass'):
+        bits = bin(int.from_bytes(text.encode(encoding, errors), 'big'))[2:]
+        return '0b' + bits.zfill(8 * ((len(bits) + 7) // 8))
+
+    def text_from_bits(self, bits, encoding='utf-8', errors='surrogatepass'):
+        n = int(bits, 2)
+        return n.to_bytes((n.bit_length() + 7) // 8, 'big').decode(encoding, errors) or '\0'
+
+    @commands.command(aliases=('bin',))
+    async def binary(self, ctx, *, text: str):
+        """BINARY_HELP"""
+        if text.startswith("0b"):
+            await ctx.send(embed=DefraEmbed(description=self.text_from_bits(text)))
+        else:
+            await ctx.send(embed=DefraEmbed(description=self.text_to_bits(text)))
+
     @commands.command(aliases=("cf",))
     async def coinflip(self, ctx, times: Optional[str] = None):
         """COINFLIP_HELP"""

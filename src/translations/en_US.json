@@ -115,5 +115,6 @@
   "DAYS_AGO": "{days, plural, one {# day} other {# days}} ago",
   "ERROR_HANDLER_HUG_NOT_FOUND": "Server member ``{target}`` was not found.",
   "HUG_HELP": "Give a hug to someone in the server!",
-  "HUG_MESSAGE_1": "{target}, **{author}** just gave you a big-big hug!"
+  "HUG_MESSAGE_1": "{target}, **{author}** just gave you a big-big hug!",
+  "BINARY_HELP": "Converts your input to binary and vise versa."
 }
