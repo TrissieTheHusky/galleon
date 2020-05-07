@@ -1,5 +1,8 @@
 from discord.ext import commands
 
+class BlacklistedUser(commands.CheckFailure):
+    pass
+
 
 def is_server_manager_or_bot_owner():
     """
