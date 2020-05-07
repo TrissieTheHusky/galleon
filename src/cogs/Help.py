@@ -5,7 +5,7 @@ import itertools
 from src.utils.translator import Translator
 
 
-class Help(commands.Cog, command_attrs=dict(hidden=True)):
+class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._original_help_command = bot.help_command
@@ -18,7 +18,7 @@ class Help(commands.Cog, command_attrs=dict(hidden=True)):
 
 class MyHelpCommand(commands.MinimalHelpCommand):
     def __init__(self, **options):
-        super().__init__(**options)
+        super().__init__(**options, command_attrs=dict(hidden=True))
         self.embed = discord.Embed(color=0x008081)
 
     def command_not_found(self, string):
