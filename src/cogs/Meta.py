@@ -40,8 +40,9 @@ class Meta(commands.Cog):
     @commands.command(aliases=('tr',))
     async def translate(self, ctx, transalte_from, translate_to, *, text: str):
         """TRANSLATE_HELP"""
-        data = await APIs.yandex_translate(text=text, tr_to=translate_to, tr_from=transalte_from)
+        await ctx.trigger_typing()
 
+        data = await APIs.yandex_translate(text=text, tr_to=translate_to, tr_from=transalte_from)
         if data['code'] != 200:
             await ctx.send(embed=error_embed(title=Translator.translate('YANDEX_TRANSLATE_FAILED', ctx), text=data['message']))
         elif data['code'] == 200:
