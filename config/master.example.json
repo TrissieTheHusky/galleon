@@ -13,9 +13,9 @@
     0
   ],
   "COGS": [
+    "src.cogs.CuteStuff",
     "src.cogs.Events",
     "src.cogs.ErrorHandler",
-    "src.cogs.TestCog",
     "src.cogs.ServerAdmin",
     "src.cogs.Owner",
     "src.cogs.Meta",
