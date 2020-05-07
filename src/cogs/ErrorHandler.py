@@ -38,7 +38,7 @@ class ErrorHandler(commands.Cog):
         # """
 
 
-        if isinstance(error, BlacklistedUser)
+        if isinstance(error, BlacklistedUser):
             return
 
         elif isinstance(error, commands.CommandNotFound):
