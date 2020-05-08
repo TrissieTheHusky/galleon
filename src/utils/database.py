@@ -64,6 +64,42 @@ class Database:
                 return await db.fetchval("SELECT trusted_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
 
     @classmethod
+    async def get_blacklist(cls):
+        async with cls.pool.acquire() as db:
+            async with db.transaction():
+                return await db.fetch("SELECT user_id FROM bot.blacklist")
+
+    @classmethod
+    async def check_blacklisted(cls, user_id: int) -> Optional[bool]:
+        async with cls.pool.acquire() as db:
+            async with db.transaction():
+                val = await db.fetchval("SELECT user_id FROM bot.blacklist WHERE user_id = $1", user_id)
+                if val is not None:
+                    return True
+                else:
+                    return False
+
+    @classmethod
+    async def add_to_blacklist(cls, user_id: int) -> Optional[bool]:
+        async with cls.pool.acquire() as db:
+            async with db.transaction():
+                is_added = await db.fetchval("INSERT INTO bot.blacklist (user_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True", user_id)
+                if is_added:
+                    return True
+                else:
+                    return False
+
+    @classmethod
+    async def remove_from_blacklist(cls, user_id: int) -> Optional[bool]:
+        async with cls.pool.acquire() as db:
+            async with db.transaction():
+                is_removed = await db.fetchval("DELETE FROM bot.blacklist WHERE user_id = $1 RETURNING True", user_id)
+                if is_removed:
+                    return True
+                else:
+                    return False
+
+    @classmethod
     async def get_language(cls, guild_id: int) -> Optional[str]:
         """
         Gets guild's language

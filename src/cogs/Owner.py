@@ -7,6 +7,7 @@ from contextlib import redirect_stdout
 from discord import Forbidden, User, Embed, ActivityType, Activity
 from discord.ext import commands
 
+from src.utils.menus import MyPagesMenu, MyPagesSource
 from src.utils.custom_bot_class import DefraBot
 
 
@@ -23,6 +24,41 @@ class Owner(commands.Cog):
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
+
+    @commands.group()
+    async def blacklist(self, ctx):
+        if ctx.invoked_subcommand is None:
+            return await ctx.send('You didn\'t specify any subcommand.')
+
+    @blacklist.command(name="list", aliases=("ls",))
+    async def _list(self, ctx):
+        res = []
+
+        for user_id in self.bot.cache.blacklisted_users:
+            res.append(f"{user_id} — {self.bot.get_user(user_id)}")
+
+        source = MyPagesSource(res, per_page=10, title="Blacklisted Users")
+        menu = MyPagesMenu(source)
+        await menu.start(ctx)
+
+    @blacklist.command()
+    async def add(self, ctx, user_id: int):
+        result = await self.bot.db.add_to_blacklist(user_id)
+        if result:
+            self.bot.cache.blacklisted_users.add(user_id)
+            await ctx.send(":ok_hand:")
+        else:
+            await ctx.send(":x:")
+
+    @blacklist.command(aliases=('del', 'delete', 'rem'))
+    async def remove(self, ctx, user_id: int):
+        is_blacklisted = await self.bot.db.check_blacklisted(user_id)
+        if not is_blacklisted:
+            await ctx.send(f":x: `{user_id}` not blacklisted")
+        else:
+            await self.bot.db.remove_from_blacklist(user_id)
+            self.bot.cache.blacklisted_users.remove(user_id)
+            await ctx.send(":ok_hand:")
 
     @commands.command(name="pull", aliases=("update",))
     async def pull(self, ctx: commands.Context):
