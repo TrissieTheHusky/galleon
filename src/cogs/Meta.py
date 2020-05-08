@@ -194,46 +194,45 @@ class Meta(commands.Cog):
 
         e = discord.Embed(colour=0x3498db)
         e.set_thumbnail(url=f"{user.avatar_url_as(format='png') if not user.is_avatar_animated() else user.avatar_url_as(format='gif')}")
-        e.add_field(name=Translator.translate("USERINFO_NAME", ctx),
-                    value=f'{escape_hyperlinks(discord.utils.escape_markdown(str(user)))}',
+        e.add_field(name=Translator.translate("USERINFO_NAME", ctx), value=f'{escape_hyperlinks(discord.utils.escape_markdown(str(user)))}',
                     inline=False)
-        e.add_field(name='**ID**', value=str(user.id), inline=False)
+        e.add_field(name='**ID**', value="{}".format(user.id), inline=False)
 
         if len(user.public_flags.all) > 0:
             badges_field_val = ""
 
             if user.public_flags.verified_bot:
-                badges_field_val += self.info_emojis['verified_bot'] + ' **Verified Bot**\n'
+                badges_field_val += '{0} **Verified Bot**\n'.format(self.info_emojis['verified_bot'])
 
             if user.public_flags.staff:
-                badges_field_val += self.info_emojis['staff'] + ' **Discord Staff**\n'
+                badges_field_val += '{0} **Discord Staff**\n'.format(self.info_emojis['staff'])
 
             if user.public_flags.partner:
-                badges_field_val += self.info_emojis['partner'] + ' **Discord Partner**\n'
+                badges_field_val += '{0} **Discord Partner**\n'.format(self.info_emojis['partner'])
 
             if user.public_flags.hypesquad:
-                badges_field_val += self.info_emojis['hse'] + ' **HypeSquad Events**\n'
+                badges_field_val += '{0} **HypeSquad Events**\n'.format(self.info_emojis['hse'])
 
             if user.public_flags.hypesquad_bravery:
-                badges_field_val += self.info_emojis['bravery'] + ' **HypeSquad Bravery**\n'
+                badges_field_val += '{0} **HypeSquad Bravery**\n'.format(self.info_emojis['bravery'])
 
             if user.public_flags.hypesquad_brilliance:
-                badges_field_val += self.info_emojis['brilliance'] + ' **HypeSquad Brilliance**\n'
+                badges_field_val += '{0} **HypeSquad Brilliance**\n'.format(self.info_emojis['brilliance'])
 
             if user.public_flags.hypesquad_balance:
-                badges_field_val += self.info_emojis['balance'] + ' **HypeSquad Balance**\n'
+                badges_field_val += '{0} **HypeSquad Balance**\n'.format(self.info_emojis['balance'])
 
             if user.public_flags.verified_bot_developer:
-                badges_field_val += self.info_emojis['verified_bot_dev'] + ' **Verified Bot Developer**\n'
+                badges_field_val += '{0} **Verified Bot Developer**\n'.format(self.info_emojis['verified_bot_dev'])
 
             if user.public_flags.bug_hunter:
-                badges_field_val += self.info_emojis['bh'] + ' **Discord Bug Hunter**\n'
+                badges_field_val += '{0} **Discord Bug Hunter**\n'.format(self.info_emojis['bh'])
 
             if user.public_flags.bug_hunter_level_2:
-                badges_field_val += self.info_emojis['bh_t2'] + ' **Discord Bug Hunter**\n'
+                badges_field_val += '{0} **Discord Bug Hunter**\n'.format(self.info_emojis['bh_t2'])
 
             if user.public_flags.early_supporter:
-                badges_field_val += self.info_emojis['early'] + ' **Early Supporter**\n'
+                badges_field_val += '{0} **Early Supporter**\n'.format(self.info_emojis['early'])
 
             if len(badges_field_val) > 0:
                 e.add_field(name=Translator.translate('USERINFO_BADGES', ctx), value=badges_field_val)
@@ -253,8 +252,7 @@ class Meta(commands.Cog):
 
         if member is not None:
             e.colour = member.top_role.color
-            e.set_field_at(0, name=Translator.translate('USERINFO_NAME', ctx),
-                           value=f'{self.user_status_icon(user.status)} {user}', inline=False)
+            e.set_field_at(0, name=Translator.translate('USERINFO_NAME', ctx), value=f'{self.user_status_icon(user.status)} {user}', inline=False)
 
             if member.bot is not True:
                 if member.activity is not None:
@@ -280,13 +278,14 @@ class Meta(commands.Cog):
 
             member_joined_days_ago = (datetime.utcnow() - member.joined_at).days
             e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',
-                        value=Translator.translate("DAYS_AGO", ctx, days=member_joined_days_ago) +
-                              f' (`{member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)', inline=False)
+                        value='{0} (`{1}`)'.format(Translator.translate("DAYS_AGO", ctx, days=member_joined_days_ago),
+                                                   member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")),
+                        inline=False)
 
         user_created_days_ago = (datetime.utcnow() - user.created_at).days
         e.add_field(name=f'**{Translator.translate("ACCOUNT_CREATED_AT", ctx)} ({guild_timezone.upper()})**',
-                    value=Translator.translate("DAYS_AGO", ctx, days=user_created_days_ago) +
-                          f' (`{user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")}`)', inline=False)
+                    value='{0} (`{1}`)'.format(Translator.translate("DAYS_AGO", ctx, days=user_created_days_ago),
+                                               user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")), inline=False)
 
         await ctx.send(embed=e)
         del e

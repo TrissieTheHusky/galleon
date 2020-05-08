@@ -44,7 +44,7 @@ def is_timezone(arg: str):
 
 def text_to_bits(text: str, encoding='utf-8', errors='surrogatepass'):
     bits = bin(int.from_bytes(text.encode(encoding, errors), 'big'))[2:]
-    return '0b' + bits.zfill(8 * ((len(bits) + 7) // 8))
+    return '0b{0}'.format(bits.zfill(8 * ((len(bits) + 7) // 8)))
 
 
 def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):

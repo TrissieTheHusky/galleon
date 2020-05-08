@@ -10,16 +10,6 @@ with open(join(dirname(__file__), "../../config/master.json"), encoding="utf-8")
 
 class Config:
     @staticmethod
-    async def reload_master():
-        """
-        Reloads master configuration
-        """
-        global cfg
-
-        with open(join(dirname(__file__), "../../config/master.json"), encoding="utf-8") as master_config:
-            cfg = json.load(master_config)
-
-    @staticmethod
     async def get_prefix(client, message: Message):
         """
         :param client: Bot instance

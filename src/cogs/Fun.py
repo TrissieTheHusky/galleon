@@ -57,16 +57,17 @@ class Fun(commands.Cog):
 
         if times is not None:
             if not is_num_in_str(times):
-                return await ctx.send(":warning: " + Translator.translate("FLIPS_NUM_MUST_BE_INT", ctx))
+                return await ctx.send(":warning: {0}".format(Translator.translate("FLIPS_NUM_MUST_BE_INT", ctx)))
 
             if int(times) > 1000:
-                return await ctx.send(":warning: " + Translator.translate("FLIPS_MAX_NUM", ctx))
+                return await ctx.send(":warning: {0}".format(Translator.translate("FLIPS_MAX_NUM", ctx)))
 
             flips = [bool(random.getrandbits(1)) for _ in range(int(times))]
             success = sum(res is True for res in flips)
             fails = sum(res is False for res in flips)
 
-            return await ctx.send(Translator.translate('HEADS', ctx, heads=success) + "\n" + Translator.translate('TAILS', ctx, tails=fails))
+            return await ctx.send("{0}\n{1}".format(Translator.translate('HEADS', ctx, heads=success),
+                                                    Translator.translate('TAILS', ctx, tails=fails)))
 
     @commands.command()
     async def joke(self, ctx):

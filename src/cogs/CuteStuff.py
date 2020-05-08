@@ -17,7 +17,7 @@ class CuteStuff(commands.Cog):
         await ctx.trigger_typing()
         some_cat = await APIs.get_fox()
 
-        embed = DefraEmbed(title=":fox: " + Translator.translate("THIS_FOX", ctx))
+        embed = DefraEmbed(title=":fox: {0}".format(Translator.translate("THIS_FOX", ctx)))
         embed.set_image(url=some_cat)
 
         await ctx.send(embed=embed)
@@ -28,7 +28,7 @@ class CuteStuff(commands.Cog):
         await ctx.trigger_typing()
         some_cat = await APIs.get_cat(self.bot.cfg['API_KEYS']['CATS'])
 
-        embed = DefraEmbed(title=":cat: " + Translator.translate("THIS_CAT", ctx))
+        embed = DefraEmbed(title=":cat: {0}".format(Translator.translate("THIS_CAT", ctx)))
         embed.set_image(url=some_cat)
 
         await ctx.send(embed=embed)

@@ -36,7 +36,6 @@ class MyPagesSource(ListPageSource):
         if isinstance(page, str):
             return page
         else:
-            self.embed.set_footer(text=Translator.translate("PAGE", menu.ctx) +
-                                       f" {menu.current_page + 1}/{self.get_max_pages()}")
+            self.embed.set_footer(text=f"{Translator.translate('PAGE', menu.ctx)} {menu.current_page + 1}/{self.get_max_pages()}")
             self.embed.description = '\n'.join(page)
             return self.embed
