@@ -89,7 +89,7 @@
   "TODO_LIST_HELP": "Shows your todo list",
   "TODO_PURGE_HELP": "Purges your todo list",
   "TODO_PURGE_CONFIRM": "Are you sure you want to purge your todo list?\nType `yes` to confirm it, `no` to abort.",
-  "TODO_PURGE_DONE": ":ok_hand: You todo list has been purged!",
+  "TODO_PURGE_DONE": ":ok_hand: Your todo list has been purged!",
   "TODO_PURGE_EMPTY_LIST": ":x: Your todo list is already empty.",
   "SERVERINFO_HELP": "Shows general information about discord server",
   "SERVERINFO_MEMBERS": "**Members**",
