@@ -7,8 +7,8 @@ from contextlib import redirect_stdout
 from discord import Forbidden, User, Embed, ActivityType, Activity
 from discord.ext import commands
 
-from src.utils.menus import MyPagesMenu, MyPagesSource
 from src.utils.custom_bot_class import DefraBot
+from src.utils.menus import MyPagesMenu, MyPagesSource
 
 
 class Owner(commands.Cog):
