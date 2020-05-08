@@ -1,0 +1,9 @@
+[flake8]
+max-line-length = 150
+exclude = 
+    /.venv,
+    __init__.py
+ignore = 
+    F841,   # local variable never used
+    E722   # do not use 'except'
+    W503    # line break before binary operator

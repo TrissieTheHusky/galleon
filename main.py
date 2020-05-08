@@ -5,6 +5,7 @@ from discord import ActivityType, Activity
 from dotenv import load_dotenv
 
 from src.utils.base import current_time_with_tz
+from src.utils.checks import BlacklistedUser
 from src.utils.configuration import Config, cfg
 from src.utils.custom_bot_class import DefraBot
 from src.utils.database import Database
@@ -20,6 +21,14 @@ if __name__ == "__main__":
     load_dotenv(join(dirname(__file__), ".env"))
     # Loading jsk
     bot.load_extension('jishaku')
+
+
+@bot.check
+async def check_blacklist(ctx):
+    if ctx.author.id in ctx.bot.cache.blacklisted_users:
+        raise BlacklistedUser(f"{ctx.author.id} is blacklisted!") from None
+
+    return True
 
 
 @bot.event

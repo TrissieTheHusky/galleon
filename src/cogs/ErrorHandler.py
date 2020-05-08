@@ -6,6 +6,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
+from src.utils.checks import BlacklistedUser
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import error_embed, warn_embed
 from src.utils.translator import Translator
@@ -25,18 +26,9 @@ class ErrorHandler(commands.Cog):
             return
 
         error = getattr(error, 'original', error)
-        is_ignore_enabled = False
-        ignored = commands.UserInputError
+        ignored = (BlacklistedUser, commands.CommandNotFound)
 
-        if is_ignore_enabled:
-            if isinstance(error, ignored):
-                return
-
-        # """"
-        # Reference: isinstance(error, event)
-        # """
-
-        if isinstance(error, commands.CommandNotFound):
+        if isinstance(error, ignored):
             return
 
         elif isinstance(error, commands.CommandOnCooldown):

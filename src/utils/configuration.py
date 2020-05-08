@@ -4,7 +4,6 @@ from os.path import join, dirname
 from discord import Message
 from discord.ext.commands import when_mentioned_or
 
-
 with open(join(dirname(__file__), "../../config/master.json"), encoding="utf-8") as master_config:
     cfg = json.load(master_config)
 

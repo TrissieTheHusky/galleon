@@ -1,13 +1,21 @@
-from typing import Dict
+from typing import Dict, MutableSet
 
 from src.utils.database import Database
 from src.utils.logger import logger
 
 
 class Cache:
-    prefixes: Dict[int, str] = {}
-    languages: Dict[int, str] = {}
-    timezones: Dict[int, str] = {}
+    prefixes: Dict[int, str] = dict()
+    languages: Dict[int, str] = dict()
+    timezones: Dict[int, str] = dict()
+    blacklisted_users: MutableSet[int] = set()
+
+    @classmethod
+    async def refresh_blacklist(cls):
+        db_blacklist = await Database.get_blacklist()
+        for row in db_blacklist:
+            cls.blacklisted_users.add(row['user_id'])
+        logger.info(f"Blacklist cache has been refreshed")
 
     @classmethod
     async def refresh_prefix(cls, guild_id: int):
