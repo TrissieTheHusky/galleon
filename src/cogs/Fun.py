@@ -2,8 +2,8 @@ import asyncio
 import random
 from typing import Optional
 
-from discord.ext import commands
 from discord import Status
+from discord.ext import commands
 
 from src.utils.base import is_num_in_str, text_from_bits, text_to_bits
 from src.utils.custom_bot_class import DefraBot
