@@ -22,6 +22,20 @@ alter table bot.guilds
     owner to defrabot;
 
 
+-- Blacklist table --
+
+create table if not exists bot.blacklist
+(
+    user_id bigint not null
+);
+
+create unique index if not exists blacklist_user_id_uindex
+    on bot.blacklist (user_id);
+
+alter table bot.blacklist
+    owner to defrabot;
+
+
 -- Infractions table script --
 
 
