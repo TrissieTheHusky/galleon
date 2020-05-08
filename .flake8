@@ -4,6 +4,9 @@ exclude =
     /.venv,
     __init__.py
 ignore = 
+    W504,   # line break after binary operator 
+    E127,   # continuation line over-indented for visual indent
+    F402,   # name shadowed by loop
     F841,   # local variable never used
-    E722   # do not use 'except'
+    E722,   # do not use 'except'
     W503    # line break before binary operator
