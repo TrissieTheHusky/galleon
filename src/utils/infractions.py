@@ -12,18 +12,26 @@ from .database import Database
 
 class Infractions:
     @staticmethod
-    async def add_infraction(inf_type: str, guild_id: int, moderator_id: int, target_id: int, reason: str = None, expires_at: datetime = None):
+    async def add(inf_type: str, guild_id: int, moderator_id: int, target_id: int, reason: str = None, expires_at: datetime = None):
+        added_at = datetime.utcnow()
+
         if expires_at is None:
-            expires_at = datetime.utcnow()
+            expires_at = added_at
 
         if reason is None:
             reason = Translator.translate('INF_NO_REASON', guild_id)
 
-        query_params = (guild_id, moderator_id, target_id, reason, inf_type, expires_at)
+        query_params = (guild_id, moderator_id, target_id, reason, inf_type, added_at, expires_at)
 
         async with Database.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    "INSERT INTO bot.infractions (guild_id, moderator_id, target_id, reason, inf_type, expires_at) VALUES ($1, $2, $3, $4, $5, $6)",
-                    query_params
+                    "INSERT INTO bot.infractions (guild_id, moderator_id, target_id, reason, inf_type, added_at, expires_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+                    *query_params
                 )
+
+    @staticmethod
+    async def remove(inf_id: int):
+        async with Database.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("DELETE FROM bot.infractions WHERE inf_id = $1", inf_id)

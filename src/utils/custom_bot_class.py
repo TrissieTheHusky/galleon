@@ -9,10 +9,11 @@ from typing import Optional
 from discord import User, TextChannel
 from discord.ext.commands import AutoShardedBot
 
-from src.utils.cache import Cache
-from src.utils.configuration import cfg
-from src.utils.database import Database
-from src.utils.logger import logger
+from .cache import Cache
+from .configuration import cfg
+from .database import Database
+from .logger import logger
+from .infractions import Infractions
 
 
 class DefraBot(AutoShardedBot):
@@ -26,6 +27,7 @@ class DefraBot(AutoShardedBot):
         self.cfg = cfg
         self.cache = Cache
         self.db = Database
+        self.infraction = Infractions
 
     async def refresh_cache(self):
         # General data cache

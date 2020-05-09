@@ -51,6 +51,7 @@
   "CuteStuff": ":heart: CuteStuff",
   "Jishaku": ":lock: Jishaku",
   "ServerAdmin": ":gear: ServerAdmin",
+  "Moderation": ":shield: Moderation (beta)",
   "FOX_HELP": "Отпрвляет лису в чат",
   "CAT_HELP": "Отправляет котиков в чат",
   "COINFLIP_HELP": "Подбрасывает монетку",
@@ -124,5 +125,6 @@
   "WHO_TITLE": "Угадайте кто это! У вас есть 10 секунд!",
   "WHO_CORRECT_ANSWER_WAS": "Похоже, никто не угадал, что это ``{user}``.",
   "WHO_ANSWER_IS_CORRECT": ":tada: {author}, это [верный ответ]({message_url})! :tada:",
-  "AVATARCOLORS_HELP": "Показывает 5 наиболее часто использованных цветов чьей-нибудь аватарки"
+  "AVATARCOLORS_HELP": "Показывает 5 наиболее часто использованных цветов чьей-нибудь аватарки",
+  "INF_NO_REASON": "Причина не указана."
 }
