@@ -1,10 +1,16 @@
+#  Copyright (c) 2020 defracted
+#
+#  This Source Code Form is subject to the terms of the Mozilla Public
+#  License, v. 2.0. If a copy of the MPL was not distributed with this
+#  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 import json
 from os.path import join, dirname
 
 import pyseeyou
 
-from src.utils.cache import Cache
-from src.utils.logger import logger
+from .cache import Cache
+from .logger import logger
 
 
 class Translator:
@@ -21,8 +27,12 @@ class Translator:
         current_lang = 'en_US'
 
         if context is not None:
-            if context.guild is not None:
-                current_lang = Cache.languages.get(context.guild.id, 'en_US')
+            if hasattr(context, 'guild'):
+                if context.guild is not None:
+                    current_lang = Cache.languages.get(context.guild.id, 'en_US')
+
+            elif isinstance(context, int):
+                current_lang = Cache.languages.get(context, 'en_US')
 
         try:
             translation = pyseeyou.format(cls.translations[current_lang][query_string], kwargs, current_lang)
