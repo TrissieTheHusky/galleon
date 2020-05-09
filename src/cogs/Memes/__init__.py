@@ -33,12 +33,12 @@ class Memes(commands.Cog):
     def __init__(self, bot):
         self.session = aiohttp.ClientSession(loop=bot.loop)
         self.bot: DefraBot = bot
-        self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "../meme_templates/FiraMono-Bold.ttf"), size=75, encoding="utf-8")
+        self.meme_font = ImageFont.truetype(font=join(dirname(__file__), "FiraMono-Bold.ttf"), size=75, encoding="utf-8")
 
     def generate_meme(self, meme: str, text: str) -> BytesIO:
         buffer = BytesIO()
 
-        with Image.open(join(dirname(__file__), f"../meme_templates/{meme}.jpg")) as img:
+        with Image.open(join(dirname(__file__), f"{meme}.jpg")) as img:
             draw = ImageDraw.Draw(img)
 
             img_width, img_height = img.size
