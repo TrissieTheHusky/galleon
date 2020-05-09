@@ -124,5 +124,6 @@
   "WHO_TITLE": "Guess who this is! You have 10 seconds!",
   "WHO_CORRECT_ANSWER_WAS": "Looks like nobody managed to guess that it was ``{user}``.",
   "WHO_ANSWER_IS_CORRECT": ":tada: {author}, this is [correct answer]({message_url})! :tada:",
-  "AVATARCOLORS_HELP": "Shows 5 most used colors of someone's avatar"
+  "AVATARCOLORS_HELP": "Shows 5 most used colors of someone's avatar",
+  "INF_NO_REASON": "No reason."
 }
