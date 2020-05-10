@@ -17,6 +17,7 @@
 import asyncio
 import random
 from typing import Optional
+from datetime import datetime
 
 from discord import Status
 from discord.ext import commands
@@ -31,6 +32,51 @@ from src.utils.translator import Translator
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
+
+    @commands.command(aliases=("reacttest", "rtest"))
+    @commands.cooldown(2, 5, commands.BucketType.guild)
+    @commands.max_concurrency(1, commands.BucketType.channel)
+    @commands.bot_has_permissions(add_reactions=True)
+    @commands.guild_only()
+    async def reactiontest(self, ctx):
+        """REACTIONTEST_HELP"""
+        emoji = random.choice(tuple(filter(lambda e: False if e.animated else True, ctx.guild.emojis)))
+
+        msg = await ctx.send(Translator.translate('REACTIONTEST_PREPARE', ctx.guild.id))
+        await asyncio.sleep(3)
+
+        finished_heading = Translator.translate('REACTIONTEST_FINISHED_IN', ctx.guild.id)
+        winner_heading = Translator.translate('REACTIONTEST_WINNER', ctx.guild.id)
+
+        emb = DefraEmbed(title=Translator.translate('REACTIONTEST_TITLE', ctx.guild.id),
+                         description=Translator.translate('REACTIONTEST_DESCRIPTION', ctx.guild.id, emoji=str(emoji)))
+        emb.add_field(name=finished_heading, value=Translator.translate('REACTIONTEST_FINISHED_IN_WAITING', ctx.guild.id))
+        emb.add_field(name=winner_heading, value=Translator.translate('REACTIONTEST_WINNER_NOBODY', ctx.guild.id))
+
+        await msg.edit(embed=emb, content=None)
+        await msg.add_reaction(emoji)
+
+        def check(r, u):
+            return str(r.emoji) == str(emoji) and r.message.id == msg.id and u.id != self.bot.user.id
+
+        try:
+            started_at = datetime.utcnow()
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=20.0, check=check)
+        except asyncio.TimeoutError:
+            emb.set_field_at(0, name=finished_heading, value=Translator.translate('REACTIONTEST_FINISHED_IN_NEVER', ctx.guild.id))
+            emb.set_field_at(1, name=winner_heading, value=Translator.translate('REACTIONTEST_WINNER_NOBODY', ctx.guild.id))
+            emb.color = 0x36393f
+
+            await msg.edit(embed=emb)
+        else:
+            finished_at = datetime.utcnow()
+            finished_in = round((finished_at - started_at).total_seconds(), 2)
+
+            emb.set_field_at(0, name=finished_heading, value=Translator.translate('SECONDS', ctx.guild.id, seconds=finished_in))
+            emb.set_field_at(1, name=winner_heading, value=f":tada: {user} ({user.mention}) :tada:")
+            emb.color = 0x59c977
+
+            await msg.edit(embed=emb)
 
     @commands.command()
     @commands.cooldown(2, 5, commands.BucketType.guild)

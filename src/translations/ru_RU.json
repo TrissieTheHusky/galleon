@@ -126,5 +126,15 @@
   "WHO_CORRECT_ANSWER_WAS": "Похоже, никто не угадал, что это ``{user}``.",
   "WHO_ANSWER_IS_CORRECT": ":tada: {author}, это [верный ответ]({message_url})! :tada:",
   "AVATARCOLORS_HELP": "Показывает 5 наиболее часто использованных цветов чьей-нибудь аватарки",
-  "INF_NO_REASON": "Причина не указана."
+  "INF_NO_REASON": "Причина не указана.",
+  "REACTIONTEST_TITLE": "Тест на реакцию",
+  "REACTIONTEST_DESCRIPTION": "Кто первый добавит реакцию {emoji} — побеждает!",
+  "REACTIONTEST_FINISHED_IN": "Пройдено за",
+  "REACTIONTEST_FINISHED_IN_NEVER": "Никто не прошёл тест",
+  "REACTIONTEST_FINISHED_IN_WAITING": "Ожидание...",
+  "REACTIONTEST_WINNER": "Победитель",
+  "REACTIONTEST_WINNER_NOBODY": "Победителя нет",
+  "SECONDS": "{seconds, plural, one {# секунда} few {# секунды} other {# секунд}}",
+  "REACTIONTEST_HELP": "Проверьте скорость своей реакции!",
+  "REACTIONTEST_PREPARE": "Приготовьтесь! Мы начнём через 3 секунды!"
 }

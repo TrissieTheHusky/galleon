@@ -126,5 +126,15 @@
   "WHO_CORRECT_ANSWER_WAS": "Looks like nobody managed to guess that it was ``{user}``.",
   "WHO_ANSWER_IS_CORRECT": ":tada: {author}, this is [correct answer]({message_url})! :tada:",
   "AVATARCOLORS_HELP": "Shows 5 most used colors of someone's avatar",
-  "INF_NO_REASON": "No reason."
+  "INF_NO_REASON": "No reason.",
+  "REACTIONTEST_TITLE": "Reaction Test",
+  "REACTIONTEST_DESCRIPTION": "First person who reacts with {emoji} wins!",
+  "REACTIONTEST_FINISHED_IN": "Finished in",
+  "REACTIONTEST_FINISHED_IN_NEVER": "Nobody have finished the test.",
+  "REACTIONTEST_FINISHED_IN_WAITING": "Still waiting",
+  "REACTIONTEST_WINNER": "Winner",
+  "REACTIONTEST_WINNER_NOBODY": "No winner",
+  "SECONDS": "{seconds, plural, one {# second} other {# seconds}}",
+  "REACTIONTEST_HELP": "Test how fast you are!",
+  "REACTIONTEST_PREPARE": "Prepare yourself! We're starting in 3 seconds!"
 }
