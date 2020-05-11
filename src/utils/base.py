@@ -70,4 +70,4 @@ def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
 
 def escape_hyperlinks(text):
     hyperlinks_pattern = r"(\[(.*)]\((?P<url><[^: >]+:\/[^ >]+>|(?:https?|steam):\/\/[^\s<]+[^<.,:;\"\'\]\s])\))"
-    return re.sub(hyperlinks_pattern, r'[REDACTED]', text)
+    return re.sub(hyperlinks_pattern, r'\g<1>', text)
