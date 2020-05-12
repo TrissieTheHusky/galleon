@@ -38,6 +38,8 @@ class DefraBot(AutoShardedBot):
         self.cache = Cache
         self.db = Database
         self.infraction = Infractions
+        # Option for cooldown bypass
+        self.owner_cd_bypass = False
 
     async def refresh_cache(self):
         # General data cache

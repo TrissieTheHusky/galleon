@@ -48,7 +48,7 @@ class ErrorHandler(commands.Cog):
             return
 
         elif isinstance(error, commands.CommandOnCooldown):
-            if ctx.author.id == self.bot.owner.id:
+            if self.bot.owner_cd_bypass and ctx.author.id == self.bot.owner.id:
                 return await ctx.reinvoke()
 
             return await ctx.send(

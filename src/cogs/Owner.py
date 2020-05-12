@@ -41,6 +41,14 @@ class Owner(commands.Cog):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
 
+    @commands.command()
+    async def bypass_cooldowns(self, ctx, value: bool = None):
+        if value is None:
+            return await ctx.send(f"Bypass mode: `{self.bot.owner_cd_bypass}`")
+        else:
+            self.bot.owner_cd_bypass = value
+            await ctx.send(f"Changed bypass mode to: `{value}`")
+
     @commands.group()
     async def blacklist(self, ctx):
         if ctx.invoked_subcommand is None:
