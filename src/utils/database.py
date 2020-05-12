@@ -40,19 +40,31 @@ class Database:
             raise DatabaseException("Unable to connect to the database")
 
     @classmethod
-    async def execute(cls, execute_string, *args):
+    async def execute(cls, execute_string, *args, **kwargs):
         async with cls.pool.acquire() as db:
-            return await db.execute(execute_string, *args)
+            if kwargs.get('transaction', False):
+                async with db.transaction():
+                    await db.execute(execute_string, *args)
+            else:
+                await db.execute(execute_string, *args)
 
     @classmethod
-    async def fetch_row(cls, query_string, *args):
+    async def fetch_row(cls, query_string, *args, **kwargs):
         async with cls.pool.acquire() as db:
-            return await db.fetchrow(query_string, *args)
+            if kwargs.get('transaction', False):
+                async with db.transaction():
+                    return await db.fetchrow(query_string, *args)
+            else:
+                return await db.fetchrow(query_string, *args)
 
     @classmethod
-    async def fetch(cls, query_string, *args):
+    async def fetch(cls, query_string, *args, **kwargs):
         async with cls.pool.acquire() as db:
-            return await db.fetch(query_string, *args)
+            if kwargs.get('transaction', False):
+                async with db.transaction():
+                    return await db.fetch(query_string, *args)
+            else:
+                return await db.fetch(query_string, *args)
 
     @classmethod
     async def safe_add_guild(cls, guild_id: int):
