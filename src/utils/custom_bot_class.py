@@ -16,7 +16,7 @@
 
 from typing import Optional
 
-from discord import User, TextChannel
+from discord import User, TextChannel, AllowedMentions
 from discord.ext.commands import AutoShardedBot
 
 from .cache import Cache
@@ -28,7 +28,7 @@ from .infractions import Infractions
 
 class DefraBot(AutoShardedBot):
     def __init__(self, command_prefix, **options):
-        super().__init__(command_prefix, **options)
+        super().__init__(command_prefix, allowed_mentions=AllowedMentions(everyone=False), **options)
         self.owner: Optional[User] = None
         self.dev_channel: Optional[TextChannel] = None
         self.logger = logger
