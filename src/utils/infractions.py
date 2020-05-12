@@ -17,7 +17,7 @@
 from datetime import datetime
 
 from .translator import Translator
-from .database import Database
+from .database import Database as db
 
 
 class Infractions:
@@ -33,7 +33,7 @@ class Infractions:
 
         query_params = (guild_id, moderator_id, target_id, reason, inf_type, added_at, expires_at)
 
-        async with Database.pool.acquire() as conn:
+        async with db.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
                     "INSERT INTO bot.infractions (guild_id, moderator_id, target_id, reason, inf_type, added_at, expires_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
@@ -41,7 +41,18 @@ class Infractions:
                 )
 
     @staticmethod
+    async def get(target_id: int = None, **kwargs):
+        if target_id is None:
+            return None
+
+        if kwargs.get('latest', False):
+            return await db.fetch_row("SELECT * FROM bot.infractions WHERE target_id = $1 ORDER BY inf_id DESC LIMIT 500", target_id,
+                                      transaction=True)
+        else:
+            return await db.fetch("SELECT * FROM bot.infractions WHERE target_id = $1 ORDER BY inf_id DESC LIMIT 500", target_id, transaction=True)
+
+    @staticmethod
     async def remove(inf_id: int):
-        async with Database.pool.acquire() as conn:
+        async with db.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute("DELETE FROM bot.infractions WHERE inf_id = $1", inf_id)
