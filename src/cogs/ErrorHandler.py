@@ -52,6 +52,7 @@ class ErrorHandler(commands.Cog):
                 return await ctx.reinvoke()
 
             return await ctx.send(
+                delete_after=10,
                 embed=warn_embed(title=Translator.translate("ERROR_HANDLER_ON_COOLDOWN", ctx),
                                  text=Translator.translate("ERROR_HANDLER_ON_COOLDOWN_WAIT", ctx, wait_more=str(round(error.retry_after, 2)))))
 
