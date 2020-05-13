@@ -16,30 +16,37 @@
 
 from typing import Optional
 
+from aiohttp import ClientSession
 from discord import User, TextChannel, AllowedMentions
 from discord.ext.commands import AutoShardedBot
 
+from .apis import APIs
 from .cache import Cache
 from .configuration import cfg
 from .database import Database
-from .logger import logger
 from .infractions import Infractions
+from .logger import logger
 
 
 class DefraBot(AutoShardedBot):
     def __init__(self, command_prefix, **options):
         super().__init__(command_prefix, allowed_mentions=AllowedMentions(everyone=False), **options)
+        self.cfg = cfg
         self.owner: Optional[User] = None
         self.dev_channel: Optional[TextChannel] = None
         self.logger = logger
         self.primary_color = 0x008081
 
-        self.cfg = cfg
-        self.cache = Cache
-        self.db = Database
-        self.infraction = Infractions
+        self.aiohttp_session = ClientSession()
+        self.apis = APIs(self.aiohttp_session)
+
         # Option for cooldown bypass
         self.owner_cd_bypass = False
+
+        # Databases related attrs
+        self.db = Database
+        self.cache = Cache
+        self.infraction = Infractions
 
     async def refresh_cache(self):
         # General data cache

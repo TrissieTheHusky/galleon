@@ -17,7 +17,6 @@
 from discord import Member
 from discord.ext import commands
 
-from src.utils.apis import APIs
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import DefraEmbed
 from src.utils.translator import Translator
@@ -28,10 +27,12 @@ class CuteStuff(commands.Cog):
         self.bot: DefraBot = bot
 
     @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.channel)
+    @commands.max_concurrency(5, commands.BucketType.guild)
     async def fox(self, ctx):
         """FOX_HELP"""
         await ctx.trigger_typing()
-        some_cat = await APIs.get_fox()
+        some_cat = await self.bot.apis.get_fox()
 
         embed = DefraEmbed(title=":fox: {0}".format(Translator.translate("THIS_FOX", ctx)))
         embed.set_image(url=some_cat)
@@ -39,10 +40,12 @@ class CuteStuff(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.channel)
+    @commands.max_concurrency(5, commands.BucketType.guild)
     async def cat(self, ctx):
         """CAT_HELP"""
         await ctx.trigger_typing()
-        some_cat = await APIs.get_cat(self.bot.cfg['API_KEYS']['CATS'])
+        some_cat = await self.bot.apis.get_cat(self.bot.cfg['API_KEYS']['CATS'])
 
         embed = DefraEmbed(title=":cat: {0}".format(Translator.translate("THIS_CAT", ctx)))
         embed.set_image(url=some_cat)
@@ -50,7 +53,7 @@ class CuteStuff(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(1, 1, commands.BucketType.guild)
+    @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.guild_only()
     async def hug(self, ctx, target: Member):
         """HUG_HELP"""

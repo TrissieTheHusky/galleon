@@ -27,7 +27,6 @@ from colorthief import ColorThief
 from discord.ext import commands
 from pytz import timezone
 
-from src.utils.apis import APIs
 from src.utils.base import escape_hyperlinks
 from src.utils.converters import NotCachedUser
 from src.utils.custom_bot_class import DefraBot
@@ -121,7 +120,7 @@ class Meta(commands.Cog):
         """TRANSLATE_HELP"""
         await ctx.trigger_typing()
 
-        data = await APIs.yandex_translate(text=text, tr_to=translate_to, tr_from=translate_from)
+        data = await self.bot.apis.yandex_translate(text=text, tr_to=translate_to, tr_from=translate_from)
         if data['code'] != 200:
             await ctx.send(embed=error_embed(title=Translator.translate('YANDEX_TRANSLATE_FAILED', ctx), text=data['message']))
         elif data['code'] == 200:
