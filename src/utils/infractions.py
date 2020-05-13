@@ -16,8 +16,8 @@
 
 from datetime import datetime
 
-from .translator import Translator
 from .database import Database as db
+from .translator import Translator
 
 
 class Infractions:

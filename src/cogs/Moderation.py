@@ -16,9 +16,10 @@
 
 import discord
 from discord.ext import commands
-from ..utils.translator import Translator
+
 from ..utils.custom_bot_class import DefraBot
 from ..utils.menus import MyPagesMenu, MyPagesSource
+from ..utils.translator import Translator
 
 
 class Moderation(commands.Cog):

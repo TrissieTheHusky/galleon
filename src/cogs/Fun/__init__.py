@@ -16,8 +16,8 @@
 
 import asyncio
 import random
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
 from discord import Status
 from discord.ext import commands
