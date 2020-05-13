@@ -38,7 +38,7 @@ class DefraBot(AutoShardedBot):
         self.primary_color = 0x008081
 
         self.aiohttp_session = ClientSession()
-        self.apis = APIs(self.aiohttp_session)
+        self.apis = APIs
 
         # Option for cooldown bypass
         self.owner_cd_bypass = False
