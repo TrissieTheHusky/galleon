@@ -17,6 +17,7 @@
 from datetime import datetime
 
 import pytz
+from aiohttp import ClientSession
 from discord import Guild, Color
 from discord import RawReactionActionEvent, TextChannel, Message, utils
 from discord.ext import commands
@@ -31,6 +32,12 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
         self.karma_phrases = bot.cfg.get("KARMA_PHRASES", [])
+
+        if self.bot.aiohttp_session is None:
+            self.bot.aiohttp_session = ClientSession()
+
+    async def cog_unload(self):
+        self.bot.aiohttp_session.close()
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):

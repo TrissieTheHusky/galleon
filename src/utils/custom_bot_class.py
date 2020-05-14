@@ -37,8 +37,9 @@ class DefraBot(AutoShardedBot):
         self.logger = logger
         self.primary_color = 0x008081
 
+        # We need this for data fetching
         self.aiohttp_session = ClientSession()
-        self.apis = APIs
+        self.apis = APIs(self.aiohttp_session)
 
         # Option for cooldown bypass
         self.owner_cd_bypass = False
