@@ -28,25 +28,25 @@ class Cache:
 
     @classmethod
     async def refresh_blacklist(cls):
-        db_blacklist = await Database.get_blacklist()
+        db_blacklist = await Database.blacklist.get()
         for row in db_blacklist:
             cls.blacklisted_users.add(row['user_id'])
         logger.info(f"Blacklist cache has been refreshed")
 
     @classmethod
     async def refresh_prefix(cls, guild_id: int):
-        val = await Database.get_prefix(guild_id)
+        val = await Database.prefixes.get(guild_id)
         cls.prefixes.update({guild_id: val})
         logger.info(f"Prefix for Guild {guild_id} has been refreshed")
 
     @classmethod
     async def refresh_language(cls, guild_id: int):
-        val = await Database.get_language(guild_id)
+        val = await Database.languages.get(guild_id)
         cls.languages.update({guild_id: val})
         logger.info(f"Language for Guild {guild_id} has been refreshed")
 
     @classmethod
     async def refresh_timezone(cls, guild_id: int):
-        val = await Database.get_timezone(guild_id)
+        val = await Database.timezones.get(guild_id)
         cls.timezones.update({guild_id: val})
         logger.info(f"Timezone for Guild {guild_id} has been refreshed")

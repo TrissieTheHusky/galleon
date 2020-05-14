@@ -14,9 +14,6 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from datetime import datetime
-
-import pytz
 from aiohttp import ClientSession
 from discord import Guild, Color
 from discord import RawReactionActionEvent, TextChannel, Message, utils
@@ -81,22 +78,6 @@ class Events(commands.Cog):
         await Database.safe_add_guild(guild.id)
         # Refreshing bot's cache for the guild
         await self.bot.cache.refresh_prefix(guild.id)
-
-    @commands.Cog.listener()
-    async def on_message(self, message: Message):
-        # Adding karma points when people being nice to each other
-        if any(element in message.clean_content.lower() for element in self.karma_phrases):
-            karma, modified_at = await Database.get_karma(message.author.id)
-
-            if karma is None or modified_at is None:
-                await Database.add_karma(message.author.id)
-
-            if karma is not None and modified_at is not None:
-                # Add more points if an hour passed from last modification time
-                if datetime.utcnow().timestamp() - modified_at.astimezone(pytz.utc).timestamp() < 3600:
-                    return
-
-                await Database.add_karma(message.author.id)
 
 
 def setup(bot):

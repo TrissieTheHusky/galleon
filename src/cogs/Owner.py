@@ -67,7 +67,7 @@ class Owner(commands.Cog):
 
     @blacklist.command()
     async def add(self, ctx, user_id: int):
-        result = await self.bot.db.add_to_blacklist(user_id)
+        result = await self.bot.db.blacklist.add(user_id)
         if result:
             self.bot.cache.blacklisted_users.add(user_id)
             await ctx.send(":ok_hand:")
@@ -76,11 +76,11 @@ class Owner(commands.Cog):
 
     @blacklist.command(aliases=('del', 'delete', 'rem'))
     async def remove(self, ctx, user_id: int):
-        is_blacklisted = await self.bot.db.check_blacklisted(user_id)
+        is_blacklisted = await self.bot.db.blacklist.check(user_id)
         if not is_blacklisted:
             await ctx.send(f":x: `{user_id}` not blacklisted")
         else:
-            await self.bot.db.remove_from_blacklist(user_id)
+            await self.bot.db.blacklist.remove(user_id)
             self.bot.cache.blacklisted_users.remove(user_id)
             await ctx.send(":ok_hand:")
 

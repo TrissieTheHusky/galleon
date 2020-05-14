@@ -38,14 +38,16 @@ class ToDo(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.send(embed=warn_embed(title=Translator.translate("EMBED_NO_SUBCOMMAND_TITLE", ctx),
                                             text=Translator.translate("EMBED_NO_SUBCOMMAND_DESCRIPTION", ctx,
-                                                                      help=f"{ctx.prefix}help {ctx.command.qualified_name}")))
+                                                                      help=f"{ctx.prefixes}help {ctx.command.qualified_name}")))
 
     @todo.command(aliases=("ls",))
     async def list(self, ctx):
         """TODO_LIST_HELP"""
         await ctx.trigger_typing()
 
-        current_todos = await self.bot.db.get_todos(ctx.author.id)
+        async with self.bot.db.pool.acquire() as db:
+            current_todos = await db.fetch("SELECT * FROM bot.todos WHERE user_id = $1 ORDER BY timestamp DESC LIMIT 200;", ctx.author.id)
+
         if len(current_todos) <= 0:
             await ctx.send(Translator.translate("TODOS_EMPTY", ctx))
         else:
@@ -65,7 +67,10 @@ class ToDo(commands.Cog):
         if task is None:
             return await ctx.send(embed=warn_embed(title=Translator.translate("TODO_MISSING_ARG", ctx), text=""))
 
-        resp = await self.bot.db.add_todo(ctx.author.id, task)
+        async with self.bot.db.pool.acquire() as conn:
+            async with conn.transaction():
+                resp = await conn.fetchval("INSERT INTO bot.todos (user_id, content) VALUES($1, $2) RETURNING True", ctx.author.id, task)
+
         if resp is True:
             await ctx.send(Translator.translate("TODO_ADDED", ctx))
 
@@ -80,7 +85,9 @@ class ToDo(commands.Cog):
 
         todo_id = int(todo_id)
         target_todo = None
-        todos = await self.bot.db.get_todos(ctx.author.id)
+
+        async with self.bot.db.pool.acquire() as conn:
+            todos = await conn.fetch("SELECT * FROM bot.todos WHERE user_id = $1 ORDER BY timestamp DESC LIMIT 200;", ctx.author.id)
 
         for index, todo in enumerate(todos):
             if index + 1 == todo_id:
@@ -89,7 +96,11 @@ class ToDo(commands.Cog):
         if target_todo is None:
             await ctx.send(warn_embed(title=Translator.translate('TODO_NOT_EXISTING', ctx)))
         else:
-            is_deleted = await self.bot.db.remove_todo(target_todo.get('timestamp'), target_todo.get('user_id'))
+            async with self.bot.db.pool.acquire() as db:
+                async with db.transaction():
+                    params = (target_todo.get('timestamp'), target_todo.get('user_id'))
+                    is_deleted = await db.fetchval("DELETE FROM bot.todos WHERE timestamp = $1 AND user_id = $2 RETURNING True", *params)
+
             if is_deleted:
                 await ctx.send(embed=DefraEmbed(description=Translator.translate('TODO_REMOVED', ctx, todo=target_todo.get('content'))))
 
@@ -98,7 +109,9 @@ class ToDo(commands.Cog):
         """TODO_PURGE_HELP"""
         await ctx.trigger_typing()
 
-        resp = await self.bot.db.purge_todos(ctx.author.id)
+        async with self.bot.db.pool.acquire() as conn:
+            async with conn.transaction():
+                resp = await conn.fetchval("DELETE FROM bot.todos WHERE user_id = $1 RETURNING True", ctx.author.id)
 
         if resp is True:
             await ctx.send(Translator.translate("TODO_PURGE_DONE", ctx))

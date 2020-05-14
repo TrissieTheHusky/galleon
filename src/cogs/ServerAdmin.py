@@ -52,7 +52,7 @@ class ServerAdmin(commands.Cog):
         if new_prefix is None:
             return await ctx.send(Translator.translate("CONFIG_PREFIX_NO_NEW"))
 
-        await self.bot.db.set_prefix(ctx.guild.id, new_prefix)
+        await self.bot.db.prefixes.set(ctx.guild.id, new_prefix)
         await self.bot.cache.refresh_prefix(ctx.guild.id)
 
         if self.bot.cache.prefixes.get(ctx.guild.id) == new_prefix:
@@ -71,7 +71,7 @@ class ServerAdmin(commands.Cog):
         if is_timezone(new_timezone) is False:
             return await ctx.send(Translator.translate("CONFIG_TIMEZONE_BAD_TIMEZONE", ctx))
 
-        await self.bot.db.set_timezone(ctx.guild.id, new_timezone)
+        await self.bot.db.timezones.set(ctx.guild.id, new_timezone)
         await self.bot.cache.refresh_timezone(ctx.guild.id)
 
         if self.bot.cache.timezones.get(ctx.guild.id) == new_timezone:
@@ -91,7 +91,7 @@ class ServerAdmin(commands.Cog):
             return await ctx.send(Translator.translate("CONFIG_LANGUAGE_BAD_LANGUAGE", ctx,
                                                        languages=", ".join(list(Translator.translations.keys()))))
 
-        await self.bot.db.set_language(ctx.guild.id, new_language)
+        await self.bot.db.languages.set(ctx.guild.id, new_language)
         await self.bot.cache.refresh_language(ctx.guild.id)
 
         await ctx.send(Translator.translate("CONFIG_LANGUAGE_UPDATED", ctx, language=new_language))
