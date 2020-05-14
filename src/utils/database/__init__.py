@@ -20,10 +20,10 @@ from typing import Optional
 from asyncpg.pool import Pool, create_pool
 
 from src.utils.logger import logger
+from .blacklist import DBBlacklist
+from .language import DBLanguage
 from .prefix import DBPrefix
 from .timezone import DBTimezone
-from .language import DBLanguage
-from .blacklist import DBBlacklist
 
 
 class DatabaseException(Exception):
