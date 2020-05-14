@@ -22,7 +22,7 @@ from src.utils.translator import Translator
 
 class MyPagesMenu(MenuPages, inherit_buttons=False):
     def __init__(self, source, **kwargs):
-        super().__init__(source, **kwargs)
+        super().__init__(source, clear_reactions_after=True, timeout=120.0, **kwargs)
 
     @button('<:previous_page:706576101844975716>', position=First(1))
     async def go_to_previous_page(self, payload):

@@ -30,7 +30,7 @@ from .logger import logger
 
 class DefraBot(AutoShardedBot):
     def __init__(self, command_prefix, **options):
-        super().__init__(command_prefix, allowed_mentions=AllowedMentions(everyone=False), **options)
+        super().__init__(command_prefix, allowed_mentions=AllowedMentions(everyone=False, roles=False), **options)
         self.cfg = cfg
         self.owner: Optional[User] = None
         self.dev_channel: Optional[TextChannel] = None
