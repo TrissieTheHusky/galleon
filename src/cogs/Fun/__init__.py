@@ -24,7 +24,6 @@ from discord.ext import commands
 
 from src.utils.base import is_num_in_str, text_from_bits, text_to_bits
 from src.utils.custom_bot_class import DefraBot
-from src.utils.jokes import Jokes
 from src.utils.premade_embeds import DefraEmbed
 from src.utils.translator import Translator
 
@@ -130,11 +129,6 @@ class Fun(commands.Cog):
 
             return await ctx.send("{0}\n{1}".format(Translator.translate('HEADS', ctx, heads=success),
                                                     Translator.translate('TAILS', ctx, tails=fails)))
-
-    @commands.command()
-    async def joke(self, ctx):
-        """JOKE_HELP"""
-        await ctx.send(embed=DefraEmbed(description=Jokes.get(), title="Анекдоты)"))
 
     @commands.command(aliases=("reverse",))
     async def reverse_text(self, ctx, *, body: commands.clean_content):
