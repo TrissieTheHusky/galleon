@@ -28,7 +28,7 @@ from discord.ext import commands
 from pytz import timezone
 
 from src.utils.base import escape_hyperlinks
-from src.utils.converters import NotCachedUser
+from src.utils.converters import SmartUser
 from src.utils.custom_bot_class import DefraBot
 from src.utils.generators import walk_emojis, walk_role_mentions
 from src.utils.premade_embeds import DefraEmbed, error_embed
@@ -61,7 +61,7 @@ class Meta(commands.Cog):
 
     @commands.command(aliases=("ac", "avatarcolor"))
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def avatarcolors(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
+    async def avatarcolors(self, ctx, user: Union[discord.Member, SmartUser] = None):
         """AVATARCOLORS_HELP"""
         await ctx.trigger_typing()
 
@@ -139,7 +139,7 @@ class Meta(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def avatar(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
+    async def avatar(self, ctx, user: Union[discord.Member, SmartUser] = None):
         """AVATAR_HELP"""
         user = user or ctx.author
 
@@ -199,7 +199,7 @@ class Meta(commands.Cog):
     @commands.command(aliases=("info", "ui"))
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.max_concurrency(5, commands.BucketType.default, wait=True)
-    async def userinfo(self, ctx, user: Union[discord.Member, NotCachedUser] = None):
+    async def userinfo(self, ctx, user: Union[discord.Member, SmartUser] = None):
         """USERINFO_HELP"""
         if user is None:
             user = member = ctx.author
