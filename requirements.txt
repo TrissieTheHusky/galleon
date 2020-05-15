@@ -1,4 +1,4 @@
-git+https://github.com/defracted/discord.py@master#egg=discord.py
+git+https://github.com/defracted/discord.py@master#egg=discord.py[voice]
 python-dotenv>=0.13.0
 pep8==1.7.1
 asyncpg>=0.20.1
@@ -12,3 +12,4 @@ jishaku>=1.18.2.188
 colorthief==0.2.1
 pyseeyou==1.0.0
 coloredlogs==14.0
+wavelink>=0.7.1

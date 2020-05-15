@@ -16,6 +16,7 @@
 
 from typing import Optional
 
+import wavelink
 from aiohttp import ClientSession
 from discord import User, TextChannel, AllowedMentions
 from discord.ext.commands import AutoShardedBot
@@ -36,6 +37,9 @@ class DefraBot(AutoShardedBot):
         self.dev_channel: Optional[TextChannel] = None
         self.logger = logger
         self.primary_color = 0x008081
+
+        # Setting wavelink default
+        self.wavelink: Optional[wavelink.Client] = None
 
         # We need this for data fetching
         self.aiohttp_session = ClientSession()
