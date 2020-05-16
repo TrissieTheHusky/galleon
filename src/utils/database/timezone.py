@@ -16,11 +16,10 @@
 
 from typing import Optional
 
+from .base import DBBase
 
-class DBTimezone:
-    def __init__(self, pool):
-        self.pool = pool
 
+class DBTimezone(DBBase):
     async def get(self, guild_id: int) -> Optional[str]:
         """
         Gets timezone for specified Discord Guild

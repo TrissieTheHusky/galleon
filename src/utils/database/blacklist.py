@@ -16,11 +16,10 @@
 
 from typing import Optional
 
+from .base import DBBase
 
-class DBBlacklist:
-    def __init__(self, pool):
-        self.pool = pool
 
+class DBBlacklist(DBBase):
     async def get(self):
         """Returns List[`int`] of blacklisted user ids"""
         async with self.pool.acquire() as db:
