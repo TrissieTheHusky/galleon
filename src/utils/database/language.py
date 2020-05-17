@@ -16,10 +16,11 @@
 
 from typing import Optional
 
-from .base import DBBase
 
+class DBLanguage:
+    def __init__(self, pool):
+        self.pool = pool
 
-class DBLanguage(DBBase):
     async def get(self, guild_id: int) -> Optional[str]:
         """
         Gets guild's language

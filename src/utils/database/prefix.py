@@ -14,10 +14,11 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from .base import DBBase
 
+class DBPrefix:
+    def __init__(self, pool):
+        self.pool = pool
 
-class DBPrefix(DBBase):
     async def get(self, guild_id: int):
         """
         Returns the non-cached value of the current guild's prefix
