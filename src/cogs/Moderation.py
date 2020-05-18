@@ -14,12 +14,27 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import re
+from typing import Union
+
 import discord
 from discord.ext import commands
+from discord.ext.menus import ListPageSource
+from pytz import timezone
 
 from ..utils.custom_bot_class import DefraBot
-from ..utils.menus import MyPagesMenu, MyPagesSource
+from ..utils.menus import MyPagesMenu
 from ..utils.translator import Translator
+
+
+class InfractionsPagesSource(ListPageSource):
+    def format_page(self, menu, page):
+        if isinstance(page, str):
+            return page
+        else:
+            # self.embed.set_footer(text=)
+            # self.embed.description = '\n'.join(page)
+            return "```{0}``` {1}".format("\n".join(page), f"{Translator.translate('PAGE', menu.ctx)} {menu.current_page + 1}/{self.get_max_pages()}")
 
 
 class Moderation(commands.Cog):
@@ -40,27 +55,49 @@ class Moderation(commands.Cog):
 
     @infractions.command()
     @commands.guild_only()
-    async def search(self, ctx, *, query: str):
-        if query.lower().startswith("[mod]"):
-            pass
-        elif query.lower().startswith("[user]"):
-            pass
-        else:
-            infractions = await self.bot.infraction.get(target_id=int(query))
+    async def search(self, ctx, *, query: str = None):
+        infractions = []
+        if query is None:
+            infractions = await self.bot.infraction.get(guild_id=ctx.guild.id)
+        elif query is not None:
+            if query.lower().startswith("[mod]"):
+                infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, moderator_id=int(re.findall(r'\d+', query)[0]))
+            elif query.lower().startswith("[user]"):
+                infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, target_id=int(re.findall(r'\d+', query)[0]))
+            else:
+                infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, target_id=int(query))
 
-            entries = []
-            for inf in infractions:
-                entries.append(
-                    f'{inf["inf_type"].upper()}\n**Moderator:** {inf["moderator_id"]}\n**User:** {inf["target_id"]}\n**Reason:** {inf["reason"]}\n\n')
+        entries = []
+        for inf in infractions:
+            inf_type_format = Translator.translate(inf["inf_type"].upper(), ctx.guild.id)  # TODO: use translator on that
+            reason_format = discord.utils.escape_markdown(discord.utils.escape_mentions(inf["reason"]))
 
-            src = MyPagesSource(per_page=4, title=f"Infraction history for {query}", entries=entries)
-            menu = MyPagesMenu(src)
-            await menu.start(ctx)
+            if (guild_timezone := self.bot.cache.timezones.get(ctx.guild.id, None)) is not None:
+                date_format = inf['added_at'].astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")
+            else:
+                date_format = inf['added_at'].astimezone(timezone('UTC')).strftime("%d-%m-%Y %H:%M:%S")
+
+            if (moderator := self.bot.get_user(inf["moderator_id"])) is None:
+                mod_format = f'{inf["moderator_id"]}'
+            else:
+                mod_format = f'{moderator} ({moderator.id})'
+
+            if (target := self.bot.get_user(inf["target_id"])) is None:
+                target_format = f'{inf["target_id"]}'
+            else:
+                target_format = f'{target} ({target.id})'
+
+            entries.append(
+                f'{inf_type_format} #{inf["inf_id"]}\n----------------\nTimestamp: {date_format}\nUser: {target_format}\nModerator: {mod_format}\nReason: {reason_format}\n')
+
+        src = InfractionsPagesSource(per_page=4, entries=entries)
+        menu = MyPagesMenu(src, delete_message_after=True)
+        await menu.start(ctx)
 
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_guild_permissions(ban_members=True)
-    async def ban(self, ctx, target: discord.Member = None, *, reason=None):
+    async def ban(self, ctx, target: Union[discord.Member, int] = None, *, reason=None):
         if target is None:
             return await ctx.send("You need to specify someone you want to ban")
 
@@ -68,11 +105,15 @@ class Moderation(commands.Cog):
             reason = Translator.translate('INF_NO_REASON', ctx.guild.id)
 
         try:
-            await ctx.guild.ban(user=target, reason=reason)
+            if isinstance(target, discord.Member):
+                await ctx.guild.ban(user=target, reason=reason)
+            elif isinstance(target, int):
+                await ctx.guild.ban(discord.Object(id=target))
+
             await self.bot.infraction.add(inf_type='permaban', guild_id=ctx.guild.id, target_id=target.id, moderator_id=ctx.author.id, reason=reason)
             await ctx.send(f":ok_hand: {target} (`{target.id}`) banned for: `{reason}`.")
-        except:
-            return
+        except Exception as e:
+            raise e
 
     @commands.command()
     @commands.guild_only()

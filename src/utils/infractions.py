@@ -41,15 +41,28 @@ class Infractions:
                 )
 
     @staticmethod
-    async def get(target_id: int = None, **kwargs):
-        if target_id is None:
-            return None
+    async def get(guild_id: int, target_id: int = None, moderator_id: int = None, latest: bool = False):
+        if latest:
+            if moderator_id is not None:
+                return await db.fetch_row("SELECT * FROM bot.infractions WHERE (moderator_id = $1 AND guild_id = $2) ORDER BY inf_id DESC LIMIT 500",
+                                          moderator_id, guild_id, transaction=True)
+            elif target_id is not None:
+                return await db.fetch_row("SELECT * FROM bot.infractions WHERE (target_id = $1 AND guild_id = $2) ORDER BY inf_id DESC LIMIT 500",
+                                          target_id, guild_id, transaction=True)
+            else:
+                return await db.fetch_row("SELECT * FROM bot.infractions WHERE (guild_id = $1) ORDER BY inf_id DESC LIMIT 500",
+                                          guild_id, transaction=True)
 
-        if kwargs.get('latest', False):
-            return await db.fetch_row("SELECT * FROM bot.infractions WHERE target_id = $1 ORDER BY inf_id DESC LIMIT 500", target_id,
-                                      transaction=True)
         else:
-            return await db.fetch("SELECT * FROM bot.infractions WHERE target_id = $1 ORDER BY inf_id DESC LIMIT 500", target_id, transaction=True)
+            if moderator_id is not None:
+                return await db.fetch("SELECT * FROM bot.infractions WHERE (moderator_id = $1 AND guild_id = $2) ORDER BY inf_id DESC LIMIT 500",
+                                      moderator_id, guild_id, transaction=True)
+            elif target_id is not None:
+                return await db.fetch("SELECT * FROM bot.infractions WHERE (target_id = $1 AND guild_id = $2) ORDER BY inf_id DESC LIMIT 500",
+                                      target_id, guild_id, transaction=True)
+            else:
+                return await db.fetch("SELECT * FROM bot.infractions WHERE (guild_id = $1) ORDER BY inf_id DESC LIMIT 500",
+                                      guild_id, transaction=True)
 
     @staticmethod
     async def remove(inf_id: int):

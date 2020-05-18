@@ -136,5 +136,9 @@
   "REACTIONTEST_WINNER_NOBODY": "No winner",
   "SECONDS": "{seconds, plural, one {# second} other {# seconds}}",
   "REACTIONTEST_HELP": "Test how fast you are!",
-  "REACTIONTEST_PREPARE": "Prepare yourself! We're starting in 3 seconds!"
+  "REACTIONTEST_PREPARE": "Prepare yourself! We're starting in 3 seconds!",
+  "WARN": "Warning",
+  "PERMABAN": "Permanent Ban",
+  "BAN": "Ban",
+  "MUTE": "Mute"
 }
