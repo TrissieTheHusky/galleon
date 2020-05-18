@@ -98,9 +98,9 @@ class Owner(commands.Cog):
     async def refresh_prefixes(self, ctx: commands.Context, target):
         if "all" in target:
             for guild in self.bot.guilds:
-                await self.bot.cache.refresh_prefix(guild.id)
+                await self.bot.cache.prefixes.refresh(guild.id)
         else:
-            await self.bot.cache.refresh_prefix(int(target))
+            await self.bot.cache.prefixes.refresh(int(target))
 
         await ctx.send(":ok_hand: Done.")
 

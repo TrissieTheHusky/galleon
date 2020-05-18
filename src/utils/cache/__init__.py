@@ -18,12 +18,14 @@ from typing import Dict, MutableSet
 
 from src.utils.database import Database
 from src.utils.logger import logger
+from .base import CacheBase
 
 
 class Cache:
-    prefixes: Dict[int, str] = dict()
-    languages: Dict[int, str] = dict()
-    timezones: Dict[int, str] = dict()
+    prefixes = CacheBase(Database, 'prefixes')
+    languages = CacheBase(Database, 'languages')
+    timezones = CacheBase(Database, 'timezones')
+
     blacklisted_users: MutableSet[int] = set()
 
     @classmethod
@@ -32,21 +34,3 @@ class Cache:
         for row in db_blacklist:
             cls.blacklisted_users.add(row['user_id'])
         logger.info(f"Blacklist cache has been refreshed")
-
-    @classmethod
-    async def refresh_prefix(cls, guild_id: int):
-        val = await Database.prefixes.get(guild_id)
-        cls.prefixes.update({guild_id: val})
-        logger.info(f"Prefix for Guild {guild_id} has been refreshed")
-
-    @classmethod
-    async def refresh_language(cls, guild_id: int):
-        val = await Database.languages.get(guild_id)
-        cls.languages.update({guild_id: val})
-        logger.info(f"Language for Guild {guild_id} has been refreshed")
-
-    @classmethod
-    async def refresh_timezone(cls, guild_id: int):
-        val = await Database.timezones.get(guild_id)
-        cls.timezones.update({guild_id: val})
-        logger.info(f"Timezone for Guild {guild_id} has been refreshed")
