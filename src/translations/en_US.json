@@ -140,5 +140,9 @@
   "WARN": "Warning",
   "PERMABAN": "Permanent Ban",
   "BAN": "Ban",
-  "MUTE": "Mute"
+  "MUTE": "Mute",
+  "CONFIG_MOD_ROLES_CURRENT": "These roles are currently set to Moderator roles",
+  "CONFIG_MOD_ROLES_ADDED": "Added these roles as Moderator roles",
+  "CONFIG_MOD_ROLES_REMOVED": "These roles are no longer Moderator roles",
+  "CONFIG_MOD_ROLES_REMOVE_BAD_ROLE": "``{role_id}`` is not a Moderator role!"
 }

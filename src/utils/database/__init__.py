@@ -24,6 +24,7 @@ from .blacklist import DBBlacklist
 from .language import DBLanguage
 from .prefix import DBPrefix
 from .timezone import DBTimezone
+from .mod_roles import DBModRoles
 
 
 class DatabaseException(Exception):
@@ -37,6 +38,7 @@ class Database:
     timezones: Optional[DBTimezone] = None
     languages: Optional[DBLanguage] = None
     blacklist: Optional[DBBlacklist] = None
+    mod_roles: Optional[DBModRoles] = None
 
     @classmethod
     async def connect(cls, credentials) -> None:
@@ -49,6 +51,7 @@ class Database:
             cls.timezones = DBTimezone(cls.pool)
             cls.languages = DBLanguage(cls.pool)
             cls.blacklist = DBBlacklist(cls.pool)
+            cls.mod_roles = DBModRoles(cls.pool)
 
             logger.info("[DB] Connection pool created.")
         except gaierror:
@@ -93,12 +96,6 @@ class Database:
         async with cls.pool.acquire() as db:
             async with db.transaction():
                 return await db.fetchval("SELECT admin_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
-
-    @classmethod
-    async def get_mod_roles(cls, guild_id: int):
-        async with cls.pool.acquire() as db:
-            async with db.transaction():
-                return await db.fetchval("SELECT mod_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
 
     @classmethod
     async def get_trusted_roles(cls, guild_id: int):

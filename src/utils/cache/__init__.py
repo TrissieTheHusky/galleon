@@ -25,6 +25,7 @@ class Cache:
     prefixes = CacheBase(Database, 'prefixes')
     languages = CacheBase(Database, 'languages')
     timezones = CacheBase(Database, 'timezones')
+    mod_roles = CacheBase(Database, 'mod_roles')
 
     blacklisted_users: MutableSet[int] = set()
 

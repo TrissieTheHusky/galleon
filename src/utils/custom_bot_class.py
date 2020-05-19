@@ -58,3 +58,4 @@ class DefraBot(AutoShardedBot):
             await self.cache.languages.refresh(guild.id)
             await self.cache.prefixes.refresh(guild.id)
             await self.cache.timezones.refresh(guild.id)
+            await self.cache.mod_roles.refresh(guild.id)

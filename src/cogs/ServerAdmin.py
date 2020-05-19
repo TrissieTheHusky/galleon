@@ -21,6 +21,7 @@ from src.utils.cache import Cache
 from src.utils.checks import is_server_manager_or_bot_owner
 from src.utils.custom_bot_class import DefraBot
 from src.utils.translator import Translator
+from ..utils.premade_embeds import DefraEmbed, error_embed
 
 
 class ServerAdmin(commands.Cog):
@@ -84,17 +85,58 @@ class ServerAdmin(commands.Cog):
     async def language(self, ctx, new_language=None):
         """CONFIG_LANGUAGE_HELP"""
         if new_language is None:
-            return await ctx.send(Translator.translate("CONFIG_LANGUAGE_CURRENT", ctx,
-                                                       language=self.bot.cache.languages.get(ctx.guild.id, "en_US")))
+            return await ctx.send(Translator.translate("CONFIG_LANGUAGE_CURRENT", ctx, language=self.bot.cache.languages.get(ctx.guild.id, "en_US")))
 
         if new_language not in Translator.translations.keys():
-            return await ctx.send(Translator.translate("CONFIG_LANGUAGE_BAD_LANGUAGE", ctx,
-                                                       languages=", ".join(list(Translator.translations.keys()))))
+            return await ctx.send(
+                Translator.translate("CONFIG_LANGUAGE_BAD_LANGUAGE", ctx, languages=", ".join(list(Translator.translations.keys()))))
 
         await self.bot.db.languages.set(ctx.guild.id, new_language)
         await self.bot.cache.languages.refresh(ctx.guild.id)
 
         await ctx.send(Translator.translate("CONFIG_LANGUAGE_UPDATED", ctx, language=new_language))
+
+    @config.group()
+    @commands.cooldown(1, 1, commands.BucketType.guild)
+    async def mod_roles(self, ctx):
+        """MOD_ROLES_HELP"""
+        if ctx.invoked_subcommand is None:
+            await ctx.send(embed=DefraEmbed(description="{0}: \n{1}".format(
+                Translator.translate('CONFIG_MOD_ROLES_CURRENT', ctx.guild.id),
+                '\n'.join([str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in
+                           self.bot.cache.mod_roles.get(ctx.guild.id)])
+            )))
+
+    @mod_roles.command(name="add")
+    @commands.cooldown(1, 1, commands.BucketType.guild)
+    async def mod_roles_add(self, ctx, roles: commands.Greedy[int]):
+        """MOD_ROLES_ADD_HELP"""
+        for role_id in roles:
+            await self.bot.db.mod_roles.add(ctx.guild.id, role_id)
+
+        await self.bot.cache.mod_roles.refresh(ctx.guild.id)
+        await ctx.send(embed=DefraEmbed(description=":ok_hand: {0}: \n{1}".format(
+            Translator.translate('CONFIG_MOD_ROLES_ADDED', ctx.guild.id),
+            '\n'.join([str(role_id) for role_id in roles])
+        )))
+
+    @mod_roles.command(name="remove", aliases=("delete", "del", "rmv"))
+    @commands.cooldown(1, 1, commands.BucketType.guild)
+    async def mod_roles_remove(self, ctx, roles: commands.Greedy[int]):
+        """MOD_ROLES_REMOVE_HELP"""
+        for role_id in roles:
+            if role_id not in self.bot.cache.mod_roles.get(ctx.guild.id):
+                return await ctx.send(embed=error_embed(
+                    text=None,
+                    title=":x: {0}".format(Translator.translate('CONFIG_MOD_ROLES_REMOVE_BAD_ROLE', ctx, role_id=role_id))))
+
+            await self.bot.db.mod_roles.remove(ctx.guild.id, role_id)
+
+        await self.bot.cache.mod_roles.refresh(ctx.guild.id)
+        await ctx.send(embed=DefraEmbed(description=":x: {0}: \n{1}".format(
+            Translator.translate('CONFIG_MOD_ROLES_REMOVED', ctx.guild.id),
+            '\n'.join([str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in roles])
+        )))
 
 
 def setup(bot):
