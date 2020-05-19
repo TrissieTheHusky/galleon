@@ -14,14 +14,14 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import json
+import toml
 from os.path import join, dirname
 
 from discord import Message
 from discord.ext.commands import when_mentioned_or
 
-with open(join(dirname(__file__), "../../config/master.json"), encoding="utf-8") as master_config:
-    cfg = json.load(master_config)
+with open(join(dirname(__file__), "../../config/master.toml"), encoding="utf-8") as master_config:
+    cfg = toml.load(master_config)
 
 
 class Config:

@@ -1,5 +1,6 @@
 .vscode/
 master.json
+master.toml
 .idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
