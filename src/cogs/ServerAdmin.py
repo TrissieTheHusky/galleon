@@ -101,42 +101,64 @@ class ServerAdmin(commands.Cog):
     async def mod_roles(self, ctx):
         """MOD_ROLES_HELP"""
         if ctx.invoked_subcommand is None:
-            await ctx.send(embed=DefraEmbed(description="{0}: \n{1}".format(
-                Translator.translate('CONFIG_MOD_ROLES_CURRENT', ctx.guild.id),
-                '\n'.join([str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in
-                           self.bot.cache.mod_roles.get(ctx.guild.id)])
-            )))
+            e = DefraEmbed(
+                title=Translator.translate('CONFIG_MOD_ROLES_CURRENT', ctx.guild.id),
+                description='\n'.join([f'{role.mention} (`{role.id}`)'
+                                       if (role := ctx.guild.get_role(role_id)) is not None
+                                       else f"`{role_id}`" for role_id in self.bot.cache.mod_roles.get(ctx.guild.id)])
+            )
+
+            await ctx.send(embed=e)
 
     @mod_roles.command(name="add")
     @commands.cooldown(1, 1, commands.BucketType.guild)
-    async def mod_roles_add(self, ctx, roles: commands.Greedy[int]):
+    async def mod_roles_add(self, ctx, roles: commands.Greedy[int] = None):
         """MOD_ROLES_ADD_HELP"""
-        for role_id in roles:
-            await self.bot.db.mod_roles.add(ctx.guild.id, role_id)
+        if roles is None:
+            return await ctx.send(embed=error_embed(text=None, title=Translator.translate('CONFIG_MOD_ROLES_EMPTY_ARGUMENT', ctx.guild.id)))
+
+        # Filtering out non-existing roles and deleting duplicates
+        roles = [ctx.guild.get_role(role) for role in set(filter(lambda _id: True if ctx.guild.get_role(_id) is not None else False, roles))]
+
+        if len(roles) <= 0:
+            return await ctx.send(embed=error_embed(text=None, title=Translator.translate('CONFIG_MOD_ROLES_NONE_ADDED', ctx.guild.id)))
+
+        # Adding each role id into the database
+        for role in roles:
+            if role.id not in self.bot.cache.mod_roles.get(ctx.guild.id):
+                await self.bot.db.mod_roles.add(ctx.guild.id, role.id)
+            else:
+                return await ctx.send(embed=error_embed(title=Translator.translate('NOTHING_CHANGED', ctx.guild.id), text=None))
 
         await self.bot.cache.mod_roles.refresh(ctx.guild.id)
-        await ctx.send(embed=DefraEmbed(description=":ok_hand: {0}: \n{1}".format(
-            Translator.translate('CONFIG_MOD_ROLES_ADDED', ctx.guild.id),
-            '\n'.join([str(role_id) for role_id in roles])
-        )))
+        await ctx.send(embed=DefraEmbed(
+            title=Translator.translate('CONFIG_MOD_ROLES_ADDED', ctx.guild.id),
+            description='\n'.join([f"{role.mention} (`{role.id}`)" for role in roles])
+        ))
 
     @mod_roles.command(name="remove", aliases=("delete", "del", "rmv"))
     @commands.cooldown(1, 1, commands.BucketType.guild)
-    async def mod_roles_remove(self, ctx, roles: commands.Greedy[int]):
+    async def mod_roles_remove(self, ctx, roles: commands.Greedy[int] = None):
         """MOD_ROLES_REMOVE_HELP"""
-        for role_id in roles:
-            if role_id not in self.bot.cache.mod_roles.get(ctx.guild.id):
-                return await ctx.send(embed=error_embed(
-                    text=None,
-                    title=":x: {0}".format(Translator.translate('CONFIG_MOD_ROLES_REMOVE_BAD_ROLE', ctx, role_id=role_id))))
+        if roles is None:
+            return await ctx.send(embed=error_embed(text=None, title=Translator.translate('CONFIG_MOD_ROLES_EMPTY_ARGUMENT', ctx.guild.id)))
 
+        # Iterate through provided list of roles
+        for role_id in roles:
+            # Check if role_id is already a mod role
+            if role_id not in self.bot.cache.mod_roles.get(ctx.guild.id):
+                return await ctx.send(embed=error_embed(text=None,
+                                                        title=Translator.translate('CONFIG_MOD_ROLES_REMOVE_BAD_ROLE', ctx, role_id=role_id)))
+
+            # Delete the role
             await self.bot.db.mod_roles.remove(ctx.guild.id, role_id)
 
         await self.bot.cache.mod_roles.refresh(ctx.guild.id)
-        await ctx.send(embed=DefraEmbed(description=":x: {0}: \n{1}".format(
-            Translator.translate('CONFIG_MOD_ROLES_REMOVED', ctx.guild.id),
-            '\n'.join([str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in roles])
-        )))
+        await ctx.send(embed=DefraEmbed(
+            title=Translator.translate('CONFIG_MOD_ROLES_REMOVED', ctx.guild.id),
+            description='\n'.join(
+                [str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in roles])
+        ))
 
 
 def setup(bot):

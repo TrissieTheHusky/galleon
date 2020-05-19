@@ -141,8 +141,14 @@
   "PERMABAN": "Permanent Ban",
   "BAN": "Ban",
   "MUTE": "Mute",
-  "CONFIG_MOD_ROLES_CURRENT": "These roles are currently set to Moderator roles",
-  "CONFIG_MOD_ROLES_ADDED": "Added these roles as Moderator roles",
-  "CONFIG_MOD_ROLES_REMOVED": "These roles are no longer Moderator roles",
-  "CONFIG_MOD_ROLES_REMOVE_BAD_ROLE": "``{role_id}`` is not a Moderator role!"
+  "CONFIG_MOD_ROLES_CURRENT": "Moderator roles list",
+  "CONFIG_MOD_ROLES_ADDED": "Added roles to Moderator roles list",
+  "CONFIG_MOD_ROLES_REMOVED": "Removed roles from Moderator roles list",
+  "CONFIG_MOD_ROLES_REMOVE_BAD_ROLE": ":x: ``{role_id}`` is not a Moderator role!",
+  "MOD_ROLES_HELP": "Shows Moderator roles list",
+  "MOD_ROLES_ADD_HELP": "Add new role to Moderator roles list",
+  "MOD_ROLES_REMOVE_HELP": "Remove a role from Moderator roles list",
+  "CONFIG_MOD_ROLES_EMPTY_ARGUMENT": ":x: You have to specify at least one role or role ID!",
+  "CONFIG_MOD_ROLES_NONE_ADDED": ":x: None of the provided roles were added!",
+  "NOTHING_CHANGED": ":x: Nothing changed."
 }
