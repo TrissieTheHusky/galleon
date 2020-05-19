@@ -50,6 +50,6 @@ class Translator:
             try:
                 translation = pyseeyou.format(cls.translations['en_US'][query_string], kwargs, current_lang)
             except KeyError:
-                translation = ""
+                translation = "..."
 
         return translation
