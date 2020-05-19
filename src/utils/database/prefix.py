@@ -25,9 +25,9 @@ class DBPrefix(DBBase):
         :param guild_id: Discord Guild ID
         :return: Guild prefix from settings table
         """
-        async with self.pool.acquire() as db:
-            row = await db.fetchrow("SELECT prefix FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
-            return row['prefix']
+        async with self.pool.acquire() as conn:
+            data = await conn.fetchval("SELECT prefix FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
+            return data
 
     async def set(self, guild_id: int, new_prefix: str):
         """
@@ -36,6 +36,6 @@ class DBPrefix(DBBase):
         :param guild_id: Discord Guild ID
         :param new_prefix: prefix that user wants to set
         """
-        async with self.pool.acquire() as db:
-            async with db.transaction():
-                await db.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)

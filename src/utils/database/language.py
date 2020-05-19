@@ -27,8 +27,8 @@ class DBLanguage(DBBase):
         :param guild_id: Discord Guild ID
         :return: 'en_US' if None
         """
-        async with self.pool.acquire() as db:
-            guild_lang = await db.fetchval("SELECT language FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
+        async with self.pool.acquire() as conn:
+            guild_lang = await conn.fetchval("SELECT language FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
             return guild_lang or 'en_US'
 
     async def set(self, guild_id: int, new_lang: str):
@@ -38,6 +38,6 @@ class DBLanguage(DBBase):
         :param guild_id: Discord Guild ID
         :param new_lang: new lang code
         """
-        async with self.pool.acquire() as db:
-            async with db.transaction():
-                await db.execute("UPDATE bot.guilds SET language = $2 WHERE guild_id = $1;", guild_id, new_lang)
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("UPDATE bot.guilds SET language = $2 WHERE guild_id = $1;", guild_id, new_lang)

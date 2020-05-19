@@ -22,9 +22,9 @@ from .base import DBBase
 class DBBlacklist(DBBase):
     async def get(self):
         """Returns List[`int`] of blacklisted user ids"""
-        async with self.pool.acquire() as db:
-            async with db.transaction():
-                return await db.fetch("SELECT user_id FROM bot.blacklist")
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                return await conn.fetch("SELECT user_id FROM bot.blacklist")
 
     async def check(self, user_id: int) -> Optional[bool]:
         async with self.pool.acquire() as db:
@@ -36,18 +36,18 @@ class DBBlacklist(DBBase):
                     return False
 
     async def add(self, user_id: int) -> Optional[bool]:
-        async with self.pool.acquire() as db:
-            async with db.transaction():
-                is_added = await db.fetchval("INSERT INTO bot.blacklist (user_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True", user_id)
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                is_added = await conn.fetchval("INSERT INTO bot.blacklist (user_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True", user_id)
                 if is_added:
                     return True
                 else:
                     return False
 
     async def remove(self, user_id: int) -> Optional[bool]:
-        async with self.pool.acquire() as db:
-            async with db.transaction():
-                is_removed = await db.fetchval("DELETE FROM bot.blacklist WHERE user_id = $1 RETURNING True", user_id)
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                is_removed = await conn.fetchval("DELETE FROM bot.blacklist WHERE user_id = $1 RETURNING True", user_id)
                 if is_removed:
                     return True
                 else:

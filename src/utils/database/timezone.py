@@ -27,8 +27,8 @@ class DBTimezone(DBBase):
         :param guild_id: Discord Guild ID
         :return: Timezone string
         """
-        async with self.pool.acquire() as db:
-            guild_tz = await db.fetchval("SELECT _timezone FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
+        async with self.pool.acquire() as conn:
+            guild_tz = await conn.fetchval("SELECT _timezone FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
             return guild_tz
 
     async def set(self, guild_id: int, new_timezone: str):
@@ -38,6 +38,6 @@ class DBTimezone(DBBase):
         :param guild_id: Discord Guild ID
         :param new_timezone: Timezone string
         """
-        async with self.pool.acquire() as db:
-            async with db.transaction():
-                await db.execute("UPDATE bot.guilds SET _timezone = $2 WHERE guild_id = $1;", guild_id, new_timezone)
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("UPDATE bot.guilds SET _timezone = $2 WHERE guild_id = $1;", guild_id, new_timezone)
