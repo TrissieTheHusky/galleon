@@ -32,8 +32,6 @@ class InfractionsPagesSource(ListPageSource):
         if isinstance(page, str):
             return page
         else:
-            # self.embed.set_footer(text=)
-            # self.embed.description = '\n'.join(page)
             return "```{0}``` {1}".format("\n".join(page), f"{Translator.translate('PAGE', menu.ctx)} {menu.current_page + 1}/{self.get_max_pages()}")
 
 
@@ -104,11 +102,14 @@ class Moderation(commands.Cog):
         if reason is None:
             reason = Translator.translate('INF_NO_REASON', ctx.guild.id)
 
+        reason_format = f"Moderator {ctx.author.id}: {reason}"
+
         try:
             if isinstance(target, discord.Member):
-                await ctx.guild.ban(user=target, reason=reason)
+                await ctx.guild.ban(user=target, reason=reason_format)
             elif isinstance(target, int):
-                await ctx.guild.ban(discord.Object(id=target))
+                target = await self.bot.fetch_user(target)
+                await ctx.guild.ban(discord.Object(id=target.id), reason=reason_format)
 
             await self.bot.infraction.add(inf_type='permaban', guild_id=ctx.guild.id, target_id=target.id, moderator_id=ctx.author.id, reason=reason)
             await ctx.send(f":ok_hand: {target} (`{target.id}`) banned for: `{reason}`.")
