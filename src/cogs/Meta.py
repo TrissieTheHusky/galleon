@@ -59,7 +59,7 @@ class Meta(commands.Cog):
         elif status == discord.Status.offline:
             return "<:offline:705378474373677107>"
 
-    @commands.command(aliases=("ac", "avatarcolor"))
+    @commands.command(aliases=("ac", "avatarcolor", "avatarcolours", "avatarcolour"))
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.max_concurrency(2, commands.BucketType.guild)
     async def avatarcolors(self, ctx, user: Union[discord.Member, SmartUser] = None):
