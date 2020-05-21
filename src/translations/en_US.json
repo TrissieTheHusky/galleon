@@ -24,6 +24,8 @@
   "WHATPREFIX": "Current prefix is ``{prefix}``",
   "CONFIG_HELP": "Server configuration editor",
   "NO_SUBCOMMAND": ":warning: You didn't specify any subcommand.\n:information_source: Learn more: ``{help}``",
+  "NO_SUBCOMMAND_TITLE": ":warning: You didn't specify any subcommand.",
+  "NO_SUBCOMMAND_TEXT": ":information_source: Learn more: ``{help}``",
   "WHATPREFIX_HELP": "Shows current bot's prefix",
   "CONFIG_PREFIX_HELP": "Changes bot's prefix in the server",
   "CONFIG_PREFIX_NO_NEW": ":warning: You didn't specify new prefix!",

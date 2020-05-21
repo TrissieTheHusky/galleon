@@ -14,8 +14,10 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import io
 import re
-from typing import Union
+from typing import Union, List
+import asyncio
 
 import discord
 from discord.ext import commands
@@ -25,6 +27,7 @@ from pytz import timezone
 from ..utils.custom_bot_class import DefraBot
 from ..utils.menus import MyPagesMenu
 from ..utils.translator import Translator
+from ..utils.premade_embeds import warn_embed
 
 
 class InfractionsPagesSource(ListPageSource):
@@ -44,8 +47,80 @@ class Moderation(commands.Cog):
     async def cog_check(self, ctx):
         return ctx.author.id == self.bot.owner.id
 
-    # TODO: Make custom checks for admin or mod role in DB
-    # TODO: Add i18n
+    async def archive_messages(self, messages: List[discord.Message]):
+        # Preparing text file heading
+        guild_timezone = self.bot.cache.timezones.get(messages[0].guild.id)
+        server_format = f"{messages[0].guild.name} ({messages[0].guild.id})"
+        channel_format = f"{messages[0].channel.name} ({messages[0].channel.id})"
+        timezone_format = f"{guild_timezone.title()}"
+
+        output = f"Server: {server_format}\nChannel: {channel_format}\nLogs timezone: {timezone_format}\n\n\n"
+        for msg in messages:
+            # Preparing format
+            created_at_format = msg.created_at.astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")
+            content_format = discord.utils.escape_markdown(discord.utils.escape_mentions(msg.content))
+            prefix = f"{created_at_format} | {msg.author} ({msg.author.id})"
+
+            # Adding the message content to output string
+            output += f"{prefix}: {content_format}\n"
+
+            # Check if the message has any attachments
+            if len(msg.attachments) > 0:
+                # Add all the links from message attachments
+                for attachment in msg.attachments:
+                    output += f"{prefix}: {attachment.proxy_url}\n"
+
+        # Return BytesIO object so it can be used in discord.File
+        bdata = io.BytesIO()
+        bdata.write(output.encode(encoding='utf-8'))
+        bdata.seek(0)
+        return bdata
+
+    async def send_archive(self, ctx: commands.Context, messages: List[discord.Message], filename: str):
+        file_bytes = await self.archive_messages(messages)
+
+        try:
+            file = discord.File(file_bytes, filename=filename)
+            await ctx.author.send(file=file)
+            await ctx.send(":ok_hand: The archive was sent into your DMs")
+        except discord.Forbidden:
+            file_bytes.seek(0)
+            file = discord.File(file_bytes, filename=filename)
+
+            await ctx.send(f":warning: {ctx.author.mention}, looks like your DMs are closed!"
+                           "\n Would you like me to send the file here? Respond with a `yes` or `no`.")
+
+            try:
+                def check(m):
+                    return m.author == ctx.author and any(ext.lower() in m.content.lower() for ext in ['yes', 'no'])
+
+                msg = await self.bot.wait_for('message', check=check, timeout=60.0)
+            except asyncio.TimeoutError:
+                await ctx.send(":clock: You were too slow, the command is cancelled.")
+            else:
+                if 'yes' in msg.content.lower():
+                    await ctx.send(file=file)
+                else:
+                    await ctx.send(":x: You have cancelled the command.")
+
+    @commands.group()
+    @commands.guild_only()
+    async def archive(self, ctx):
+        """ARCHIVE_HELP"""
+        if ctx.invoked_subcommand is None:
+            await ctx.send(embed=warn_embed(
+                text=Translator.translate('NO_SUBCOMMAND_TEXT', ctx, help=f"{ctx.prefix}help {ctx.command.qualified_name}"),
+                title=Translator.translate('NO_SUBCOMMAND_TITLE', ctx)))
+
+    @archive.command(name="channel")
+    async def archive_channel(self, ctx, amount: int = 100, channel: discord.TextChannel = None):
+        channel = channel or ctx.channel
+
+        if amount > 2000:
+            return await ctx.send(":x: You can archive up to 2000 messages!")
+
+        messages = await channel.history(limit=amount).flatten()
+        await self.send_archive(ctx, messages, f"Archive for {channel.name}.txt")
 
     @commands.group(aliases=('i', 'inf', 'infraction'))
     @commands.guild_only()
