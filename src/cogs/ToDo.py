@@ -38,7 +38,7 @@ class ToDo(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.send(embed=warn_embed(title=Translator.translate("EMBED_NO_SUBCOMMAND_TITLE", ctx),
                                             text=Translator.translate("EMBED_NO_SUBCOMMAND_DESCRIPTION", ctx,
-                                                                      help=f"{ctx.prefixes}help {ctx.command.qualified_name}")))
+                                                                      help=f"{ctx.prefix}help {ctx.command.qualified_name}")))
 
     @todo.command(aliases=("ls",))
     async def list(self, ctx):
@@ -94,7 +94,7 @@ class ToDo(commands.Cog):
                 target_todo = todo
 
         if target_todo is None:
-            await ctx.send(warn_embed(title=Translator.translate('TODO_NOT_EXISTING', ctx)))
+            await ctx.send(embed=warn_embed(title=Translator.translate('TODO_NOT_EXISTING', ctx)))
         else:
             async with self.bot.db.pool.acquire() as db:
                 async with db.transaction():
