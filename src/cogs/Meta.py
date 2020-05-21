@@ -97,13 +97,13 @@ class Meta(commands.Cog):
                     hex_color = "{:02x}{:02x}{:02x}".format(r, g, b)
                     draw.text((110, 0 + (y + 31)), f"#{hex_color}", (255, 255, 255), font=self.pil_font)
 
+                txt_y = 530
                 for line in text_line:
                     line_width, line_height = self.pil_font.getsize(line)
-                    x = 300 + (img_width - line_width) / 2
-                    y = 530
+                    txt_x = 300 + (img_width - line_width) / 2
 
-                    draw.text((x, y), line, (255, 255, 255), font=self.pil_font)
-                    y += line_height
+                    draw.text((txt_x, txt_y), line, (255, 255, 255), font=self.pil_font)
+                    txt_y += line_height
 
                 im.save(buffer, "png")
 
