@@ -21,6 +21,34 @@ create unique index if not exists guilds_guild_id_uindex
 alter table bot.guilds
     owner to defrabot;
 
+-- Logging table --
+
+create table if not exists bot.logging_channels
+(
+    guild_id       bigint                          not null
+        constraint logging_channels_pk
+            primary key,
+    misc           bigint[] default '{}'::bigint[] not null,
+    messages       bigint[] default '{}'::bigint[] not null,
+    join_leave     bigint[] default '{}'::bigint[] not null,
+    mod_actions    bigint[] default '{}'::bigint[] not null,
+    config_logs    bigint[] default '{}'::bigint[] not null,
+    server_changes bigint[] default '{}'::bigint[] not null
+);
+
+comment on table bot.logging_channels is 'guild_id - represents guild
+misc - some commands usage logs
+messages - deleted and edited messages, maybe spam violations
+join_leave - basically new members
+mod_actions - mutes, bans, kicks and etc.
+config_logs - someone changed bot config
+server_changes - new channels, roles, added/removed roles and other things like that (actually might be useless cuz audit logs)';
+
+create unique index if not exists logging_channels_guild_id_uindex
+    on bot.logging_channels (guild_id);
+
+alter table bot.blacklist
+    owner to defrabot;
 
 -- Blacklist table --
 
@@ -35,9 +63,7 @@ create unique index if not exists blacklist_user_id_uindex
 alter table bot.blacklist
     owner to defrabot;
 
-
 -- Infractions table script --
-
 
 create table if not exists bot.infractions
 (
@@ -59,9 +85,7 @@ alter table bot.infractions
 create unique index infractions_inf_id_uindex
     on bot.infractions (inf_id);
 
-
 -- Stats table script --
-
 
 create table if not exists bot.stats
 (
@@ -77,9 +101,7 @@ alter table bot.stats
 create unique index if not exists stats_user_id_uindex
     on bot.stats (user_id);
 
-
 -- Karma counter table --
-
 
 create table if not exists bot.karma
 (
@@ -92,15 +114,13 @@ create table if not exists bot.karma
 
 comment on table bot.karma is 'users karma data';
 
-alter table bot.karma
-    owner to defrabot;
-
 create unique index if not exists karma_user_id_uindex
     on bot.karma (user_id);
 
+alter table bot.karma
+    owner to defrabot;
 
 -- Todos table --
-
 
 create table if not exists bot.todos
 (

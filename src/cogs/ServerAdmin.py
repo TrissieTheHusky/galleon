@@ -16,11 +16,11 @@
 
 from discord.ext import commands
 
-from src.utils.base import is_timezone
-from src.utils.cache import Cache
-from src.utils.checks import is_server_manager_or_bot_owner
-from src.utils.custom_bot_class import DefraBot
-from src.utils.translator import Translator
+from ..utils.base import is_timezone
+from ..utils.cache import Cache
+from ..utils.checks import is_server_manager_or_bot_owner
+from ..utils.custom_bot_class import DefraBot
+from ..utils.translator import Translator
 from ..utils.premade_embeds import DefraEmbed, error_embed
 
 
