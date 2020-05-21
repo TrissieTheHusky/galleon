@@ -61,6 +61,7 @@ class Meta(commands.Cog):
 
     @commands.command(aliases=("ac", "avatarcolor"))
     @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.max_concurrency(2, commands.BucketType.guild)
     async def avatarcolors(self, ctx, user: Union[discord.Member, SmartUser] = None):
         """AVATARCOLORS_HELP"""
         await ctx.trigger_typing()

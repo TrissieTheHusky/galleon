@@ -150,5 +150,7 @@
   "MOD_ROLES_REMOVE_HELP": "Remove a role from Moderator roles list",
   "CONFIG_MOD_ROLES_EMPTY_ARGUMENT": ":x: You have to specify at least one role or role ID!",
   "CONFIG_MOD_ROLES_NONE_ADDED": ":x: None of the provided roles were added!",
-  "NOTHING_CHANGED": ":x: Nothing changed."
+  "NOTHING_CHANGED": ":x: Nothing changed.",
+  "EMPTY_INF_SEARCH": ":warning: There are no infractions on the server!",
+  "ERROR_MAX_CONCURRENCY": ":x: Too many people running this command!"
 }

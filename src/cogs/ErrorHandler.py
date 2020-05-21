@@ -47,6 +47,9 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, ignored):
             return
 
+        elif isinstance(error, commands.MaxConcurrencyReached):
+            return await ctx.send(embed=error_embed(text=None, title=Translator.translate('ERROR_MAX_CONCURRENCY', ctx)), delete_after=10)
+
         elif isinstance(error, commands.CommandOnCooldown):
             if self.bot.owner_cd_bypass and ctx.author.id == self.bot.owner.id:
                 return await ctx.reinvoke()
