@@ -32,6 +32,8 @@ class InfractionsPagesSource(ListPageSource):
         if isinstance(page, str):
             return page
         else:
+            if len(page) <= 0:
+                return Translator.translate('EMPTY_INF_SEARCH', menu.ctx)
             return "```{0}``` {1}".format("\n".join(page), f"{Translator.translate('PAGE', menu.ctx)} {menu.current_page + 1}/{self.get_max_pages()}")
 
 
