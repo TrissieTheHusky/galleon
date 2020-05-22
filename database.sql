@@ -47,7 +47,7 @@ server_changes - new channels, roles, added/removed roles and other things like 
 create unique index if not exists logging_channels_guild_id_uindex
     on bot.logging_channels (guild_id);
 
-alter table bot.blacklist
+alter table bot.logging_channels
     owner to defrabot;
 
 -- Blacklist table --
@@ -82,7 +82,7 @@ create table if not exists bot.infractions
 alter table bot.infractions
     owner to defrabot;
 
-create unique index infractions_inf_id_uindex
+create unique index if not exists infractions_inf_id_uindex
     on bot.infractions (inf_id);
 
 -- Stats table script --

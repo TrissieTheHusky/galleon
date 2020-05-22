@@ -21,7 +21,7 @@ from discord.ext import commands
 from src.database import Database
 from src.utils.base import current_time_with_tz
 from src.utils.custom_bot_class import DefraBot
-from src.utils.modlogs import Modlogs, ModlogsException
+from src.utils.modlogs import Modlogs, ModlogsNotFound
 from src.utils.premade_embeds import DefraEmbed
 
 
@@ -45,7 +45,7 @@ class Events(commands.Cog):
 
         try:
             await Modlogs.send(await self.bot.get_context(message), 'messages', message.guild.id, message_type='deleted', message=message)
-        except ModlogsException:
+        except ModlogsNotFound:
             pass
 
     @commands.Cog.listener()
