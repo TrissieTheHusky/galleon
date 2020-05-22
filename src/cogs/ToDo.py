@@ -15,7 +15,6 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from io import BytesIO
-import sys
 
 from discord import File, Forbidden
 from discord.ext import commands

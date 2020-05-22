@@ -14,9 +14,6 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import Union
-
-from discord import TextChannel
 from discord.ext import commands
 
 from src.cache import Cache
@@ -25,7 +22,6 @@ from src.utils.checks import is_server_manager_or_bot_owner
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import DefraEmbed, error_embed
 from src.utils.translator import Translator
-from src.utils.converters import LowerString
 
 
 class ServerAdmin(commands.Cog):

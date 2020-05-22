@@ -15,7 +15,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from aiohttp import ClientSession
-from discord import RawReactionActionEvent, TextChannel, Message, utils, Guild, Color, RawMessageDeleteEvent, DMChannel, Member
+from discord import RawReactionActionEvent, TextChannel, Message, utils, Guild, Color
 from discord.ext import commands
 
 from src.database import Database
