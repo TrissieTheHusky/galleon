@@ -14,6 +14,10 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from io import BytesIO
+import sys
+
+from discord import File, Forbidden
 from discord.ext import commands
 
 from src.utils.custom_bot_class import DefraBot
@@ -58,6 +62,31 @@ class ToDo(commands.Cog):
             source = TodosSource(entries, title=Translator.translate("TODOS_LIST_TITLE", ctx, user=ctx.author))
             menu = MyPagesMenu(source, delete_message_after=True)
             await menu.start(ctx)
+
+    @todo.command()
+    async def export(self, ctx):
+        """TODO_EXPORT_HELP"""
+        await ctx.trigger_typing()
+
+        async with self.bot.db.pool.acquire() as db:
+            current_todos = await db.fetch("SELECT * FROM bot.todos WHERE user_id = $1 ORDER BY timestamp DESC LIMIT 200;", ctx.author.id)
+
+        if len(current_todos) <= 0:
+            await ctx.send(Translator.translate("TODOS_EMPTY", ctx))
+        else:
+            output = "Todo:\n"
+            for index, todo in enumerate(current_todos):
+                output += f"{index + 1}) {todo['content']}\n"
+
+            bdata = BytesIO()
+            bdata.write(output.encode(encoding='utf-8'))
+            bdata.seek(0)
+
+            try:
+                await ctx.author.send(file=File(bdata, filename="Todo List.txt"))
+                await ctx.send(Translator.translate('TODO_EXPORTED', ctx))
+            except Forbidden:
+                await ctx.send(Translator.translate('TODO_EXPORT_CLOSED_DM', ctx, author=ctx.author.mention))
 
     @todo.command()
     async def add(self, ctx, *, task: str = None):

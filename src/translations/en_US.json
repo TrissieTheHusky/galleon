@@ -163,5 +163,8 @@
   "ARCHIVE_HELP": "Archives messages into .txt file",
   "ARCHIVE_CHANNEL_HELP": "Archives X amount of latest messages in specific channel",
   "ARCHIVE_SEE_LOGS": ":ok_hand: The message archive packed and delivered into message logs channel!",
-  "ERROR_HANDLER_BAD_LOGGING_TYPE": "You have specified bad logging type! You can only use these types: \n``{types}``"
+  "ERROR_HANDLER_BAD_LOGGING_TYPE": "You have specified bad logging type! You can only use these types: \n``{types}``",
+  "TODO_EXPORT_HELP": "Exports your todo list into `.txt` file and sends in your DMs",
+  "TODO_EXPORTED": ":ok_hand: I've sent your todo list into your DMs!",
+  "TODO_EXPORT_CLOSED_DM": ":x: {author}, your DMs are closed and I couldn't send you the file."
 }
