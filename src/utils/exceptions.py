@@ -17,15 +17,3 @@
 
 class DatabaseException(Exception):
     pass
-
-
-class DatabaseBadLoggingType(Exception):
-    pass
-
-
-class ModlogsException(Exception):
-    pass
-
-
-class ModlogsNotFound(Exception):
-    pass
