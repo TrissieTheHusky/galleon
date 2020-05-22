@@ -18,6 +18,14 @@ from discord import HTTPException, NotFound
 from discord.ext.commands import BadArgument, Converter
 
 
+class LowerString(Converter):
+    async def convert(self, ctx, argument):
+        try:
+            return str(argument).upper()
+        except AttributeError:
+            raise BadArgument("{0} is not a string".format(argument))
+
+
 class SmartUser(Converter):
     async def convert(self, ctx, argument):
         try:

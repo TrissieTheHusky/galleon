@@ -161,5 +161,12 @@
   "ARCHIVE_CHANNEL_NOT_FOUND": ":ok_hand: It seems this server hasn't configured messages logging channel, so the archive was sent into your DMs.",
   "ARCHIVE_WARNING_CLOSED_DMS": ":warning: {author}, looks like your DMs are closed!\nWould you like me to send the file here? Respond with a `yes` or `no`.",
   "ARCHIVE_TOO_SLOW": ":clock: You were too slow, the archiving process is cancelled.",
-  "ARCHIVE_CANCELLED": ":x: You have cancelled the command."
+  "ARCHIVE_CANCELLED": ":x: You have cancelled the command.",
+  "CONFIG_LOGGING_HELP": "Changes logging settings",
+  "ARCHIVE_HELP": "Archives messages into .txt file",
+  "ARCHIVE_CHANNEL_HELP": "Archives X amount of latest messages in specific channel",
+  "ARCHIVE_SEE_LOGS": ":ok_hand: The message archive packed and delivered into message logs channel!",
+  "CONFIG_LOGGING_ADD_HELP": "Add logging to the channel",
+  "CONFIG_LOGGING_REMOVE_HELP": "Remove logging from the channel",
+  "ERROR_HANDLER_BAD_LOGGING_TYPE": "You have specified bad logging type! You can only use these types: \n``{types}``"
 }

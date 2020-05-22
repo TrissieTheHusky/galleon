@@ -22,6 +22,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
+from src.utils.exceptions import DatabaseBadLoggingType
 from src.utils.checks import BlacklistedUser
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import error_embed, warn_embed
@@ -103,6 +104,10 @@ class ErrorHandler(commands.Cog):
 
         elif isinstance(error, discord.Forbidden):
             return await ctx.send(embed=error_embed(text=Translator.translate("ERROR_HANDLER_BOT_MISSING_PERMS", ctx)))
+
+        elif isinstance(error, DatabaseBadLoggingType):
+            return await ctx.send(embed=error_embed(text=Translator.translate('ERROR_HANDLER_BAD_LOGGING_TYPE', ctx, types=", ".join(
+                [x.upper() for x in await self.bot.db.modlogs.available_types()]))))
 
         e = discord.Embed(
             color=0xFF0000,

@@ -19,17 +19,14 @@ from typing import Optional
 
 from asyncpg.pool import Pool, create_pool
 
-from src.utils.logger import logger
+from ..utils.logger import logger
+from ..utils.exceptions import DatabaseException
 from .blacklist import DBBlacklist
 from .language import DBLanguage
 from .mod_roles import DBModRoles
 from .modlogs import DBModlogs
 from .prefix import DBPrefix
 from .timezone import DBTimezone
-
-
-class DatabaseException(Exception):
-    pass
 
 
 class Database:

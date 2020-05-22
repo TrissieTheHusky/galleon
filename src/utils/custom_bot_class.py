@@ -20,10 +20,10 @@ from aiohttp import ClientSession
 from discord import User, TextChannel, AllowedMentions
 from discord.ext.commands import AutoShardedBot
 
-from .apis import APIs
 from src.cache import Cache
-from .configuration import cfg
 from src.database import Database
+from .apis import APIs
+from .configuration import cfg
 from .infractions import Infractions
 from .logger import logger
 

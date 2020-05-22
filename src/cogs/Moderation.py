@@ -24,11 +24,12 @@ from discord.ext import commands
 from discord.ext.menus import ListPageSource
 from pytz import timezone
 
-from ..utils.custom_bot_class import DefraBot
-from ..utils.menus import MyPagesMenu
-from ..utils.premade_embeds import warn_embed
-from ..utils.translator import Translator
-from ..utils.modlogs import Modlogs, ModlogsException
+from src.utils.custom_bot_class import DefraBot
+from src.utils.menus import MyPagesMenu
+from src.utils.modlogs import Modlogs
+from src.utils.premade_embeds import warn_embed
+from src.utils.translator import Translator
+from src.utils.exceptions import ModlogsNotFound
 
 
 class InfractionsPagesSource(ListPageSource):
@@ -84,16 +85,14 @@ class Moderation(commands.Cog):
         try:
             await Modlogs.send(ctx, 'messages', ctx.guild.id, message_type='archive', requester=ctx.author, archived_channel=archived_channel.mention,
                                file=discord.File(file_bytes, filename=filename))
-        except ModlogsException:
+            await ctx.send(Translator.translate('ARCHIVE_SEE_LOGS', ctx))
+        except ModlogsNotFound:
             try:
                 file_bytes.seek(0)
-                file = discord.File(file_bytes, filename=filename)
-                await ctx.author.send(file=file)
+                await ctx.author.send(file=discord.File(file_bytes, filename=filename))
                 await ctx.send(Translator.translate('ARCHIVE_CHANNEL_NOT_FOUND', ctx))
             except discord.Forbidden:
                 file_bytes.seek(0)
-                file = discord.File(file_bytes, filename=filename)
-
                 await ctx.send(Translator.translate('ARCHIVE_WARNING_CLOSED_DMS', ctx, author=ctx.author.mention))
 
                 try:
@@ -105,7 +104,7 @@ class Moderation(commands.Cog):
                     await ctx.send(Translator.translate('ARCHIVE_TOO_SLOW', ctx))
                 else:
                     if 'yes' in msg.content.lower():
-                        await ctx.send(file=file)
+                        await ctx.send(file=discord.File(file_bytes, filename=filename))
                     else:
                         await ctx.send(Translator.translate('ARCHIVE_CANCELLED', ctx))
 
@@ -120,6 +119,7 @@ class Moderation(commands.Cog):
 
     @archive.command(name="channel")
     async def archive_channel(self, ctx, amount: int = 100, channel: discord.TextChannel = None):
+        """ARCHIVE_CHANNEL_HELP"""
         channel = channel or ctx.channel
 
         if amount > 2000:
@@ -150,7 +150,7 @@ class Moderation(commands.Cog):
 
         entries = []
         for inf in infractions:
-            inf_type_format = Translator.translate(inf["inf_type"].upper(), ctx.guild.id)  # TODO: use translator on that
+            inf_type_format = Translator.translate(inf["inf_type"].upper(), ctx.guild.id)
             reason_format = discord.utils.escape_markdown(discord.utils.escape_mentions(inf["reason"]))
 
             if (guild_timezone := self.bot.cache.timezones.get(ctx.guild.id, None)) is not None:

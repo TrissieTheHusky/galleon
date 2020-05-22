@@ -14,14 +14,18 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from typing import Union
+
+from discord import TextChannel
 from discord.ext import commands
 
-from ..utils.base import is_timezone
 from src.cache import Cache
-from ..utils.checks import is_server_manager_or_bot_owner
-from ..utils.custom_bot_class import DefraBot
-from ..utils.premade_embeds import DefraEmbed, error_embed
-from ..utils.translator import Translator
+from src.utils.base import is_timezone
+from src.utils.checks import is_server_manager_or_bot_owner
+from src.utils.custom_bot_class import DefraBot
+from src.utils.premade_embeds import DefraEmbed, error_embed
+from src.utils.translator import Translator
+from src.utils.converters import LowerString
 
 
 class ServerAdmin(commands.Cog):
@@ -43,8 +47,7 @@ class ServerAdmin(commands.Cog):
     async def config(self, ctx: commands.Context):
         """CONFIG_HELP"""
         if ctx.invoked_subcommand is None:
-            await ctx.send(Translator.translate("NO_SUBCOMMAND", ctx,
-                                                help=f"{ctx.prefix}help {ctx.command} {ctx.command.signature}"))
+            await ctx.send(Translator.translate("NO_SUBCOMMAND", ctx, help=f"{ctx.prefix}help {ctx.command} {ctx.command.signature}"))
 
     @config.command()
     @commands.cooldown(1, 5, commands.BucketType.guild)
@@ -159,6 +162,50 @@ class ServerAdmin(commands.Cog):
             description='\n'.join(
                 [str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in roles])
         ))
+
+    @config.group(name='logging')
+    async def cfg_logging(self, ctx):
+        """CONFIG_LOGGING_HELP"""
+        if ctx.invoked_subcommand is None:
+            embed = DefraEmbed()
+
+            for logging_type, channel_ids in self.bot.cache.modlogs.get(ctx.guild.id).items():
+                channels_format = ""
+                for index, channel_id in enumerate(channel_ids):
+                    if (channel := self.bot.get_channel(channel_id)) is not None:
+                        channels_format += f"{index + 1}. {channel.mention}\n"
+                    else:
+                        channels_format += f"{index + 1}. {channel_id}\n"
+
+                embed.add_field(name=f'{logging_type.upper()}', value=channels_format if len(channels_format) > 0 else "None")
+
+            await ctx.send(embed=embed)
+
+    @cfg_logging.command(name='add')
+    async def cfg_logging_add(self, ctx, channel: Union[int, TextChannel], logging_type: LowerString):
+        """CONFIG_LOGGING_ADD_HELP"""
+        if isinstance(channel, TextChannel):
+            await self.bot.db.modlogs.add(logging_type, ctx.guild.id, channel.id)
+
+        elif isinstance(channel, int):
+            await self.bot.db.modlogs.add(logging_type, ctx.guild.id, channel)
+
+        await self.bot.cache.modlogs.refresh(ctx.guild.id)
+
+        await ctx.send('done, also dear bot owner, add the i18n and proper checks and if-elses and everything else')
+
+    @cfg_logging.command(name='remove', aliases=('rmv', 'del', 'delete'))
+    async def cfg_logging_rmv(self, ctx, channel: Union[int, TextChannel], logging_type: LowerString):
+        """CONFIG_LOGGING_REMOVE_HELP"""
+        if isinstance(channel, TextChannel):
+            await self.bot.db.modlogs.remove(logging_type, ctx.guild.id, channel.id)
+
+        elif isinstance(channel, int):
+            await self.bot.db.modlogs.remove(logging_type, ctx.guild.id, channel)
+
+        await self.bot.cache.modlogs.refresh(ctx.guild.id)
+
+        await ctx.send('done, also dear bot owner, add the i18n and proper checks and if-elses and everything else')
 
 
 def setup(bot):

@@ -15,13 +15,13 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from aiohttp import ClientSession
-from discord import Guild, Color
-from discord import RawReactionActionEvent, TextChannel, Message, utils
+from discord import RawReactionActionEvent, TextChannel, Message, utils, Guild, Color, RawMessageDeleteEvent
 from discord.ext import commands
 
+from src.database import Database
 from src.utils.base import current_time_with_tz
 from src.utils.custom_bot_class import DefraBot
-from src.database import Database
+from src.utils.modlogs import Modlogs, ModlogsException
 from src.utils.premade_embeds import DefraEmbed
 
 
@@ -35,6 +35,18 @@ class Events(commands.Cog):
 
     async def cog_unload(self):
         self.bot.aiohttp_session.close()
+
+    @commands.Cog.listener()
+    async def on_raw_message_delete(self, payload: RawMessageDeleteEvent):
+        if payload.cached_message is not None:
+            message: Message = payload.cached_message
+        else:
+            message: Message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+
+        try:
+            await Modlogs.send(await self.bot.get_context(message), 'messages', message.guild.id, message_type='deleted', message=message)
+        except ModlogsException:
+            pass
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):

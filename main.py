@@ -20,11 +20,11 @@ from os.path import join, dirname
 from discord import ActivityType, Activity
 from dotenv import load_dotenv
 
+from src.database import Database
 from src.utils.base import current_time_with_tz
 from src.utils.checks import BlacklistedUser
 from src.utils.configuration import Config, cfg
 from src.utils.custom_bot_class import DefraBot
-from src.database import Database
 from src.utils.translator import Translator
 
 FIRST_CONNECTION = True
