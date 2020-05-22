@@ -159,11 +159,8 @@
   "ARCHIVE_WARNING_CLOSED_DMS": ":warning: {author}, looks like your DMs are closed!\nWould you like me to send the file here? Respond with a `yes` or `no`.",
   "ARCHIVE_TOO_SLOW": ":clock: You were too slow, the archiving process is cancelled.",
   "ARCHIVE_CANCELLED": ":x: You have cancelled the command.",
-  "CONFIG_LOGGING_HELP": "Changes logging settings",
   "ARCHIVE_HELP": "Archives messages into .txt file",
   "ARCHIVE_CHANNEL_HELP": "Archives X amount of latest messages in specific channel",
-  "ARCHIVE_SEE_LOGS": ":ok_hand: The message archive packed and delivered into message logs channel!",
-  "ERROR_HANDLER_BAD_LOGGING_TYPE": "You have specified bad logging type! You can only use these types: \n``{types}``",
   "TODO_EXPORT_HELP": "Exports your todo list into `.txt` file and sends in your DMs",
   "TODO_EXPORTED": ":ok_hand: I've sent your todo list into your DMs!",
   "TODO_EXPORT_CLOSED_DM": ":x: {author}, your DMs are closed and I couldn't send you the file."
