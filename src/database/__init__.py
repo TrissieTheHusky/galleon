@@ -22,9 +22,10 @@ from asyncpg.pool import Pool, create_pool
 from src.utils.logger import logger
 from .blacklist import DBBlacklist
 from .language import DBLanguage
+from .mod_roles import DBModRoles
+from .modlogs import DBModlogs
 from .prefix import DBPrefix
 from .timezone import DBTimezone
-from .mod_roles import DBModRoles
 
 
 class DatabaseException(Exception):
@@ -39,6 +40,7 @@ class Database:
     languages: Optional[DBLanguage] = None
     blacklist: Optional[DBBlacklist] = None
     mod_roles: Optional[DBModRoles] = None
+    modlogs: Optional[DBModlogs] = None
 
     @classmethod
     async def connect(cls, credentials) -> None:
@@ -52,6 +54,7 @@ class Database:
             cls.languages = DBLanguage(cls.pool)
             cls.blacklist = DBBlacklist(cls.pool)
             cls.mod_roles = DBModRoles(cls.pool)
+            cls.modlogs = DBModlogs(cls.pool)
 
             logger.info("[DB] Connection pool created.")
         except gaierror:
@@ -89,7 +92,9 @@ class Database:
         """Adds a guild to settings table if it's not there"""
         async with cls.pool.acquire() as db:
             async with db.transaction():
-                return await db.fetchval("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True;", guild_id)
+                settings = await db.fetchval("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True", guild_id)
+                logging = await db.fetchval("INSERT INTO bot.logging_channels (guild_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True", guild_id)
+                return settings, logging
 
     @classmethod
     async def get_admin_roles(cls, guild_id: int):

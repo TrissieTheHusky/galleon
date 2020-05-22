@@ -17,7 +17,7 @@
 from discord.ext import commands
 
 from ..utils.base import is_timezone
-from ..utils.cache import Cache
+from src.cache import Cache
 from ..utils.checks import is_server_manager_or_bot_owner
 from ..utils.custom_bot_class import DefraBot
 from ..utils.premade_embeds import DefraEmbed, error_embed

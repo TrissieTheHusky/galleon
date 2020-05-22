@@ -24,7 +24,7 @@ from src.utils.base import current_time_with_tz
 from src.utils.checks import BlacklistedUser
 from src.utils.configuration import Config, cfg
 from src.utils.custom_bot_class import DefraBot
-from src.utils.database import Database
+from src.database import Database
 from src.utils.translator import Translator
 
 FIRST_CONNECTION = True

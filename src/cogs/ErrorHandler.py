@@ -122,7 +122,7 @@ class ErrorHandler(commands.Cog):
             embed=discord.Embed(
                 title=Translator.translate("ERROR_HANDLER_UNEXPECTED", ctx),
                 color=discord.Color.red(),
-                description=f"```py\n{error}\n```"
+                description=f"```py\n{error}\n```"[0:2000]
             )
         )
         e.clear_fields()

@@ -16,9 +16,10 @@
 
 from typing import MutableSet
 
-from src.utils.database import Database
+from src.database import Database
 from src.utils.logger import logger
 from .base import CacheBase
+from .modlogs import ModlogsCache
 
 
 class Cache:
@@ -28,6 +29,8 @@ class Cache:
     mod_roles = CacheBase(Database, 'mod_roles')
 
     blacklisted_users: MutableSet[int] = set()
+
+    modlogs = ModlogsCache(Database)
 
     @classmethod
     async def refresh_blacklist(cls):

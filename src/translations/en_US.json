@@ -157,5 +157,9 @@
   "ERROR_MAX_CONCURRENCY": ":x: Too many people running this command!",
   "MOD_LOG_DELETED_MESSAGE": "Message in {channel} by **{user}** (``{user_id}``) was deleted: \n{content}",
   "MOD_LOG_EDITED_MESSAGE": "Message in {channel} by **{user}** (``{user_id}``) was edited: \n**From:** {old_content}\n**To:** {new_content}",
-  "MOD_LOG_ARCHIVE_CHANNEL": "Archived messages in {channel}, requested by {requester} (``{requester_id}``)"
+  "MOD_LOG_ARCHIVE_CHANNEL": "Archived messages in {channel}, requested by {requester} (``{requester_id}``)",
+  "ARCHIVE_CHANNEL_NOT_FOUND": ":ok_hand: It seems this server hasn't configured messages logging channel, so the archive was sent into your DMs.",
+  "ARCHIVE_WARNING_CLOSED_DMS": ":warning: {author}, looks like your DMs are closed!\nWould you like me to send the file here? Respond with a `yes` or `no`.",
+  "ARCHIVE_TOO_SLOW": ":clock: You were too slow, the archiving process is cancelled.",
+  "ARCHIVE_CANCELLED": ":x: You have cancelled the command."
 }

@@ -28,6 +28,7 @@ from ..utils.custom_bot_class import DefraBot
 from ..utils.menus import MyPagesMenu
 from ..utils.premade_embeds import warn_embed
 from ..utils.translator import Translator
+from ..utils.modlogs import Modlogs, ModlogsException
 
 
 class InfractionsPagesSource(ListPageSource):
@@ -76,32 +77,37 @@ class Moderation(commands.Cog):
         bdata.seek(0)
         return bdata
 
-    async def send_archive(self, ctx: commands.Context, messages: List[discord.Message], filename: str):
+    async def send_archive(self, ctx: commands.Context, messages: List[discord.Message], archived_channel: discord.TextChannel):
         file_bytes = await self.archive_messages(messages)
+        filename = f"Archive for {archived_channel.name}.txt"
 
         try:
-            file = discord.File(file_bytes, filename=filename)
-            await ctx.author.send(file=file)
-            await ctx.send(":ok_hand: The archive was sent into your DMs")
-        except discord.Forbidden:
-            file_bytes.seek(0)
-            file = discord.File(file_bytes, filename=filename)
-
-            await ctx.send(f":warning: {ctx.author.mention}, looks like your DMs are closed!"
-                           "\n Would you like me to send the file here? Respond with a `yes` or `no`.")
-
+            await Modlogs.send(ctx, 'messages', ctx.guild.id, message_type='archive', requester=ctx.author, archived_channel=archived_channel.mention,
+                               file=discord.File(file_bytes, filename=filename))
+        except ModlogsException:
             try:
-                def check(m):
-                    return m.author == ctx.author and any(ext.lower() in m.content.lower() for ext in ['yes', 'no'])
+                file_bytes.seek(0)
+                file = discord.File(file_bytes, filename=filename)
+                await ctx.author.send(file=file)
+                await ctx.send(Translator.translate('ARCHIVE_CHANNEL_NOT_FOUND', ctx))
+            except discord.Forbidden:
+                file_bytes.seek(0)
+                file = discord.File(file_bytes, filename=filename)
 
-                msg = await self.bot.wait_for('message', check=check, timeout=60.0)
-            except asyncio.TimeoutError:
-                await ctx.send(":clock: You were too slow, the command is cancelled.")
-            else:
-                if 'yes' in msg.content.lower():
-                    await ctx.send(file=file)
+                await ctx.send(Translator.translate('ARCHIVE_WARNING_CLOSED_DMS', ctx, author=ctx.author.mention))
+
+                try:
+                    def check(m):
+                        return m.author == ctx.author and any(ext.lower() in m.content.lower() for ext in ['yes', 'no'])
+
+                    msg = await self.bot.wait_for('message', check=check, timeout=60.0)
+                except asyncio.TimeoutError:
+                    await ctx.send(Translator.translate('ARCHIVE_TOO_SLOW', ctx))
                 else:
-                    await ctx.send(":x: You have cancelled the command.")
+                    if 'yes' in msg.content.lower():
+                        await ctx.send(file=file)
+                    else:
+                        await ctx.send(Translator.translate('ARCHIVE_CANCELLED', ctx))
 
     @commands.group()
     @commands.guild_only()
@@ -120,7 +126,7 @@ class Moderation(commands.Cog):
             return await ctx.send(":x: You can archive up to 2000 messages!")
 
         messages = await channel.history(limit=amount).flatten()
-        await self.send_archive(ctx, messages, f"Archive for {channel.name}.txt")
+        await self.send_archive(ctx, messages, channel)
 
     @commands.group(aliases=('i', 'inf', 'infraction'))
     @commands.guild_only()

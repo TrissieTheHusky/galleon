@@ -16,7 +16,7 @@
 
 from datetime import datetime
 
-from .database import Database as db
+from src.database import Database as db
 from .translator import Translator
 
 

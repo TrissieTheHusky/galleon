@@ -21,9 +21,9 @@ from discord import User, TextChannel, AllowedMentions
 from discord.ext.commands import AutoShardedBot
 
 from .apis import APIs
-from .cache import Cache
+from src.cache import Cache
 from .configuration import cfg
-from .database import Database
+from src.database import Database
 from .infractions import Infractions
 from .logger import logger
 
@@ -59,3 +59,4 @@ class DefraBot(AutoShardedBot):
             await self.cache.prefixes.refresh(guild.id)
             await self.cache.timezones.refresh(guild.id)
             await self.cache.mod_roles.refresh(guild.id)
+            await self.cache.modlogs.refresh(guild.id)

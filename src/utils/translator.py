@@ -19,7 +19,7 @@ from os.path import join, dirname
 
 import pyseeyou
 
-from .cache import Cache
+from src.cache import Cache
 from .logger import logger
 
 

@@ -24,26 +24,22 @@ class DBModRoles(DBBase):
         """Returns `List[int]` of moderator role IDs"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                data = await conn.fetchval("SELECT (mod_roles) FROM bot.guilds WHERE guild_id = $1;", guild_id)
-                return data
+                return await conn.fetchval("SELECT (mod_roles) FROM bot.guilds WHERE guild_id = $1;", guild_id)
 
     async def set(self, guild_id: int, roles: List[int]):
         """Sets a mod roles list in guild settings"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                execution = await conn.execute("UPDATE bot.guilds SET mod_roles = $1 WHERE guild_id = $2", roles, guild_id)
-                return execution
+                return await conn.execute("UPDATE bot.guilds SET mod_roles = $1 WHERE guild_id = $2", roles, guild_id)
 
     async def add(self, guild_id: int, role_id: int):
         """Adds a mod role id into guild settings"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                execution = await conn.execute("UPDATE bot.guilds SET mod_roles = array_append(mod_roles, $1) WHERE guild_id = $2", role_id, guild_id)
-                return execution
+                return await conn.execute("UPDATE bot.guilds SET mod_roles = array_append(mod_roles, $1) WHERE guild_id = $2", role_id, guild_id)
 
     async def remove(self, guild_id: int, role_id: int):
         """Removes a mod role id into guild settings"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                execution = await conn.execute("UPDATE bot.guilds SET mod_roles = array_remove(mod_roles, $1) WHERE guild_id = $2", role_id, guild_id)
-                return execution
+                return await conn.execute("UPDATE bot.guilds SET mod_roles = array_remove(mod_roles, $1) WHERE guild_id = $2", role_id, guild_id)
