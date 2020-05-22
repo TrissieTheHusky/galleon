@@ -26,10 +26,8 @@ from pytz import timezone
 
 from src.utils.custom_bot_class import DefraBot
 from src.utils.menus import MyPagesMenu
-from src.utils.modlogs import Modlogs
 from src.utils.premade_embeds import warn_embed
 from src.utils.translator import Translator
-from src.utils.exceptions import ModlogsNotFound
 
 
 class InfractionsPagesSource(ListPageSource):
@@ -83,30 +81,25 @@ class Moderation(commands.Cog):
         filename = f"Archive for {archived_channel.name}.txt"
 
         try:
-            await Modlogs.send(ctx, 'messages', ctx.guild.id, message_type='archive', requester=ctx.author, archived_channel=archived_channel.mention,
-                               file=discord.File(file_bytes, filename=filename))
-            await ctx.send(Translator.translate('ARCHIVE_SEE_LOGS', ctx))
-        except ModlogsNotFound:
+            file_bytes.seek(0)
+            await ctx.author.send(file=discord.File(file_bytes, filename=filename))
+            await ctx.send(Translator.translate('ARCHIVE_SENT', ctx))
+        except discord.Forbidden:
+            file_bytes.seek(0)
+            await ctx.send(Translator.translate('ARCHIVE_WARNING_CLOSED_DMS', ctx, author=ctx.author.mention))
+
             try:
-                file_bytes.seek(0)
-                await ctx.author.send(file=discord.File(file_bytes, filename=filename))
-                await ctx.send(Translator.translate('ARCHIVE_CHANNEL_NOT_FOUND', ctx))
-            except discord.Forbidden:
-                file_bytes.seek(0)
-                await ctx.send(Translator.translate('ARCHIVE_WARNING_CLOSED_DMS', ctx, author=ctx.author.mention))
+                def check(m):
+                    return m.author == ctx.author and any(ext.lower() in m.content.lower() for ext in ['yes', 'no'])
 
-                try:
-                    def check(m):
-                        return m.author == ctx.author and any(ext.lower() in m.content.lower() for ext in ['yes', 'no'])
-
-                    msg = await self.bot.wait_for('message', check=check, timeout=60.0)
-                except asyncio.TimeoutError:
-                    await ctx.send(Translator.translate('ARCHIVE_TOO_SLOW', ctx))
+                msg = await self.bot.wait_for('message', check=check, timeout=60.0)
+            except asyncio.TimeoutError:
+                await ctx.send(Translator.translate('ARCHIVE_TOO_SLOW', ctx))
+            else:
+                if 'yes' in msg.content.lower():
+                    await ctx.send(file=discord.File(file_bytes, filename=filename))
                 else:
-                    if 'yes' in msg.content.lower():
-                        await ctx.send(file=discord.File(file_bytes, filename=filename))
-                    else:
-                        await ctx.send(Translator.translate('ARCHIVE_CANCELLED', ctx))
+                    await ctx.send(Translator.translate('ARCHIVE_CANCELLED', ctx))
 
     @commands.group()
     @commands.guild_only()
@@ -175,7 +168,7 @@ class Moderation(commands.Cog):
         menu = MyPagesMenu(src, delete_message_after=True)
         await menu.start(ctx)
 
-    @commands.command()
+    @commands.command(aliases=('permaban',))
     @commands.guild_only()
     @commands.bot_has_guild_permissions(ban_members=True)
     async def ban(self, ctx, target: Union[discord.Member, int] = None, *, reason=None):

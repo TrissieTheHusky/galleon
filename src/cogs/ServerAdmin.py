@@ -160,52 +160,7 @@ class ServerAdmin(commands.Cog):
         await ctx.send(embed=DefraEmbed(
             title=Translator.translate('CONFIG_MOD_ROLES_REMOVED', ctx.guild.id),
             description='\n'.join(
-                [str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in roles])
-        ))
-
-    @config.group(name='logging')
-    async def cfg_logging(self, ctx):
-        """CONFIG_LOGGING_HELP"""
-        if ctx.invoked_subcommand is None:
-            embed = DefraEmbed()
-
-            for logging_type, channel_ids in self.bot.cache.modlogs.get(ctx.guild.id).items():
-                channels_format = ""
-                for index, channel_id in enumerate(channel_ids):
-                    if (channel := self.bot.get_channel(channel_id)) is not None:
-                        channels_format += f"{index + 1}. {channel.mention}\n"
-                    else:
-                        channels_format += f"{index + 1}. {channel_id}\n"
-
-                embed.add_field(name=f'{logging_type.upper()}', value=channels_format if len(channels_format) > 0 else "None")
-
-            await ctx.send(embed=embed)
-
-    @cfg_logging.command(name='add')
-    async def cfg_logging_add(self, ctx, channel: Union[int, TextChannel], logging_type: LowerString):
-        """CONFIG_LOGGING_ADD_HELP"""
-        if isinstance(channel, TextChannel):
-            await self.bot.db.modlogs.add(logging_type, ctx.guild.id, channel.id)
-
-        elif isinstance(channel, int):
-            await self.bot.db.modlogs.add(logging_type, ctx.guild.id, channel)
-
-        await self.bot.cache.modlogs.refresh(ctx.guild.id)
-
-        await ctx.send('done, also dear bot owner, add the i18n and proper checks and if-elses and everything else')
-
-    @cfg_logging.command(name='remove', aliases=('rmv', 'del', 'delete'))
-    async def cfg_logging_rmv(self, ctx, channel: Union[int, TextChannel], logging_type: LowerString):
-        """CONFIG_LOGGING_REMOVE_HELP"""
-        if isinstance(channel, TextChannel):
-            await self.bot.db.modlogs.remove(logging_type, ctx.guild.id, channel.id)
-
-        elif isinstance(channel, int):
-            await self.bot.db.modlogs.remove(logging_type, ctx.guild.id, channel)
-
-        await self.bot.cache.modlogs.refresh(ctx.guild.id)
-
-        await ctx.send('done, also dear bot owner, add the i18n and proper checks and if-elses and everything else')
+                [str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in roles])))
 
 
 def setup(bot):

@@ -24,7 +24,6 @@ from ..utils.exceptions import DatabaseException
 from .blacklist import DBBlacklist
 from .language import DBLanguage
 from .mod_roles import DBModRoles
-from .modlogs import DBModlogs
 from .prefix import DBPrefix
 from .timezone import DBTimezone
 
@@ -37,7 +36,6 @@ class Database:
     languages: Optional[DBLanguage] = None
     blacklist: Optional[DBBlacklist] = None
     mod_roles: Optional[DBModRoles] = None
-    modlogs: Optional[DBModlogs] = None
 
     @classmethod
     async def connect(cls, credentials) -> None:
@@ -51,7 +49,6 @@ class Database:
             cls.languages = DBLanguage(cls.pool)
             cls.blacklist = DBBlacklist(cls.pool)
             cls.mod_roles = DBModRoles(cls.pool)
-            cls.modlogs = DBModlogs(cls.pool)
 
             logger.info("[DB] Connection pool created.")
         except gaierror:
