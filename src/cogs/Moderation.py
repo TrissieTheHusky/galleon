@@ -14,10 +14,10 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import asyncio
 import io
 import re
 from typing import Union, List
-import asyncio
 
 import discord
 from discord.ext import commands
@@ -26,8 +26,8 @@ from pytz import timezone
 
 from ..utils.custom_bot_class import DefraBot
 from ..utils.menus import MyPagesMenu
-from ..utils.translator import Translator
 from ..utils.premade_embeds import warn_embed
+from ..utils.translator import Translator
 
 
 class InfractionsPagesSource(ListPageSource):

@@ -154,5 +154,8 @@
   "CONFIG_MOD_ROLES_NONE_ADDED": ":x: None of the provided roles were added!",
   "NOTHING_CHANGED": ":x: Nothing changed.",
   "EMPTY_INF_SEARCH": ":warning: There are no infractions on the server!",
-  "ERROR_MAX_CONCURRENCY": ":x: Too many people running this command!"
+  "ERROR_MAX_CONCURRENCY": ":x: Too many people running this command!",
+  "MOD_LOG_DELETED_MESSAGE": "Message in {channel} by **{user}** (``{user_id}``) was deleted: \n{content}",
+  "MOD_LOG_EDITED_MESSAGE": "Message in {channel} by **{user}** (``{user_id}``) was edited: \n**From:** {old_content}\n**To:** {new_content}",
+  "MOD_LOG_ARCHIVE_CHANNEL": "Archived messages in {channel}, requested by {requester} (``{requester_id}``)"
 }

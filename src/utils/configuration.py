@@ -14,9 +14,9 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import toml
 from os.path import join, dirname
 
+import toml
 from discord import Message
 from discord.ext.commands import when_mentioned_or
 
