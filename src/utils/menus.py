@@ -17,6 +17,7 @@
 from discord import Embed
 from discord.ext.menus import MenuPages, ListPageSource, button, First, Last
 
+from src.utils.configuration import cfg
 from src.utils.translator import Translator
 
 
@@ -24,17 +25,35 @@ class MyPagesMenu(MenuPages, inherit_buttons=False):
     def __init__(self, source, **kwargs):
         super().__init__(source, clear_reactions_after=True, timeout=120.0, **kwargs)
 
-    @button('<:previous_page:706576101844975716>', position=First(1))
+    def _skip_double_triangle_buttons(self):
+        max_pages = self._source.get_max_pages()
+        if max_pages is None:
+            return True
+        return max_pages <= 2
+
+    @button(cfg['EMOJIS'].get('FIRST_PAGE', '\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f'), position=First(0),
+            skip_if=_skip_double_triangle_buttons)
+    async def go_to_first_page(self, payload):
+        """go to the first page"""
+        await self.show_page(0)
+
+    @button(cfg['EMOJIS'].get('PREVIOUS_PAGE', '\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f'), position=First(1))
     async def go_to_previous_page(self, payload):
         """go to the previous page"""
         await self.show_checked_page(self.current_page - 1)
 
-    @button('<:next_page:706576101719277629>', position=Last(2))
+    @button(cfg['EMOJIS'].get('NEXT_PAGE', '\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f'), position=Last(1))
     async def go_to_next_page(self, payload):
         """go to the next page"""
         await self.show_checked_page(self.current_page + 1)
 
-    @button('<:stop:706576101681528853>', position=Last(0))
+    @button(cfg['EMOJIS'].get('LAST_PAGE', '\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f'), position=Last(2), skip_if=_skip_double_triangle_buttons)
+    async def go_to_last_page(self, payload):
+        """go to the last page"""
+        # The call here is safe because it's guarded by skip_if
+        await self.show_page(self._source.get_max_pages() - 1)
+
+    @button(cfg['EMOJIS'].get('STOP_PAGES', '\N{BLACK SQUARE FOR STOP}\ufe0f'), position=Last(0))
     async def stop_pages(self, payload):
         """stops the pagination session."""
         self.stop()
