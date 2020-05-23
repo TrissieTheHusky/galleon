@@ -163,5 +163,8 @@
   "ARCHIVE_CHANNEL_HELP": "Archives X amount of latest messages in specific channel",
   "TODO_EXPORT_HELP": "Exports your todo list into `.txt` file and sends in your DMs",
   "TODO_EXPORTED": ":ok_hand: I've sent your todo list into your DMs!",
-  "TODO_EXPORT_CLOSED_DM": ":x: {author}, your DMs are closed and I couldn't send you the file."
+  "TODO_EXPORT_CLOSED_DM": ":x: {author}, your DMs are closed and I couldn't send you the file.",
+  "HELP_TITLE": "List of available commands",
+  "HELP_DESCRIPTION_1": "To report a bug you can join the [Galleon Support Server](https://discord.gg/DhA3k6B).",
+  "HELP_DESCRIPTION_2": "To get help you can join the [Galleon Support Server](https://discord.gg/DhA3k6B)."
 }

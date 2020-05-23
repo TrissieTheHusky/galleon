@@ -15,6 +15,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import itertools
+from random import randint
 
 import discord
 from discord.ext import commands
@@ -54,6 +55,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
     def prepare_embed(self):
         self.embed.description = None
         self.embed.title = None
+        self.embed.clear_fields()
 
     async def prepare_help_command(self, ctx, command):
         await ctx.trigger_typing()
@@ -67,14 +69,21 @@ class MyHelpCommand(commands.MinimalHelpCommand):
 
     # Formatter for the embed
     def format_pages(self, **kwargs):
-        if kwargs.get("title", None) is not None:
-            self.embed.title = kwargs.get("title", None)
+        if (title := kwargs.get("title", None)) is not None:
+            self.embed.title = "%s %s" % (self.context.bot.cfg['EMOJIS']['BOOK'], title)
+
+        if (description := kwargs.get("description", None)) is not None:
+            self.embed.description = description
 
     async def send_pages(self):
         destination = self.get_destination()
-        for page in self.paginator.pages:
-            self.embed.description = page
+
+        if len(self.embed.fields) > 0 and len(self.paginator.pages) <= 0:
             await destination.send(embed=self.embed)
+        else:
+            for page in self.paginator.pages:
+                self.embed.description = page
+                await destination.send(embed=self.embed)
 
     def get_opening_note(self):
         return None
@@ -85,8 +94,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
     def add_bot_commands_formatting(self, commands, heading):
         if commands:
             joined = ', '.join(f"`{c.name}`" for c in commands)
-            self.paginator.add_line('\n**%s**' % Translator.translate(heading, self.context))
-            self.paginator.add_line(joined)
+            self.embed.add_field(name='**%s**' % Translator.translate(heading, self.context), value=joined)
 
     def add_subcommand_formatting(self, command):
         fmt = '`{0}{1}` — {2}' if command.short_doc else '`{0}{1}`'
@@ -119,6 +127,12 @@ class MyHelpCommand(commands.MinimalHelpCommand):
     async def send_bot_help(self, mapping):
         ctx = self.context
         bot = ctx.bot
+
+        title = Translator.translate('HELP_TITLE', self.context)
+        description = Translator.translate(f'HELP_DESCRIPTION_{randint(1, 2)}', self.context)
+        self.format_pages(title=title, description="%s\n\N{NO-BREAK SPACE}" % description)
+
+        self.embed.add_field(name="\u200b", value="\u200b", inline=False)
 
         if bot.description:
             self.paginator.add_line(bot.description, empty=True)
