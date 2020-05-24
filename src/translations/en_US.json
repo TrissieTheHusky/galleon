@@ -166,5 +166,6 @@
   "TODO_EXPORT_CLOSED_DM": ":x: {author}, your DMs are closed and I couldn't send you the file.",
   "HELP_TITLE": "List of available commands",
   "HELP_DESCRIPTION_1": "To report a bug you can join the [Galleon Support Server](https://discord.gg/DhA3k6B).",
-  "HELP_DESCRIPTION_2": "To get help you can join the [Galleon Support Server](https://discord.gg/DhA3k6B)."
+  "HELP_DESCRIPTION_2": "To get help you can join the [Galleon Support Server](https://discord.gg/DhA3k6B).",
+  "HELP_DESCRIPTION": "```\nAll the required arguments are wrapped with <argument>\nAll the optional arguments wrapped with [argument]\n```[Support Server](https://discord.gg/DhA3k6B) | [Source Code](https://github.com/defracted/galleon)"
 }

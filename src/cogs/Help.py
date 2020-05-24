@@ -37,7 +37,7 @@ class Help(commands.Cog):
 class MyHelpCommand(commands.MinimalHelpCommand):
     def __init__(self, **options):
         super().__init__(**options, command_attrs=dict(hidden=True))
-        self.embed = discord.Embed(color=0x008081)
+        self.embed = discord.Embed(color=0x36393E)
 
     def command_not_found(self, string):
         return Translator.translate("HELP_COMMAND_NOT_FOUND", self.context, command=string)
@@ -129,10 +129,8 @@ class MyHelpCommand(commands.MinimalHelpCommand):
         bot = ctx.bot
 
         title = Translator.translate('HELP_TITLE', self.context)
-        description = Translator.translate(f'HELP_DESCRIPTION_{randint(1, 2)}', self.context)
-        self.format_pages(title=title, description="%s\n\N{NO-BREAK SPACE}" % description)
-
-        self.embed.add_field(name="\u200b", value="\u200b", inline=False)
+        description = Translator.translate('HELP_DESCRIPTION', self.context)
+        self.format_pages(title=title, description="%s" % description)
 
         if bot.description:
             self.paginator.add_line(bot.description, empty=True)
@@ -166,7 +164,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
 
         filtered = await self.filter_commands(cog.get_commands(), sort=self.sort_commands)
         if filtered:
-            self.paginator.add_line('**%s %s**' % (cog.qualified_name, self.commands_heading))
+            self.format_pages(title='**%s %s**' % (cog.qualified_name, self.commands_heading))
             for command in filtered:
                 self.add_subcommand_formatting(command)
 
