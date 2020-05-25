@@ -15,7 +15,6 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import itertools
-from random import randint
 
 import discord
 from discord.ext import commands

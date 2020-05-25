@@ -15,22 +15,22 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
-from typing import Union
 from datetime import datetime
+from typing import Union
 
 import discord
 from discord.ext import commands, tasks
 from discord.ext.menus import ListPageSource
 from pytz import timezone
 
-from src.utils.custom_bot_class import DefraBot
-from src.utils.menus import MyPagesMenu
-from src.utils.premade_embeds import warn_embed
-from src.utils.translator import Translator
-from src.utils.temp_actions import TempActions
 from src.utils.converters import Duration
-from src.utils.messages import Messages
+from src.utils.custom_bot_class import DefraBot
 from src.utils.enums import InfractionType
+from src.utils.menus import MyPagesMenu
+from src.utils.messages import Messages
+from src.utils.premade_embeds import warn_embed
+from src.utils.temp_actions import TempActions
+from src.utils.translator import Translator
 
 
 class InfractionsPagesSource(ListPageSource):
