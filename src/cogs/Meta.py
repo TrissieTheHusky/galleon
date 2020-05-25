@@ -295,13 +295,13 @@ class Meta(commands.Cog):
             member_joined_days_ago = (datetime.utcnow() - member.joined_at).days
             e.add_field(name=f'**{Translator.translate("JOINED_AT", ctx)} ({guild_timezone.upper()})**',
                         value='{0} (`{1}`)'.format(Translator.translate("DAYS_AGO", ctx, days=member_joined_days_ago),
-                                                   member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")),
+                                                   member.joined_at.astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")),
                         inline=False)
 
         user_created_days_ago = (datetime.utcnow() - user.created_at).days
         e.add_field(name=f'**{Translator.translate("ACCOUNT_CREATED_AT", ctx)} ({guild_timezone.upper()})**',
                     value='{0} (`{1}`)'.format(Translator.translate("DAYS_AGO", ctx, days=user_created_days_ago),
-                                               user.created_at.astimezone(timezone(guild_timezone)).strftime("%d.%m.%Y %H:%M:%S")), inline=False)
+                                               user.created_at.astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")), inline=False)
 
         await ctx.send(embed=e)
         del e
