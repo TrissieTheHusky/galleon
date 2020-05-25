@@ -31,7 +31,7 @@ FIRST_CONNECTION = True
 SHARD_IDS = cfg['SHARD_IDS']
 SHARD_COUNT = cfg['SHARD_COUNT']
 
-bot = DefraBot(command_prefix=Config.get_prefix, shard_count=SHARD_COUNT, shard_ids=SHARD_IDS)
+bot = DefraBot(command_prefix=Config.get_prefix, shard_count=SHARD_COUNT, shard_ids=SHARD_IDS, case_insensitive=True)
 
 if __name__ == "__main__":
     load_dotenv(join(dirname(__file__), ".env"))
@@ -79,6 +79,9 @@ async def on_ready():
             f"\U0001f527 **`[{current_time_with_tz(bot.cfg['DEFAULT_TZ']).strftime('%H:%M:%S')}]`**"
             f" Connection to Discord API has been established."
         )
+
+        # Check the active infractions in DB
+        bot.dispatch('check_actions')
 
     # Safe adding every existing guild to the database
     for guild in bot.guilds:

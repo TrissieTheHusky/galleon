@@ -35,14 +35,17 @@ class Infractions:
 
         async with db.pool.acquire() as conn:
             async with conn.transaction():
-                await conn.execute(
-                    "INSERT INTO bot.infractions (guild_id, moderator_id, target_id, reason, inf_type, added_at, expires_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+                return await conn.fetchval(
+                    "INSERT INTO bot.infractions (guild_id, moderator_id, target_id, reason, inf_type, added_at, expires_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING inf_id",
                     *query_params
                 )
 
     @staticmethod
-    async def get(guild_id: int, target_id: int = None, moderator_id: int = None, latest: bool = False):
-        if latest:
+    async def get(guild_id: int, target_id: int = None, moderator_id: int = None, latest: bool = False, inf_id: int = None):
+        if inf_id:
+            return await db.fetch_row("SELECT * FROM bot.infractions WHERE inf_id = $1 LIMIT 1;", inf_id)
+
+        elif latest:
             if moderator_id is not None:
                 return await db.fetch_row("SELECT * FROM bot.infractions WHERE (moderator_id = $1 AND guild_id = $2) ORDER BY inf_id DESC LIMIT 500",
                                           moderator_id, guild_id, transaction=True)
@@ -63,6 +66,12 @@ class Infractions:
             else:
                 return await db.fetch("SELECT * FROM bot.infractions WHERE (guild_id = $1) ORDER BY inf_id DESC LIMIT 500",
                                       guild_id, transaction=True)
+
+    @staticmethod
+    async def deactivate(inf_id: int):
+        async with db.pool.acquire() as conn:
+            async with conn.transaction():
+                return await conn.execute("UPDATE bot.infractions SET is_active = FALSE WHERE inf_id = $1", inf_id)
 
     @staticmethod
     async def remove(inf_id: int):

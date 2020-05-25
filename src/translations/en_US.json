@@ -142,6 +142,7 @@
   "WARN": "Warning",
   "PERMABAN": "Permanent Ban",
   "BAN": "Ban",
+  "TEMPBAN": "Temporary Ban",
   "MUTE": "Mute",
   "CONFIG_MOD_ROLES_CURRENT": "Moderator roles list",
   "CONFIG_MOD_ROLES_ADDED": "Added roles to Moderator roles list",
@@ -167,5 +168,7 @@
   "HELP_TITLE": "List of available commands",
   "HELP_DESCRIPTION_1": "To report a bug you can join the [Galleon Support Server](https://discord.gg/DhA3k6B).",
   "HELP_DESCRIPTION_2": "To get help you can join the [Galleon Support Server](https://discord.gg/DhA3k6B).",
-  "HELP_DESCRIPTION": "```\nAll the required arguments are wrapped with <argument>\nAll the optional arguments wrapped with [argument]\n```[Support Server](https://discord.gg/DhA3k6B) | [Source Code](https://github.com/defracted/galleon)"
+  "HELP_DESCRIPTION": "```\nAll the required arguments are wrapped with <argument>\nAll the optional arguments wrapped with [argument]\n```[Support Server](https://discord.gg/DhA3k6B) | [Source Code](https://github.com/defracted/galleon)",
+  "ERROR_HANDLER_TEMP_ACTION_BAD_TIME": "The ``{arg}`` is not valid duration!",
+  "TEMP_BAN_EXPIRED": "Unbanned because #{inf_id} has expired."
 }

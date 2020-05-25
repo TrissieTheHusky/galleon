@@ -14,8 +14,37 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from datetime import timedelta
+
 from discord import HTTPException, NotFound
 from discord.ext.commands import BadArgument, Converter
+
+
+class Duration(Converter):
+    async def convert(self, ctx, argument):
+        def test_arg(arg):
+            try:
+                int(arg[:-1])
+            except ValueError:
+                raise BadArgument("{0} is invalid time format".format(arg), argument) from None
+
+        if argument.endswith("s"):
+            test_arg(argument)
+            return timedelta(seconds=int(argument[:-1]))
+
+        elif argument.endswith("m"):
+            test_arg(argument)
+            return timedelta(minutes=int(argument[:-1]))
+
+        elif argument.endswith("h"):
+            test_arg(argument)
+            return timedelta(hours=int(argument[:-1]))
+
+        elif argument.endswith("d"):
+            test_arg(argument)
+            return timedelta(days=int(argument[:-1]))
+        else:
+            raise BadArgument("{0} is invalid time format".format(argument), argument) from None
 
 
 class LowerString(Converter):

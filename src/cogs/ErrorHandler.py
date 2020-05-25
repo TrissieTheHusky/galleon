@@ -95,6 +95,12 @@ class ErrorHandler(commands.Cog):
                     text=Translator.translate("ERROR_HANDLER_HUG_NOT_FOUND", ctx, target=re.findall(r'"([^"]*)"', error.args[0])[0])
                 ))
 
+            elif ctx.command.qualified_name == 'tempban':
+                return await ctx.send(embed=warn_embed(
+                    title=Translator.translate("ERROR_HANDLER_BAD_ARGUMENT", ctx),
+                    text=Translator.translate("ERROR_HANDLER_TEMP_ACTION_BAD_TIME", ctx, arg=error.args[1])
+                ))
+
         elif isinstance(error, commands.NoPrivateMessage):
             return await ctx.author.send(Translator.translate("ERROR_HANDLER_SERVER_ONLY", ctx, command=str(ctx.command)))
 

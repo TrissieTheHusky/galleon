@@ -48,6 +48,7 @@ class DefraBot(AutoShardedBot):
         self.db = Database
         self.cache = Cache
         self.infraction = Infractions
+        self.active_infractions = []
 
     async def refresh_cache(self):
         # General data cache

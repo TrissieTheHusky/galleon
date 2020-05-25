@@ -76,7 +76,8 @@ create table if not exists bot.infractions
     reason       text      default 'no reason,'::text                   not null,
     inf_type     text                                                   not null,
     added_at     timestamp default (now())::timestamp without time zone not null,
-    expires_at   timestamp default (now())::timestamp without time zone not null
+    expires_at   timestamp default (now())::timestamp without time zone not null,
+    is_active    boolean   default true
 );
 
 alter table bot.infractions
