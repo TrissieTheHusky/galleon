@@ -58,13 +58,6 @@ class Moderation(commands.Cog):
             raise commands.CheckFailure() from None
         return True
 
-    async def add_ban(self, context, reason: str, target: Union[discord.Member, int]):
-        if isinstance(target, discord.Member):
-            await context.guild.ban(user=target, reason=reason)
-        elif isinstance(target, int):
-            target = await self.bot.fetch_user(target)
-            await context.guild.ban(discord.Object(id=target.id), reason=reason)
-
     @tasks.loop(seconds=1.0)
     async def infractions_checker(self):
         # If there's no active infractions, do nothing
@@ -73,24 +66,22 @@ class Moderation(commands.Cog):
 
         for infraction in self.bot.active_infractions:
             # If the infraction still active (expiration date is not in the past or not this moment) - do nothing
-            if infraction['expires_at'].timestamp() >= datetime.utcnow().timestamp():
-                return
-
-            # Obtain the guild object
-            guild = self.bot.get_guild(infraction['guild_id'])
-
-            # Do nothing if guild is None, perform actions if otherwise
-            if guild is not None:
-                if infraction['inf_type'] == InfractionType.tempban:
-                    try:
-                        member = discord.Object(id=infraction['target_id'])
-                        await guild.unban(member, reason=Translator.translate('TEMP_BAN_EXPIRED', guild.id, inf_id=infraction['inf_id']))
-                        await self.bot.infraction.deactivate(infraction['inf_id'])
-                        self.bot.active_infractions.remove(infraction)
-                    except discord.Forbidden:
-                        pass  # TODO: Must inform the server owner through logging that bot lacks required permissions to un-ban
-                    except discord.HTTPException:
-                        pass  # Well, there's nothing we can do about it :P
+            if infraction['expires_at'].timestamp() < datetime.utcnow().timestamp():
+                # Do nothing if guild is None, perform actions if otherwise
+                if (guild := self.bot.get_guild(infraction['guild_id'])) is not None:
+                    if infraction['inf_type'] == InfractionType.tempban.value:
+                        try:
+                            member = discord.Object(id=infraction['target_id'])
+                            await guild.unban(member, reason=Translator.translate('TEMP_BAN_EXPIRED', guild.id, inf_id=infraction['inf_id']))
+                            await self.bot.infraction.deactivate(infraction['inf_id'])
+                            self.bot.active_infractions.remove(infraction)
+                        except discord.Forbidden:
+                            pass  # TODO: Must inform the server owner through logging that bot lacks required permissions to un-ban
+                        except discord.HTTPException:
+                            pass  # Well, there's nothing we can do about it :P
+            else:
+                # print(f'{infraction["inf_id"]} still not expired')
+                pass
 
     @commands.Cog.listener()
     async def on_check_actions(self):
@@ -145,18 +136,21 @@ class Moderation(commands.Cog):
             return await ctx.send("what subcommand???!!! SEE HELP YOU GOOD PERSON!!!!")
 
     @infractions.command()
-    async def search(self, ctx, *, query: str = None):
+    async def search(self, ctx, *, query: Union[discord.Member, str] = None):
         """INFRACTIONS_SEARCH_HELP"""
         infractions = []
         if query is None:
             infractions = await self.bot.infraction.get(guild_id=ctx.guild.id)
         elif query is not None:
-            if query.lower().startswith("[mod]"):
-                infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, moderator_id=int(re.findall(r'\d+', query)[0]))
-            elif query.lower().startswith("[user]"):
-                infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, target_id=int(re.findall(r'\d+', query)[0]))
-            else:
-                infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, target_id=int(query))
+            if isinstance(query, str):
+                if query.lower().startswith("[mod]"):
+                    infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, moderator_id=int(re.findall(r'\d+', query)[0]))
+                elif query.lower().startswith("[user]"):
+                    infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, target_id=int(re.findall(r'\d+', query)[0]))
+                else:
+                    infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, target_id=int(query))
+            elif isinstance(query, discord.Member):
+                infractions = await self.bot.infraction.get(guild_id=ctx.guild.id, target_id=query.id)
 
         entries = []
         for inf in infractions:
@@ -206,6 +200,8 @@ class Moderation(commands.Cog):
         if target is None:
             return await ctx.send("You need to specify someone you want to ban")
 
+        msg = await ctx.send(Translator.translate('PROCESSING', ctx))
+
         if reason is None:
             reason = Translator.translate('INF_NO_REASON', ctx.guild.id)
 
@@ -216,10 +212,14 @@ class Moderation(commands.Cog):
         reason_format = f"Moderator {ctx.author.id}: {reason}"
 
         # Normal ban if Member, hack ban if integer
-        await self.add_ban(ctx, reason_format, target)
+        if isinstance(target, discord.Member):
+            await ctx.guild.ban(user=target, reason=reason_format)
+        elif isinstance(target, int):
+            target = await self.bot.fetch_user(target)
+            await ctx.guild.ban(discord.Object(id=target.id), reason=reason_format)
 
         # Adding to infraction table
-        inf_id = await self.bot.infraction.add(inf_type=InfractionType.tempban, guild_id=ctx.guild.id, target_id=target.id,
+        inf_id = await self.bot.infraction.add(inf_type=InfractionType.tempban.value, guild_id=ctx.guild.id, target_id=target.id,
                                                moderator_id=ctx.author.id, expires_at=duration, reason=reason)
 
         # Getting the infraction row object from the table
@@ -227,10 +227,12 @@ class Moderation(commands.Cog):
         # Adding it to the tasks checker
         self.bot.active_infractions.append(infraction_object)
 
-        banned_until = infraction_object['expires_at'].astimezone(timezone(self.bot.cache.timezones.get(ctx.guild.id))).strftime("%d-%m-%Y %H:%M:%S")
+        # Formatting info message
+        guild_timezone = self.bot.cache.timezones.get(ctx.guild.id, 'UTC')
+        banned_until = infraction_object['expires_at'].astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")
 
         # Inform the context author
-        await ctx.send(f":ok_hand: **{target}** (`{target.id}`) temporary banned until `{banned_until}` for: `{reason}`.")
+        await msg.edit(content=f":ok_hand: **{target}** (`{target.id}`) temporary banned until `{banned_until}` for: `{reason}`.")
 
     @commands.command(aliases=('permaban',))
     @commands.bot_has_guild_permissions(ban_members=True)
@@ -245,10 +247,14 @@ class Moderation(commands.Cog):
         reason_format = f"Moderator {ctx.author.id}: {reason}"
 
         # Normal ban if Member, hack ban if integer
-        await self.add_ban(ctx, reason_format, target)
+        if isinstance(target, discord.Member):
+            await ctx.guild.ban(user=target, reason=reason_format)
+        elif isinstance(target, int):
+            target = await self.bot.fetch_user(target)
+            await ctx.guild.ban(discord.Object(id=target.id), reason=reason_format)
 
         # Add the infraction to the table
-        await self.bot.infraction.add(inf_type=InfractionType.permaban, guild_id=ctx.guild.id, target_id=target.id, moderator_id=ctx.author.id,
+        await self.bot.infraction.add(inf_type=InfractionType.permaban.value, guild_id=ctx.guild.id, target_id=target.id, moderator_id=ctx.author.id,
                                       reason=reason)
 
         # Inform the context author

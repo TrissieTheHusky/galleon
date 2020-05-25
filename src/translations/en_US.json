@@ -170,5 +170,11 @@
   "HELP_DESCRIPTION_2": "To get help you can join the [Galleon Support Server](https://discord.gg/DhA3k6B).",
   "HELP_DESCRIPTION": "```\nAll the required arguments are wrapped with <argument>\nAll the optional arguments wrapped with [argument]\n```[Support Server](https://discord.gg/DhA3k6B) | [Source Code](https://github.com/defracted/galleon)",
   "ERROR_HANDLER_TEMP_ACTION_BAD_TIME": "The ``{arg}`` is not valid duration!",
-  "TEMP_BAN_EXPIRED": "Unbanned because #{inf_id} has expired."
+  "TEMP_BAN_EXPIRED": "Unbanned because #{inf_id} has expired.",
+  "BAN_HELP": "Permanently bans said target",
+  "TEMPBAN_HELP": "Temporary bans said target for said amount of time",
+  "WARN_HELP": "Adds a warning to said target",
+  "INFRACTIONS_HELP": "Manipulations with infractions",
+  "INFRACTIONS_SEARCH_HELP": "Searches through infractions in the guild\n\nYou can type `infractions search <mention | id>` to search for infractions of specific user",
+  "PROCESSING": ":arrows_counterclockwise: Processing..."
 }
