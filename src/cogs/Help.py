@@ -97,9 +97,9 @@ class MyHelpCommand(commands.MinimalHelpCommand):
             self.embed.add_field(name='**%s**' % Translator.translate(heading, self.context), value=joined)
 
     def add_subcommand_formatting(self, command):
-        fmt = '`{0}{1}` — {2}' if command.short_doc else '`{0}{1}`'
+        fmt = '`{0}{1}`: {2}' if command.short_doc else '`{0}{1}`'
         self.paginator.add_line(fmt.format(self.clean_prefix, command.qualified_name,
-                                           Translator.translate(command.short_doc, self.context)))
+                                           Translator.translate(command.short_doc, self.context).splitlines()[0]))
 
     def add_aliases_formatting(self, aliases):
         self.paginator.add_line('**%s** %s' % (self.aliases_heading, ', '.join((f"`{alias}`" for alias in aliases))),
