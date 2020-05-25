@@ -23,7 +23,7 @@ from .translator import Translator
 class Infractions:
     @staticmethod
     async def add(inf_type: str, guild_id: int, moderator_id: int, target_id: int, reason: str = None, expires_at: datetime = None):
-        added_at = datetime.utcnow()
+        added_at = datetime.now()
 
         if expires_at is None:
             expires_at = added_at

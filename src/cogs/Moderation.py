@@ -66,7 +66,7 @@ class Moderation(commands.Cog):
 
         for infraction in self.bot.active_infractions:
             # If the infraction still active (expiration date is not in the past or not this moment) - do nothing
-            if infraction['expires_at'].timestamp() < datetime.utcnow().timestamp():
+            if infraction['expires_at'].timestamp() < datetime.now().timestamp():
                 # Do nothing if guild is None, perform actions if otherwise
                 if (guild := self.bot.get_guild(infraction['guild_id'])) is not None:
                     if infraction['inf_type'] == InfractionType.tempban.value:
@@ -206,7 +206,7 @@ class Moderation(commands.Cog):
             reason = Translator.translate('INF_NO_REASON', ctx.guild.id)
 
         # Adding time to the current moment to create expiration datetime object
-        duration += datetime.utcnow()
+        duration = datetime.now() + duration
 
         # Formatting the string
         reason_format = f"Moderator {ctx.author.id}: {reason}"

@@ -21,7 +21,7 @@ from discord.ext.commands import BadArgument, Converter
 
 
 class Duration(Converter):
-    async def convert(self, ctx, argument):
+    async def convert(self, ctx, argument) -> timedelta:
         def test_arg(arg):
             try:
                 int(arg[:-1])
