@@ -67,16 +67,16 @@ alter table bot.blacklist
 
 create table if not exists bot.infractions
 (
-    inf_id       bigserial                                  not null
+    inf_id       bigserial                                      not null
         constraint infractions_pk
             primary key,
-    guild_id     bigint                                     not null,
-    moderator_id bigint                                     not null,
-    target_id    bigint                                     not null,
-    reason       text      default 'no reason,'::text       not null,
-    inf_type     text                                       not null,
-    added_at     timestamp default now() at time zone 'utc' not null,
-    expires_at   timestamp default now() at time zone 'utc' not null,
+    guild_id     bigint                                         not null,
+    moderator_id bigint                                         not null,
+    target_id    bigint                                         not null,
+    reason       text      default 'no reason,'::text           not null,
+    inf_type     text                                           not null,
+    added_at     timestamp default timezone('utc'::text, now()) not null,
+    expires_at   timestamp default timezone('utc'::text, now()) not null,
     is_active    boolean   default true
 );
 
