@@ -21,12 +21,12 @@ from asyncpg.pool import Pool, create_pool
 
 from .blacklist import SQLBlacklist
 from .language import SQLLanguage
-from .roles import SQLRoles
 from .prefix import SQLPrefix
+from .roles import SQLRoles
+from .temp_actions import SQLTempActions
 from .timezone import SQLTimezone
 from ..utils.exceptions import DatabaseException
 from ..utils.logger import logger
-from .temp_actions import SQLTempActions
 
 
 class Database:

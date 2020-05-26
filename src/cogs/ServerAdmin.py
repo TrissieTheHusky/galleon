@@ -20,9 +20,9 @@ from src.cache import Cache
 from src.utils.base import is_timezone
 from src.utils.checks import is_server_manager_or_bot_owner
 from src.utils.custom_bot_class import DefraBot
+from src.utils.enums import TableRolesTypes
 from src.utils.premade_embeds import DefraEmbed, error_embed
 from src.utils.translator import Translator
-from src.utils.enums import TableRolesTypes
 
 
 class ServerAdmin(commands.Cog):
