@@ -14,10 +14,10 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from .base import DBBase
+from .base import SQLBase
 
 
-class DBPrefix(DBBase):
+class SQLPrefix(SQLBase):
     async def get(self, guild_id: int):
         """
         Returns the non-cached value of the current guild's prefix
@@ -25,7 +25,7 @@ class DBPrefix(DBBase):
         :param guild_id: Discord Guild ID
         :return: Guild prefix from settings table
         """
-        async with self.pool.acquire() as conn:
+        async with self._pool.acquire() as conn:
             data = await conn.fetchval("SELECT prefix FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
             return data
 
@@ -36,6 +36,6 @@ class DBPrefix(DBBase):
         :param guild_id: Discord Guild ID
         :param new_prefix: prefix that user wants to set
         """
-        async with self.pool.acquire() as conn:
+        async with self._pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute("UPDATE bot.guilds SET prefix = $2 WHERE guild_id = $1;", guild_id, new_prefix)

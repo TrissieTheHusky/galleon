@@ -20,6 +20,7 @@ from src.cache import Cache
 from src.utils.base import is_timezone
 from src.utils.checks import is_server_manager_or_bot_owner
 from src.utils.custom_bot_class import DefraBot
+from src.utils.enums import TableRolesTypes
 from src.utils.premade_embeds import DefraEmbed, error_embed
 from src.utils.translator import Translator
 
@@ -34,7 +35,7 @@ class ServerAdmin(commands.Cog):
         if ctx.guild is None:
             return await ctx.send(Translator.translate('WHATPREFIX', ctx, prefix=self.bot.cfg['DEFAULT_PREFIX']))
 
-        prefix = self.bot.cache.prefixes.get(ctx.guild.id, self.bot.cfg['DEFAULT_PREFIX'])
+        prefix = self.bot.cache.guilds.get(ctx.guild.id).prefix or self.bot.cfg['DEFAULT_PREFIX']
         await ctx.send(Translator.translate('WHATPREFIX', ctx, prefix=prefix))
 
     @commands.guild_only()
@@ -53,9 +54,9 @@ class ServerAdmin(commands.Cog):
             return await ctx.send(Translator.translate("CONFIG_PREFIX_NO_NEW"))
 
         await self.bot.db.prefixes.set(ctx.guild.id, new_prefix)
-        await self.bot.cache.prefixes.refresh(ctx.guild.id)
+        await self.bot.cache.refresh(ctx.guild.id)
 
-        if self.bot.cache.prefixes.get(ctx.guild.id) == new_prefix:
+        if self.bot.cache.guilds.get(ctx.guild.id).prefix == new_prefix:
             await ctx.send(Translator.translate("CONFIG_PREFIX_UPDATED", ctx, prefix=new_prefix))
         else:
             await ctx.send(Translator.translate("CONFIG_UPDATE_ERROR", ctx))
@@ -65,16 +66,16 @@ class ServerAdmin(commands.Cog):
     async def timezone(self, ctx, new_timezone=None):
         """CONFIG_TIMEZONE_HELP"""
         if new_timezone is None:
-            current_tz = Cache.timezones.get(ctx.guild.id)
+            current_tz = Cache.guilds.get(ctx.guild.id).timezone
             return await ctx.send(Translator.translate("CONFIG_TIMEZONE_CURRENT", ctx, current=current_tz))
 
         if is_timezone(new_timezone) is False:
             return await ctx.send(Translator.translate("CONFIG_TIMEZONE_BAD_TIMEZONE", ctx))
 
         await self.bot.db.timezones.set(ctx.guild.id, new_timezone)
-        await self.bot.cache.timezones.refresh(ctx.guild.id)
+        await self.bot.cache.refresh(ctx.guild.id)
 
-        if self.bot.cache.timezones.get(ctx.guild.id) == new_timezone:
+        if Cache.guilds.get(ctx.guild.id).timezone == new_timezone:
             await ctx.send(Translator.translate("CONFIG_TIMEZONE_UPDATED", ctx, timezone=new_timezone))
         else:
             await ctx.send(Translator.translate("CONFIG_UPDATE_ERROR", ctx))
@@ -84,14 +85,17 @@ class ServerAdmin(commands.Cog):
     async def language(self, ctx, new_language=None):
         """CONFIG_LANGUAGE_HELP"""
         if new_language is None:
-            return await ctx.send(Translator.translate("CONFIG_LANGUAGE_CURRENT", ctx, language=self.bot.cache.languages.get(ctx.guild.id, "en_US")))
+            settings = self.bot.cache.guilds.get(ctx.guild.id, None)
+            current_language = (settings.language if settings is not None else 'en_US') or 'en_US'
+
+            return await ctx.send(Translator.translate("CONFIG_LANGUAGE_CURRENT", ctx, language=current_language))
 
         if new_language not in Translator.translations.keys():
             return await ctx.send(
                 Translator.translate("CONFIG_LANGUAGE_BAD_LANGUAGE", ctx, languages=", ".join(list(Translator.translations.keys()))))
 
         await self.bot.db.languages.set(ctx.guild.id, new_language)
-        await self.bot.cache.languages.refresh(ctx.guild.id)
+        await self.bot.cache.refresh(ctx.guild.id)
 
         await ctx.send(Translator.translate("CONFIG_LANGUAGE_UPDATED", ctx, language=new_language))
 
@@ -104,7 +108,7 @@ class ServerAdmin(commands.Cog):
                 title=Translator.translate('CONFIG_MOD_ROLES_CURRENT', ctx.guild.id),
                 description='\n'.join([f'{role.mention} (`{role.id}`)'
                                        if (role := ctx.guild.get_role(role_id)) is not None
-                                       else f"`{role_id}`" for role_id in self.bot.cache.mod_roles.get(ctx.guild.id)])
+                                       else f"`{role_id}`" for role_id in self.bot.cache.guilds.get(ctx.guild.id).mod_roles])
             )
 
             await ctx.send(embed=e)
@@ -124,12 +128,12 @@ class ServerAdmin(commands.Cog):
 
         # Adding each role id into the database
         for role in roles:
-            if role.id not in self.bot.cache.mod_roles.get(ctx.guild.id):
-                await self.bot.db.mod_roles.add(ctx.guild.id, role.id)
+            if role.id not in self.bot.cache.guilds.get(ctx.guild.id).mod_roles:
+                await self.bot.db.roles.add(TableRolesTypes.mod_roles, ctx.guild.id, role.id)
             else:
                 return await ctx.send(embed=error_embed(title=Translator.translate('NOTHING_CHANGED', ctx.guild.id), text=None))
 
-        await self.bot.cache.mod_roles.refresh(ctx.guild.id)
+        await self.bot.cache.refresh(ctx.guild.id)
         await ctx.send(embed=DefraEmbed(
             title=Translator.translate('CONFIG_MOD_ROLES_ADDED', ctx.guild.id),
             description='\n'.join([f"{role.mention} (`{role.id}`)" for role in roles])
@@ -145,14 +149,14 @@ class ServerAdmin(commands.Cog):
         # Iterate through provided list of roles
         for role_id in roles:
             # Check if role_id is already a mod role
-            if role_id not in self.bot.cache.mod_roles.get(ctx.guild.id):
+            if role_id not in self.bot.cache.guilds.get(ctx.guild.id).mod_roles:
                 return await ctx.send(embed=error_embed(text=None,
                                                         title=Translator.translate('CONFIG_MOD_ROLES_REMOVE_BAD_ROLE', ctx, role_id=role_id)))
 
             # Delete the role
-            await self.bot.db.mod_roles.remove(ctx.guild.id, role_id)
+            await self.bot.db.roles.remove(TableRolesTypes.mod_roles, ctx.guild.id, role_id)
 
-        await self.bot.cache.mod_roles.refresh(ctx.guild.id)
+        await self.bot.cache.refresh(ctx.guild.id)
         await ctx.send(embed=DefraEmbed(
             title=Translator.translate('CONFIG_MOD_ROLES_REMOVED', ctx.guild.id),
             description='\n'.join(

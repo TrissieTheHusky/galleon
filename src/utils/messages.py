@@ -29,7 +29,7 @@ class Messages:
     @staticmethod
     async def archive_messages(bot, messages: List[Message]):
         # Preparing text file heading
-        guild_timezone = bot.cache.timezones.get(messages[0].guild.id)
+        guild_timezone = bot.cache.guilds.get(messages[0].guild.id).timezone
         server_format = f"{messages[0].guild.name} ({messages[0].guild.id})"
         channel_format = f"{messages[0].channel.name} ({messages[0].channel.id})"
         timezone_format = f"{guild_timezone.title()}"

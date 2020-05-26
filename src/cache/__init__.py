@@ -14,20 +14,26 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import MutableSet
+from collections import namedtuple
+from typing import MutableSet, Dict
 
 from src.database import Database
 from src.utils.logger import logger
-from .base import CacheBase
+
+CacheStruct = namedtuple('CacheStruct', 'prefix language timezone mod_roles admin_roles mute_role')
 
 
 class Cache:
-    prefixes = CacheBase(Database, 'prefixes')
-    languages = CacheBase(Database, 'languages')
-    timezones = CacheBase(Database, 'timezones')
-    mod_roles = CacheBase(Database, 'mod_roles')
-
+    guilds: Dict[int, CacheStruct] = {}
     blacklisted_users: MutableSet[int] = set()
+
+    @classmethod
+    async def refresh(cls, guild_id: int):
+        row = await Database.fetchrow("SELECT * FROM bot.guilds WHERE guild_id = $1", guild_id)
+        cls.guilds.update({
+            guild_id: CacheStruct(row['prefix'], row['language'], row['_timezone'], row['mod_roles'], row['admin_roles'], row['mute_role'])
+        })
+        print("[CACHE] Refreshed settings data for Guild {0}".format(guild_id))
 
     @classmethod
     async def refresh_blacklist(cls):

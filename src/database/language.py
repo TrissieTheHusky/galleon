@@ -16,10 +16,10 @@
 
 from typing import Optional
 
-from .base import DBBase
+from .base import SQLBase
 
 
-class DBLanguage(DBBase):
+class SQLLanguage(SQLBase):
     async def get(self, guild_id: int) -> Optional[str]:
         """
         Gets guild's language
@@ -27,7 +27,7 @@ class DBLanguage(DBBase):
         :param guild_id: Discord Guild ID
         :return: 'en_US' if None
         """
-        async with self.pool.acquire() as conn:
+        async with self._pool.acquire() as conn:
             guild_lang = await conn.fetchval("SELECT language FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
             return guild_lang or 'en_US'
 
@@ -38,6 +38,6 @@ class DBLanguage(DBBase):
         :param guild_id: Discord Guild ID
         :param new_lang: new lang code
         """
-        async with self.pool.acquire() as conn:
+        async with self._pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute("UPDATE bot.guilds SET language = $2 WHERE guild_id = $1;", guild_id, new_lang)

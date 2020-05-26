@@ -14,14 +14,22 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from datetime import timedelta
 
-class CacheBase(dict):
-    def __init__(self, database, name: str):
-        super().__init__()
-        self.name = name
-        self.database = database
+from .base import SQLBase
 
-    async def refresh(self, guild_id: int):
-        current = await getattr(self.database, self.name.lower()).get(guild_id)
-        super().update({guild_id: current})
-        print("[CACHE] {0} for {1} was refreshed.".format(self.name.capitalize(), guild_id))
+
+class SQLTempActions(SQLBase):
+    async def get(self, limit: int = None):
+        query = "SELECT * FROM bot.infractions WHERE inf_type IN('tempban', 'tempmute') AND is_active = true AND expires_at < (CURRENT_DATE + $1::interval) ORDER BY inf_id"
+
+        if limit is not None:
+            query += "LIMIT $2"
+
+        async with self._pool.acquire() as conn:
+            if limit is not None:
+                active_actions = await conn.fetch(query, timedelta(days=365), limit)
+            else:
+                active_actions = await conn.fetch(query, timedelta(days=365))
+
+        return active_actions

@@ -35,5 +35,9 @@ class Config:
         if not message.guild:
             return when_mentioned_or(cfg['DEFAULT_PREFIX'])(client, message)
 
-        prefix = client.cache.prefixes.get(message.guild.id, cfg['DEFAULT_PREFIX'])
+        if (settings := client.cache.guilds.get(message.guild.id, None)) is not None:
+            prefix = settings.prefix or cfg['DEFAULT_PREFIX']
+        else:
+            prefix = cfg['DEFAULT_PREFIX']
+
         return when_mentioned_or(prefix if prefix is not None else cfg['DEFAULT_PREFIX'])(client, message)
