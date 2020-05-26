@@ -94,13 +94,13 @@ class Owner(commands.Cog):
         if stderr:
             return await ctx.send('```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
-    @commands.command(name="refresh_prefix")
-    async def refresh_prefixes(self, ctx: commands.Context, target):
+    @commands.command(name="refresh_cache")
+    async def refresh_cache(self, ctx: commands.Context, target):
         if "all" in target:
             for guild in self.bot.guilds:
-                await self.bot.cache.prefixes.refresh(guild.id)
+                await self.bot.cache.refresh(guild.id)
         else:
-            await self.bot.cache.prefixes.refresh(int(target))
+            await self.bot.cache.refresh(int(target))
 
         await ctx.send(":ok_hand: Done.")
 

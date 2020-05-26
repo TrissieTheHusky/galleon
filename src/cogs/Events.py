@@ -18,7 +18,6 @@ from aiohttp import ClientSession
 from discord import RawReactionActionEvent, TextChannel, Message, utils, Guild, Color
 from discord.ext import commands
 
-from src.database import Database
 from src.utils.base import current_time_with_tz
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import DefraEmbed
@@ -74,9 +73,9 @@ class Events(commands.Cog):
             ))
 
         # Adding the guild to database of settings
-        await Database.safe_add_guild(guild.id)
+        await self.bot.db.safe_add_guild(guild.id)
         # Refreshing bot's cache for the guild
-        await self.bot.cache.prefixes.refresh(guild.id)
+        await self.bot.cache.refresh(guild.id)
 
 
 def setup(bot):

@@ -15,8 +15,8 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-class DBBase:
+class SQLBase:
     """A base class for DB data getters and setters classes"""
 
     def __init__(self, pool):
-        self.pool = pool
+        self._pool = pool

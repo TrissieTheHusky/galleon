@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
 @bot.check
 async def check_blacklist(ctx):
-    if ctx.author.id in ctx.bot.cache.blacklisted_users:
+    if ctx.author.id in bot.cache.blacklisted_users:
         raise BlacklistedUser(f"{ctx.author.id} is blacklisted!") from None
 
     return True

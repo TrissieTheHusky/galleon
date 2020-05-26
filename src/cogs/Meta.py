@@ -264,7 +264,7 @@ class Meta(commands.Cog):
         if user == self.bot.owner:
             e.description = Translator.translate("OWNER_NOTICE", ctx)
 
-        guild_timezone = self.bot.cache.timezones.get(ctx.guild.id) if ctx.guild is not None else "UTC"
+        guild_timezone = self.bot.cache.guilds.get(ctx.guild.id).timezone if ctx.guild is not None else "UTC"
 
         if member is not None:
             e.colour = member.top_role.color

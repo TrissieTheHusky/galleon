@@ -16,10 +16,10 @@
 
 from typing import Optional
 
-from .base import DBBase
+from .base import SQLBase
 
 
-class DBTimezone(DBBase):
+class SQLTimezone(SQLBase):
     async def get(self, guild_id: int) -> Optional[str]:
         """
         Gets timezone for specified Discord Guild
@@ -27,7 +27,7 @@ class DBTimezone(DBBase):
         :param guild_id: Discord Guild ID
         :return: Timezone string
         """
-        async with self.pool.acquire() as conn:
+        async with self._pool.acquire() as conn:
             guild_tz = await conn.fetchval("SELECT _timezone FROM bot.guilds WHERE guild_id = $1 LIMIT 1;", guild_id)
             return guild_tz
 
@@ -38,6 +38,6 @@ class DBTimezone(DBBase):
         :param guild_id: Discord Guild ID
         :param new_timezone: Timezone string
         """
-        async with self.pool.acquire() as conn:
+        async with self._pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute("UPDATE bot.guilds SET _timezone = $2 WHERE guild_id = $1;", guild_id, new_timezone)

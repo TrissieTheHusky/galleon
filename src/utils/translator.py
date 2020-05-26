@@ -39,10 +39,12 @@ class Translator:
         if context is not None:
             if hasattr(context, 'guild'):
                 if context.guild is not None:
-                    current_lang = Cache.languages.get(context.guild.id, 'en_US')
+                    if (settings_cache := Cache.guilds.get(context.guild.id, None)) is not None:
+                        current_lang = settings_cache.language
 
             elif isinstance(context, int):
-                current_lang = Cache.languages.get(context, 'en_US')
+                if (settings_cache := Cache.guilds.get(context, None)) is not None:
+                    current_lang = settings_cache.language
 
         try:
             translation = pyseeyou.format(cls.translations[current_lang][query_string], kwargs, current_lang)

@@ -29,7 +29,6 @@ from src.utils.enums import InfractionType
 from src.utils.menus import MyPagesMenu
 from src.utils.messages import Messages
 from src.utils.premade_embeds import warn_embed
-from src.utils.temp_actions import TempActions
 from src.utils.translator import Translator
 
 
@@ -87,7 +86,8 @@ class Moderation(commands.Cog):
     async def on_check_actions(self):
         await self.bot.wait_until_ready()
 
-        active_actions = await TempActions.get_active_actions(self.bot.db.pool)
+        #active_actions = await TempActions.get_active_actions(self.bot.db.pool)
+        active_actions = await self.bot.db.temp_actions.get()
 
         for action in active_actions:
             self.bot.active_infractions.append(action)
@@ -157,10 +157,9 @@ class Moderation(commands.Cog):
             inf_type_format = Translator.translate(inf["inf_type"].upper(), ctx.guild.id)
             reason_format = discord.utils.escape_markdown(discord.utils.escape_mentions(inf["reason"]))
 
-            if (guild_timezone := self.bot.cache.timezones.get(ctx.guild.id, None)) is not None:
-                date_format = inf['added_at'].astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")
-            else:
-                date_format = inf['added_at'].astimezone(timezone('UTC')).strftime("%d-%m-%Y %H:%M:%S")
+            settings = self.bot.cache.guilds.get(ctx.guild.id, None)
+            guild_timezone = settings.timezone if settings is not None else 'UTC'
+            date_format = inf['added_at'].astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")
 
             if (moderator := self.bot.get_user(inf["moderator_id"])) is None:
                 mod_format = f'{inf["moderator_id"]}'
@@ -228,7 +227,11 @@ class Moderation(commands.Cog):
         self.bot.active_infractions.append(infraction_object)
 
         # Formatting info message
-        guild_timezone = self.bot.cache.timezones.get(ctx.guild.id, 'UTC')
+        if (settings := self.bot.cache.guilds.get(ctx.guild.id, None)) is None:
+            guild_timezone = 'UTC'
+        else:
+            guild_timezone = settings.timezone
+
         banned_until = infraction_object['expires_at'].astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")
 
         # Inform the context author

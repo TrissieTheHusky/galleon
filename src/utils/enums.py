@@ -24,3 +24,9 @@ class InfractionType(Enum):
     ban = 'permaban'
     warning = 'warn'
     warn = 'warn'
+
+
+class TableRolesTypes(Enum):
+    mute_role = 'mute_role'
+    mod_roles = 'mod_roles'
+    admin_roles = 'admin_roles'

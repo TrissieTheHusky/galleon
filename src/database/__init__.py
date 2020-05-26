@@ -19,36 +19,38 @@ from typing import Optional
 
 from asyncpg.pool import Pool, create_pool
 
-from .blacklist import DBBlacklist
-from .language import DBLanguage
-from .mod_roles import DBModRoles
-from .prefix import DBPrefix
-from .timezone import DBTimezone
+from .blacklist import SQLBlacklist
+from .language import SQLLanguage
+from .roles import SQLRoles
+from .prefix import SQLPrefix
+from .timezone import SQLTimezone
 from ..utils.exceptions import DatabaseException
 from ..utils.logger import logger
+from .temp_actions import SQLTempActions
 
 
 class Database:
-    pool: Optional[Pool] = None
-
-    prefixes: Optional[DBPrefix] = None
-    timezones: Optional[DBTimezone] = None
-    languages: Optional[DBLanguage] = None
-    blacklist: Optional[DBBlacklist] = None
-    mod_roles: Optional[DBModRoles] = None
+    _pool: Optional[Pool] = None
+    prefixes: Optional[SQLPrefix] = None
+    timezones: Optional[SQLTimezone] = None
+    languages: Optional[SQLLanguage] = None
+    blacklist: Optional[SQLBlacklist] = None
+    roles: Optional[SQLRoles] = None
+    temp_actions: Optional[SQLTempActions] = None
 
     @classmethod
     async def connect(cls, credentials) -> None:
         try:
             # Creating the pool connection
-            cls.pool = await create_pool(**credentials)
+            cls._pool = await create_pool(**credentials)
 
             # Passing the pool to the subclasses
-            cls.prefixes = DBPrefix(cls.pool)
-            cls.timezones = DBTimezone(cls.pool)
-            cls.languages = DBLanguage(cls.pool)
-            cls.blacklist = DBBlacklist(cls.pool)
-            cls.mod_roles = DBModRoles(cls.pool)
+            cls.prefixes = SQLPrefix(cls._pool)
+            cls.timezones = SQLTimezone(cls._pool)
+            cls.languages = SQLLanguage(cls._pool)
+            cls.blacklist = SQLBlacklist(cls._pool)
+            cls.roles = SQLRoles(cls._pool)
+            cls.temp_actions = SQLTempActions(cls._pool)
 
             logger.info("[DB] Connection pool created.")
         except gaierror:
@@ -56,7 +58,7 @@ class Database:
 
     @classmethod
     async def execute(cls, execute_string, *args, **kwargs):
-        async with cls.pool.acquire() as db:
+        async with cls._pool.acquire() as db:
             if kwargs.get('transaction', False):
                 async with db.transaction():
                     await db.execute(execute_string, *args)
@@ -64,8 +66,8 @@ class Database:
                 await db.execute(execute_string, *args)
 
     @classmethod
-    async def fetch_row(cls, query_string, *args, **kwargs):
-        async with cls.pool.acquire() as db:
+    async def fetchrow(cls, query_string, *args, **kwargs):
+        async with cls._pool.acquire() as db:
             if kwargs.get('transaction', False):
                 async with db.transaction():
                     return await db.fetchrow(query_string, *args)
@@ -74,7 +76,7 @@ class Database:
 
     @classmethod
     async def fetch(cls, query_string, *args, **kwargs):
-        async with cls.pool.acquire() as db:
+        async with cls._pool.acquire() as db:
             if kwargs.get('transaction', False):
                 async with db.transaction():
                     return await db.fetch(query_string, *args)
@@ -82,22 +84,19 @@ class Database:
                 return await db.fetch(query_string, *args)
 
     @classmethod
+    async def fetchval(cls, query_string, *args):
+        async with cls._pool.acquire() as conn:
+            return await conn.fetchval(query_string, *args)
+
+    @classmethod
+    async def get_pool(cls) -> Pool:
+        return cls._pool
+
+    @classmethod
     async def safe_add_guild(cls, guild_id: int):
         """Adds a guild to settings table if it's not there"""
-        async with cls.pool.acquire() as db:
+        async with cls._pool.acquire() as db:
             async with db.transaction():
                 settings = await db.fetchval("INSERT INTO bot.guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True", guild_id)
                 logging = await db.fetchval("INSERT INTO bot.logging_channels (guild_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING True", guild_id)
                 return settings, logging
-
-    @classmethod
-    async def get_admin_roles(cls, guild_id: int):
-        async with cls.pool.acquire() as db:
-            async with db.transaction():
-                return await db.fetchval("SELECT admin_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
-
-    @classmethod
-    async def get_trusted_roles(cls, guild_id: int):
-        async with cls.pool.acquire() as db:
-            async with db.transaction():
-                return await db.fetchval("SELECT trusted_roles FROM bot.guilds WHERE guild_id = $1", guild_id)
