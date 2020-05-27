@@ -46,6 +46,18 @@ class ServerAdmin(commands.Cog):
             await ctx.send(Translator.translate("NO_SUBCOMMAND", ctx, help=f"{ctx.prefix}help {ctx.command} {ctx.command.signature}"))
 
     @config.command()
+    async def log_messages(self, ctx, mode: bool = None):
+        """CONFIG_LOG_MESSAGES_HELP"""
+        if mode is None:
+            return await ctx.send(Translator.translate('CONFIG_LOG_MESSAGES_CURRENT_MOD', ctx,
+                                                       mode=self.bot.cache.guilds.get(ctx.guild.id).log_messages))
+
+        await self.bot.db.execute("UPDATE bot.guilds SET log_messages = $2 WHERE guild_id = $1;", ctx.guild.id, mode)
+        await self.bot.cache.refresh(ctx.guild.id)
+
+        await ctx.send(Translator.translate('CONFIG_LOG_MESSAGES_UPDATED', ctx, mode=self.bot.cache.guilds.get(ctx.guild.id).log_messages))
+
+    @config.command()
     @commands.cooldown(1, 5, commands.BucketType.guild)
     async def prefix(self, ctx: commands.Context, new_prefix=None):
         """CONFIG_PREFIX_HELP"""
@@ -79,7 +91,7 @@ class ServerAdmin(commands.Cog):
         else:
             await ctx.send(Translator.translate("CONFIG_UPDATE_ERROR", ctx))
 
-    @config.command(aliases=("lang",))
+    @config.command(aliases=("lang", "locale"))
     @commands.cooldown(1, 5, commands.BucketType.guild)
     async def language(self, ctx, new_language=None):
         """CONFIG_LANGUAGE_HELP"""

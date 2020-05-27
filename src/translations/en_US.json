@@ -176,5 +176,8 @@
   "WARN_HELP": "Adds a warning to said target",
   "INFRACTIONS_HELP": "Manipulations with infractions",
   "INFRACTIONS_SEARCH_HELP": "Searches through infractions in the guild\n\nYou can type `infractions search <mention | id>` to search for infractions of specific user",
-  "PROCESSING": ":arrows_counterclockwise: Processing..."
+  "PROCESSING": ":arrows_counterclockwise: Processing...",
+  "CONFIG_LOG_MESSAGES_CURRENT_MOD": ":information_source: Current mode for `LOG_MESSAGES` is ``{mode}``",
+  "CONFIG_LOG_MESSAGES_UPDATED": ":information_source: Updated mode for `LOG_MESSAGES` to ``{mode}``",
+  "CONFIG_LOG_MESSAGES_HELP": "Changes the mode of logging messages settings\n\n`true` - enabled messages logging to the bot's database\n`false` - disables logging\n\n**Why bot needs to store people's messages?** Unfortunately, Discord API doesn't provide some needed functionality for such modules as `ModLogging` and other `Moderation` module functionality.\n\nYou can change it's setting to `false` if you're anxious about it but keep in mind that you will no longer have an ability to see previous message content in your mod logs."
 }
