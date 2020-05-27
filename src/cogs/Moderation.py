@@ -30,6 +30,7 @@ from src.utils.menus import MyPagesMenu
 from src.utils.messages import Messages
 from src.utils.premade_embeds import warn_embed
 from src.utils.translator import Translator
+from src.utils.types import InfractionStruct
 
 
 class InfractionsPagesSource(ListPageSource):
@@ -119,7 +120,7 @@ class Moderation(commands.Cog):
         channel = channel or ctx.channel
 
         if amount > 2000:
-            return await ctx.send(":x: You can archive up to 2000 messages!")
+            return await ctx.send(Translator.translate('ARCHIVE_UP_TO', ctx, number=str(2000)))
 
         messages = await channel.history(limit=amount).flatten()
         await Messages.send_archive(self.bot, ctx, messages, channel)
@@ -128,12 +129,12 @@ class Moderation(commands.Cog):
     async def archive_user(self, ctx, amount: int = 100, user: discord.Member = None, channel: discord.TextChannel = None):
         """ARCHIVE_USER_HELP"""
         if user is None:
-            return await ctx.send(":x: You must specify some server member!")
+            return await ctx.send(Translator.translate('MEMBER_ARG_REQUIRED', ctx))
 
         channel = channel or ctx.channel
 
         if amount > 3000:
-            return await ctx.send(":x: You can archive up to 3000 messages for users!")
+            return await ctx.send(Translator.translate('ARCHIVE_UP_TO', ctx, number=str(3000)))
 
         messages = []
         async for message in channel.history(limit=amount):
@@ -146,7 +147,7 @@ class Moderation(commands.Cog):
     async def infractions(self, ctx):
         """INFRACTIONS_HELP"""
         if ctx.invoked_subcommand is None:
-            return await ctx.send("what subcommand???!!! SEE HELP YOU GOOD PERSON!!!!")
+            return await ctx.send(Translator.translate('NO_SUBCOMMAND', ctx, help=f"{ctx.prefix} help {ctx.command.qualified_name}"))
 
     @infractions.command()
     async def search(self, ctx, *, query: Union[discord.Member, str] = None):
@@ -203,14 +204,42 @@ class Moderation(commands.Cog):
     @commands.bot_has_guild_permissions(kick_members=True)
     async def kick(self, ctx, target: Union[discord.Member, int] = None, *, reason=None):
         """KICK_HELP"""
-        pass
+        if target is None:
+            return await ctx.send(Translator.translate('MEMBER_ARG_REQUIRED', ctx))
+
+        member = target
+
+        if reason is None:
+            reason = Translator.translate('INF_NO_REASON', ctx.guild.id)
+
+        reason_format = f"Moderator {ctx.author.id}: {reason}"
+
+        # Normal kick if Member, hack kick if integer
+        if isinstance(target, discord.Member):
+            await target.kick(reason=reason_format)
+        elif isinstance(target, int):
+            member = ctx.guild.get_member(target)
+            if member is None:
+                return await ctx.send(Translator.translate('MEMBER_NOT_FOUND', ctx, id=str(target)))
+
+            await member.kick(reason=reason_format)
+
+        # Add the infraction to the table
+        inf_id = await self.bot.infraction.add(inf_type=InfractionType.kick.value, guild_id=ctx.guild.id, target_id=member.id,
+                                               moderator_id=ctx.author.id, reason=reason)
+
+        # Inform the context author
+        await ctx.send(Translator.translate('KICKED_MESSAGE', ctx, target=str(member), target_id=str(member.id), reason=reason))
+        # Prepare mod log
+        infraction = InfractionStruct(inf_id, InfractionType.kick, ctx.guild, member, ctx.author, reason, datetime.now(), None)
+        self.bot.dispatch('mod_logging_inf_add', infraction=infraction)
 
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
     async def tempban(self, ctx, target: Union[discord.Member, int], duration: Duration, *, reason=None):
         """TEMPBAN_HELP"""
         if target is None:
-            return await ctx.send("You need to specify someone you want to ban")
+            return await ctx.send(Translator.translate('MEMBER_ARG_REQUIRED', ctx))
 
         msg = await ctx.send(Translator.translate('PROCESSING', ctx))
 
@@ -248,14 +277,20 @@ class Moderation(commands.Cog):
         banned_until = infraction_object['expires_at'].astimezone(timezone(guild_timezone)).strftime("%d-%m-%Y %H:%M:%S")
 
         # Inform the context author
-        await msg.edit(content=f":ok_hand: **{target}** (`{target.id}`) temporary banned until `{banned_until}` for: `{reason}`.")
+        await msg.edit(content=Translator.translate('TEMP_BANNED_MESSAGE', ctx, target=str(target), target_id=str(target.id), until=banned_until,
+                                                    reason=reason))
+        # Prepare mod log
+        infraction = InfractionStruct(inf_id, InfractionType.tempban, ctx.guild, target, ctx.author, reason, infraction_object['added_at'], duration)
+        self.bot.dispatch('mod_logging_inf_add', infraction=infraction)
 
     @commands.command(aliases=('permaban',))
     @commands.bot_has_guild_permissions(ban_members=True)
     async def ban(self, ctx, target: Union[discord.Member, int] = None, *, reason=None):
         """BAN_HELP"""
         if target is None:
-            return await ctx.send("You need to specify someone you want to ban")
+            return await ctx.send(Translator.translate('MEMBER_ARG_REQUIRED', ctx))
+
+        msg = await ctx.send(Translator.translate('PROCESSING', ctx))
 
         if reason is None:
             reason = Translator.translate('INF_NO_REASON', ctx.guild.id)
@@ -270,11 +305,14 @@ class Moderation(commands.Cog):
             await ctx.guild.ban(discord.Object(id=target.id), reason=reason_format)
 
         # Add the infraction to the table
-        await self.bot.infraction.add(inf_type=InfractionType.permaban.value, guild_id=ctx.guild.id, target_id=target.id, moderator_id=ctx.author.id,
-                                      reason=reason)
+        inf_id = await self.bot.infraction.add(inf_type=InfractionType.permaban.value, guild_id=ctx.guild.id, target_id=target.id,
+                                               moderator_id=ctx.author.id, reason=reason)
 
         # Inform the context author
-        await ctx.send(f":ok_hand: {target} (`{target.id}`) banned for: `{reason}`.")
+        await msg.edit(content=Translator.translate('BANNED_MESSAGE', ctx, target=str(target), target_id=str(target.id), reason=reason))
+        # Prepare mod log
+        infraction = InfractionStruct(inf_id, InfractionType.permaban, ctx.guild, target, ctx.author, reason, datetime.now(), None)
+        self.bot.dispatch('mod_logging_inf_add', infraction=infraction)
 
     @commands.command()
     async def warn(self, ctx, target: discord.Member = None, *, reason=None):
@@ -285,8 +323,13 @@ class Moderation(commands.Cog):
         if reason is None:
             reason = Translator.translate('INF_NO_REASON', ctx.guild.id)
 
-        await self.bot.infraction.add(inf_type='warn', guild_id=ctx.guild.id, target_id=target.id, moderator_id=ctx.author.id, reason=reason)
-        await ctx.send(f":ok_hand: Warning for {target} (`{target.id}`) added, reason: `{reason}`")
+        inf_id = await self.bot.infraction.add(inf_type=InfractionType.warn.value, guild_id=ctx.guild.id, target_id=target.id,
+                                               moderator_id=ctx.author.id, reason=reason)
+
+        await ctx.send(Translator.translate('WARNING_MESSAGE', ctx, target=str(target), target_id=str(target.id), reason=reason))
+        # Prepare mod log
+        infraction = InfractionStruct(inf_id, InfractionType.warn, ctx.guild, target, ctx.author, reason, datetime.now(), None)
+        self.bot.dispatch('mod_logging_inf_add', infraction=infraction)
 
 
 def setup(bot):

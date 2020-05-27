@@ -31,7 +31,7 @@ FIRST_CONNECTION = True
 SHARD_IDS = cfg['SHARD_IDS']
 SHARD_COUNT = cfg['SHARD_COUNT']
 
-bot = DefraBot(command_prefix=Config.get_prefix, shard_count=SHARD_COUNT, shard_ids=SHARD_IDS, case_insensitive=True)
+bot = DefraBot(command_prefix=Config.get_prefix, shard_count=SHARD_COUNT, shard_ids=SHARD_IDS, case_insensitive=True, max_messages=300)
 
 if __name__ == "__main__":
     load_dotenv(join(dirname(__file__), ".env"))

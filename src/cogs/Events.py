@@ -15,12 +15,13 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from aiohttp import ClientSession
-from discord import RawReactionActionEvent, TextChannel, Message, utils, Guild, Color
+from discord import RawMessageUpdateEvent, RawMessageDeleteEvent, RawReactionActionEvent, TextChannel, Message, utils, Guild, Color, Member
 from discord.ext import commands
 
 from src.utils.base import current_time_with_tz
 from src.utils.custom_bot_class import DefraBot
 from src.utils.premade_embeds import DefraEmbed
+from src.utils.enums import MessageLogType
 
 
 class Events(commands.Cog):
@@ -33,6 +34,39 @@ class Events(commands.Cog):
 
     async def cog_unload(self):
         self.bot.aiohttp_session.close()
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: Member):
+        # Let custom event listener to deal with mod logging
+        self.bot.dispatch('mod_log_join_leave', is_join=True, member=member)
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member: Member):
+        # TODO: Check if kicked
+        # Let custom event listener to deal with mod logging
+        self.bot.dispatch('mod_log_join_leave', is_join=False, member=member)
+
+    @commands.Cog.listener()
+    async def on_member_ban(self, guild, user):
+        pass
+
+    @commands.Cog.listener()
+    async def on_member_unban(self, guild, user):
+        pass
+
+    @commands.Cog.listener()
+    async def on_raw_message_edit(self, payload: RawMessageUpdateEvent):
+        if payload.data['guild_id'] is None:
+            return
+
+        self.bot.dispatch('mod_logging_messages', payload=payload, message_log_type=MessageLogType.edited_message)
+
+    @commands.Cog.listener()
+    async def on_raw_message_delete(self, payload: RawMessageDeleteEvent):
+        if payload.guild_id is None:
+            return
+
+        self.bot.dispatch('mod_logging_messages', payload=payload, message_log_type=MessageLogType.deleted_message)
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):

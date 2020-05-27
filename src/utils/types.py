@@ -14,33 +14,20 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from enum import Enum
+from datetime import datetime
+from typing import Union, NamedTuple, Optional
+
+from discord import Member, User, Guild
+
+from src.utils.enums import InfractionType
 
 
-class InfractionType(Enum):
-    tempban = 'tempban'
-    tempmute = 'tempmute'
-    permaban = 'permaban'
-    warn = 'warn'
-    kick = 'kick'
-
-
-class TableRolesTypes(Enum):
-    mute_role = 'mute_role'
-    mod_roles = 'mod_roles'
-    admin_roles = 'admin_roles'
-
-
-class ModLoggingType(Enum):
-    misc = 'misc'
-    messages = 'messages'
-    join_leave = 'join_leave'
-    mod_actions = 'mod_actions'
-    config_logs = 'config_logs'
-    server_changes = 'server_changes'
-
-
-class MessageLogType(Enum):
-    deleted_message = 'deleted_message'
-    edited_message = 'edited_message'
-    archive = 'archive'
+class InfractionStruct(NamedTuple):
+    inf_id: Optional[int]
+    inf_type: InfractionType
+    guild: Guild
+    target: Union[Member, User]
+    moderator: Union[Member, User]
+    reason: str
+    added_at: Optional[datetime]
+    expires_at: Optional[datetime]
