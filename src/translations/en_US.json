@@ -179,5 +179,5 @@
   "PROCESSING": ":arrows_counterclockwise: Processing...",
   "CONFIG_LOG_MESSAGES_CURRENT_MOD": ":information_source: Current mode for `LOG_MESSAGES` is ``{mode}``",
   "CONFIG_LOG_MESSAGES_UPDATED": ":information_source: Updated mode for `LOG_MESSAGES` to ``{mode}``",
-  "CONFIG_LOG_MESSAGES_HELP": "Changes the mode of logging messages settings\n\n`true` - enabled messages logging to the bot's database\n`false` - disables logging\n\n**Why bot needs to store people's messages?** Unfortunately, Discord API doesn't provide some needed functionality for such modules as `ModLogging` and other `Moderation` module functionality.\n\nYou can change it's setting to `false` if you're anxious about it but keep in mind that you will no longer have an ability to see previous message content in your mod logs."
+  "CONFIG_LOG_MESSAGES_HELP": "Changes the mode of logging messages settings\n\n`true` - Messages will be logged to the bot's database\n`false` - Messages will NOT be logged\n\n**Why does this bot need to store messages?** Unfortunately, Discord API doesn't provide some needed functionality for modules such as `Mod Logging`, as well as other functionality in the moderation module.\n\nYou can change this setting at any time, however, you will no longer be able to see previous messages in the modlogs."
 }
