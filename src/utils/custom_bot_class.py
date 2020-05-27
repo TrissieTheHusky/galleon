@@ -17,12 +17,12 @@
 from typing import Optional
 
 from aiohttp import ClientSession
+from cryptography.fernet import Fernet
 from discord import User, TextChannel, AllowedMentions
 from discord.ext.commands import AutoShardedBot
-from cryptography.fernet import Fernet
 
-from src.utils.cache import CacheManager
 from src.database import Database
+from src.utils.cache import CacheManager
 from .apis import APIs
 from .configuration import cfg
 from .infractions import Infractions
