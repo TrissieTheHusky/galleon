@@ -16,7 +16,6 @@
 
 from discord.ext import commands
 
-from src.cache import Cache
 from src.utils.base import is_timezone
 from src.utils.checks import is_server_manager_or_bot_owner
 from src.utils.custom_bot_class import DefraBot
@@ -66,7 +65,7 @@ class ServerAdmin(commands.Cog):
     async def timezone(self, ctx, new_timezone=None):
         """CONFIG_TIMEZONE_HELP"""
         if new_timezone is None:
-            current_tz = Cache.guilds.get(ctx.guild.id).timezone
+            current_tz = self.bot.cache.guilds.get(ctx.guild.id).timezone
             return await ctx.send(Translator.translate("CONFIG_TIMEZONE_CURRENT", ctx, current=current_tz))
 
         if is_timezone(new_timezone) is False:
@@ -75,7 +74,7 @@ class ServerAdmin(commands.Cog):
         await self.bot.db.timezones.set(ctx.guild.id, new_timezone)
         await self.bot.cache.refresh(ctx.guild.id)
 
-        if Cache.guilds.get(ctx.guild.id).timezone == new_timezone:
+        if self.bot.cache.guilds.get(ctx.guild.id).timezone == new_timezone:
             await ctx.send(Translator.translate("CONFIG_TIMEZONE_UPDATED", ctx, timezone=new_timezone))
         else:
             await ctx.send(Translator.translate("CONFIG_UPDATE_ERROR", ctx))

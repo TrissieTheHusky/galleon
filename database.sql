@@ -6,12 +6,13 @@ create table if not exists bot.guilds
         constraint guilds_pk
             primary key,
     prefix        text,
+    _timezone     text     default 'UTC'::text not null,
+    language      text,
     admin_roles   bigint[] default '{}'::bigint[],
     mod_roles     bigint[] default '{}'::bigint[],
     trusted_roles bigint[] default '{}'::bigint[],
     mute_role     bigint,
-    _timezone     text     default 'UTC'::text not null,
-    language      text
+    log_messages  boolean  default true        not null
 );
 
 comment on table bot.guilds is 'Settings of every guild';
@@ -47,6 +48,21 @@ server_changes - new channels, roles, added/removed roles and other things like 
 
 create unique index if not exists logging_channels_guild_id_uindex
     on bot.logging_channels (guild_id);
+
+alter table bot.logging_channels
+    owner to defrabot;
+
+-- Messages logger table --
+
+create table if not exists bot.messages
+(
+    guild_id   bigint                not null,
+    channel_id bigint                not null,
+    message_id bigint                not null,
+    author_id  bigint                not null,
+    is_deleted boolean default false not null,
+    content    bytea
+);
 
 alter table bot.logging_channels
     owner to defrabot;

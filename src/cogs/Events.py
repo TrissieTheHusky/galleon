@@ -77,6 +77,11 @@ class Events(commands.Cog):
         # Refreshing bot's cache for the guild
         await self.bot.cache.refresh(guild.id)
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.guild is not None:
+            self.bot.dispatch('log_message', message=message)
+
 
 def setup(bot):
     bot.add_cog(Events(bot))

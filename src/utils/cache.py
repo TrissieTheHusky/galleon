@@ -14,16 +14,23 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from collections import namedtuple
-from typing import MutableSet, Dict
+from typing import MutableSet, Dict, List, Optional, NamedTuple
 
 from src.database import Database
 from src.utils.logger import logger
 
-CacheStruct = namedtuple('CacheStruct', 'prefix language timezone mod_roles admin_roles mute_role')
+
+class CacheStruct(NamedTuple):
+    prefix: Optional[str]
+    language: Optional[str]
+    timezone: str
+    mod_roles: List[int]
+    admin_roles: List[int]
+    mute_role: Optional[int]
+    log_messages: bool
 
 
-class Cache:
+class CacheManager:
     guilds: Dict[int, CacheStruct] = {}
     blacklisted_users: MutableSet[int] = set()
 
@@ -31,7 +38,8 @@ class Cache:
     async def refresh(cls, guild_id: int):
         row = await Database.fetchrow("SELECT * FROM bot.guilds WHERE guild_id = $1", guild_id)
         cls.guilds.update({
-            guild_id: CacheStruct(row['prefix'], row['language'], row['_timezone'], row['mod_roles'], row['admin_roles'], row['mute_role'])
+            guild_id: CacheStruct(row['prefix'], row['language'], row['_timezone'], row['mod_roles'],
+                                  row['admin_roles'], row['mute_role'], row['log_messages'])
         })
         print("[CACHE] Refreshed settings data for Guild {0}".format(guild_id))
 

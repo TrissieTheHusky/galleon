@@ -19,7 +19,7 @@ from os.path import join, dirname
 
 import pyseeyou
 
-from src.cache import Cache
+from .cache import CacheManager
 from .logger import logger
 
 
@@ -39,11 +39,11 @@ class Translator:
         if context is not None:
             if hasattr(context, 'guild'):
                 if context.guild is not None:
-                    if (settings_cache := Cache.guilds.get(context.guild.id, None)) is not None:
+                    if (settings_cache := CacheManager.guilds.get(context.guild.id, None)) is not None:
                         current_lang = settings_cache.language
 
             elif isinstance(context, int):
-                if (settings_cache := Cache.guilds.get(context, None)) is not None:
+                if (settings_cache := CacheManager.guilds.get(context, None)) is not None:
                     current_lang = settings_cache.language
 
         try:

@@ -19,8 +19,9 @@ from typing import Optional
 from aiohttp import ClientSession
 from discord import User, TextChannel, AllowedMentions
 from discord.ext.commands import AutoShardedBot
+from cryptography.fernet import Fernet
 
-from src.cache import Cache
+from src.utils.cache import CacheManager
 from src.database import Database
 from .apis import APIs
 from .configuration import cfg
@@ -46,9 +47,12 @@ class DefraBot(AutoShardedBot):
 
         # Databases related attrs
         self.db = Database
-        self.cache = Cache
+        self.cache = CacheManager
         self.infraction = Infractions
         self.active_infractions = []
+
+        # Data encryption
+        self.cryptor = Fernet(cfg['SECURITY']['SECRET_KEY'].encode(encoding='utf-8'))
 
     async def refresh_cache(self):
         # General data cache

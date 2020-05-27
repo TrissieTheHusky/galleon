@@ -35,6 +35,9 @@ DATABASE = "DB name"
 HOST = "IP addr"
 PORT = 5432
 
+[SECURITY]
+SECRET_KEY = "some random thing must be here"
+
 [API_KEYS]
 CATS = "asdasd"
 YANDEX = "blablabla"
