@@ -18,7 +18,7 @@ from datetime import datetime
 from typing import Union, Optional, List
 
 from pytz import timezone
-from discord import utils, TextChannel, RawMessageDeleteEvent, RawMessageUpdateEvent, Member
+from discord import utils, TextChannel, RawMessageDeleteEvent, RawMessageUpdateEvent, Member, Message
 from discord.ext import commands
 
 from src.utils.custom_bot_class import DefraBot
@@ -55,6 +55,21 @@ class ModLogging(commands.Cog):
         elif logging_type is ModLoggingType.server_changes:
             channel_ids = await self.bot.db.fetchval("SELECT server_changes FROM bot.logging_channels WHERE guild_id = $1", guild_id)
             return [self.bot.get_channel(channel_id) for channel_id in channel_ids] if channel_ids is not None else None
+
+    @commands.Cog.listener()
+    async def on_log_message(self, message: Message):
+        cache = self.bot.cache.guilds.get(message.guild.id)
+
+        if cache is None:
+            return
+
+        if not cache.log_messages:
+            return
+
+        encrypted_content = self.bot.cryptor.encrypt(message.content.encode(encoding='utf-8'))
+        query = "INSERT INTO bot.messages (guild_id, channel_id, message_id, author_id, content) VALUES ($1, $2, $3, $4, $5)"
+        query_params = (message.guild.id, message.channel.id, message.id, message.author.id, encrypted_content)
+        await self.bot.db.execute(query, *query_params)
 
     @commands.Cog.listener()
     async def on_mod_log_join_leave(self, is_join: bool, member: Member):

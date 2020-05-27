@@ -91,21 +91,6 @@ class Moderation(commands.Cog):
         for action in active_actions:
             self.bot.active_infractions.append(action)
 
-    @commands.Cog.listener()
-    async def on_log_message(self, message: discord.Message):
-        cache = self.bot.cache.guilds.get(message.guild.id)
-
-        if cache is None:
-            return
-
-        if not cache.log_messages:
-            return
-
-        encrypted_content = self.bot.cryptor.encrypt(message.content.encode(encoding='utf-8'))
-        query = "INSERT INTO bot.messages (guild_id, channel_id, message_id, author_id, content) VALUES ($1, $2, $3, $4, $5)"
-        query_params = (message.guild.id, message.channel.id, message.id, message.author.id, encrypted_content)
-        await self.bot.db.execute(query, *query_params)
-
     @commands.group()
     async def archive(self, ctx):
         """ARCHIVE_HELP"""
