@@ -41,29 +41,32 @@ class ModLogging(commands.Cog):
         def check(x):
             return x is not None
 
+        def process_ids(ids: list):
+            return list(filter(check, [self.bot.get_channel(cid) for cid in ids]))
+
         if logging_type is ModLoggingType.misc:
             channel_ids = self.bot.cache.guilds.get(guild_id).logging.misc or []
-            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
+            return process_ids(channel_ids)
 
         elif logging_type is ModLoggingType.messages:
             channel_ids = self.bot.cache.guilds.get(guild_id).logging.messages or []
-            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
+            return process_ids(channel_ids)
 
         elif logging_type is ModLoggingType.join_leave:
             channel_ids = self.bot.cache.guilds.get(guild_id).logging.join_leave or []
-            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
+            return process_ids(channel_ids)
 
         elif logging_type is ModLoggingType.mod_actions:
             channel_ids = self.bot.cache.guilds.get(guild_id).logging.mod_actions or []
-            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
+            return process_ids(channel_ids)
 
         elif logging_type is ModLoggingType.config_logs:
             channel_ids = self.bot.cache.guilds.get(guild_id).logging.config_logs or []
-            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
+            return process_ids(channel_ids)
 
         elif logging_type is ModLoggingType.server_changes:
             channel_ids = self.bot.cache.guilds.get(guild_id).logging.server_changes or []
-            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
+            return process_ids(channel_ids)
 
     @commands.Cog.listener()
     async def on_log_message(self, message: Message):
