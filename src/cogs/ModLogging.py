@@ -31,30 +31,39 @@ class ModLogging(commands.Cog):
     def __init__(self, bot):
         self.bot: DefraBot = bot
 
-    async def get_destinations(self, guild_id: int, logging_type: ModLoggingType) -> Optional[List[Optional[TextChannel]]]:
+    async def get_destinations(self, guild_id: int, logging_type: ModLoggingType) -> List[Optional[TextChannel]]:
+        """Returns a list of TextChannels for selected logging type.
+
+        It will return an empty list if no channels found,
+        so it will prevent from trying to send a message to unknown channel.
+        """
+
+        def check(x):
+            return x is not None
+
         if logging_type is ModLoggingType.misc:
-            channel_ids = await self.bot.db.fetchval("SELECT misc FROM bot.logging_channels WHERE guild_id = $1", guild_id)
-            return [self.bot.get_channel(channel_id) for channel_id in channel_ids] if channel_ids is not None else None
+            channel_ids = self.bot.cache.guilds.get(guild_id).logging.misc or []
+            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
 
         elif logging_type is ModLoggingType.messages:
-            channel_ids = await self.bot.db.fetchval("SELECT messages FROM bot.logging_channels WHERE guild_id = $1", guild_id)
-            return [self.bot.get_channel(channel_id) for channel_id in channel_ids] if channel_ids is not None else None
+            channel_ids = self.bot.cache.guilds.get(guild_id).logging.messages or []
+            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
 
         elif logging_type is ModLoggingType.join_leave:
-            channel_ids = await self.bot.db.fetchval("SELECT join_leave FROM bot.logging_channels WHERE guild_id = $1", guild_id)
-            return [self.bot.get_channel(channel_id) for channel_id in channel_ids] if channel_ids is not None else None
+            channel_ids = self.bot.cache.guilds.get(guild_id).logging.join_leave or []
+            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
 
         elif logging_type is ModLoggingType.mod_actions:
-            channel_ids = await self.bot.db.fetchval("SELECT mod_actions FROM bot.logging_channels WHERE guild_id = $1", guild_id)
-            return [self.bot.get_channel(channel_id) for channel_id in channel_ids] if channel_ids is not None else None
+            channel_ids = self.bot.cache.guilds.get(guild_id).logging.mod_actions or []
+            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
 
         elif logging_type is ModLoggingType.config_logs:
-            channel_ids = await self.bot.db.fetchval("SELECT config_logs FROM bot.logging_channels WHERE guild_id = $1", guild_id)
-            return [self.bot.get_channel(channel_id) for channel_id in channel_ids] if channel_ids is not None else None
+            channel_ids = self.bot.cache.guilds.get(guild_id).logging.config_logs or []
+            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
 
         elif logging_type is ModLoggingType.server_changes:
-            channel_ids = await self.bot.db.fetchval("SELECT server_changes FROM bot.logging_channels WHERE guild_id = $1", guild_id)
-            return [self.bot.get_channel(channel_id) for channel_id in channel_ids] if channel_ids is not None else None
+            channel_ids = self.bot.cache.guilds.get(guild_id).logging.server_changes or []
+            return list(filter(check, [self.bot.get_channel(cid) for cid in channel_ids]))
 
     @commands.Cog.listener()
     async def on_log_message(self, message: Message):

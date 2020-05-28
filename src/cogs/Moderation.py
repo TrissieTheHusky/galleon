@@ -75,6 +75,7 @@ class Moderation(commands.Cog):
                             await guild.unban(member, reason=Translator.translate('TEMP_BAN_EXPIRED', guild.id, inf_id=infraction['inf_id']))
                             await self.bot.infraction.deactivate(infraction['inf_id'])
                             self.bot.active_infractions.remove(infraction)
+                            # Inform that someone got unbanned, use bot.dispatch and handle in mod logging cog
                         except discord.Forbidden:
                             pass  # TODO: Must inform the server owner through logging that bot lacks required permissions to un-ban
                         except discord.HTTPException:
