@@ -20,6 +20,16 @@ from src.database import Database
 from src.utils.logger import logger
 
 
+class LoggingStruct(NamedTuple):
+    misc: List[int]
+    messages: List[int]
+    join_leave: List[int]
+    mod_actions: List[int]
+    config_logs: List[int]
+    server_changes: List[int]
+    ignored_users: List[int]
+
+
 class CacheStruct(NamedTuple):
     prefix: Optional[str]
     language: Optional[str]
@@ -28,6 +38,7 @@ class CacheStruct(NamedTuple):
     admin_roles: List[int]
     mute_role: Optional[int]
     log_messages: bool
+    logging: LoggingStruct
 
 
 class CacheManager:
@@ -36,10 +47,19 @@ class CacheManager:
 
     @classmethod
     async def refresh(cls, guild_id: int):
-        row = await Database.fetchrow("SELECT * FROM bot.guilds WHERE guild_id = $1", guild_id)
+        settings = await Database.fetchrow("SELECT * FROM bot.guilds WHERE guild_id = $1", guild_id)
+        logging = await Database.fetchrow("SELECT * FROM bot.logging_channels WHERE guild_id = $1", guild_id)
+
+        def l_s_l(x: list):
+            return list(set(x))
+
         cls.guilds.update({
-            guild_id: CacheStruct(row['prefix'], row['language'], row['_timezone'], row['mod_roles'],
-                                  row['admin_roles'], row['mute_role'], row['log_messages'])
+            guild_id: CacheStruct(settings['prefix'], settings['language'], settings['_timezone'], settings['mod_roles'],
+                                  settings['admin_roles'], settings['mute_role'], settings['log_messages'],
+
+                                  LoggingStruct(l_s_l(logging['misc']), l_s_l(logging['messages']), l_s_l(logging['join_leave']),
+                                                l_s_l(logging['mod_actions']), l_s_l(logging['config_logs']), l_s_l(logging['server_changes']),
+                                                l_s_l(logging['ignored_users'])))
         })
         print("[CACHE] Refreshed settings data for Guild {0}".format(guild_id))
 
