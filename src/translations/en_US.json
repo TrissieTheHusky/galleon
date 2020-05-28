@@ -195,5 +195,19 @@
   "TEMP_BANNED_MESSAGE": ":ok_hand: **{target}** (``{target_id}``) was temporary banned until ``{until}`` for: ``{reason}``",
   "BANNED_MESSAGE": ":ok_hand: **{target}** (``{target_id}``) was banned for: ``{reason}``",
   "WARNING_MESSAGE": ":ok_hand: **{target}** (``{target_id}``) has received a warning for: ``{reason}``",
-  "MOD_LOGS_WARN": ":warning: [``{time}``] **{target}** (``{target_id}``) was warned by **{moderator}** (``{moderator_id}``) for: ``{reason}``"
+  "MOD_LOGS_WARN": ":warning: [``{time}``] **{target}** (``{target_id}``) was warned by **{moderator}** (``{moderator_id}``) for: ``{reason}``",
+  "MOD_ROLES_RESET_FAIL": ":x: There are no moderator roles on this server!",
+  "MOD_ROLES_RESET_SUCCESS": ":ok_hand: Moderator roles list was purged.",
+  "MOD_ROLES_RESET_HELP": "Purges current list of Moderator roles",
+  "MOD_LOGGING_UNKNOWN_CHANNEL": ":x: You have specified an unknown channel!",
+  "MOD_LOGGING_ADDED": ":ok_hand: Successfully added logging to {channel} for these type of logging: {logging_types}",
+  "MOD_LOGGING_REMOVED": ":ok_hand: Successfully removed logging from {channel} of these types: {logging_types}",
+  "LOGGING_CURRENT_TITLE": "Current logging settings for {servername}",
+  "CONFIG_LOGGING_RESET_CHANNEL_IS_NONE": ":x: You haven't specified any channel!",
+  "CONFIG_LOGGING_RESET": ":ok_hand: You have successfully reset logging settings for {channel}",
+  "CONFIG_LOGGING_HELP": "Changes mod logging settings",
+  "CONFIG_LOGGING_ADD_HELP": "Assigns logging types to the channel",
+  "CONFIG_LOGGING_REMOVE_HELP": "Removes logging types from the channel",
+  "CONFIG_LOGGING_RESET_HELP": "Purges logging types from the channel",
+  "ERROR_HANDLER_CFG_LOGGING_BAD_CHANNEL": "You have specified an unknown channel!"
 }

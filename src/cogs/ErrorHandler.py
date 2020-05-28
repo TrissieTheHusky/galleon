@@ -101,6 +101,12 @@ class ErrorHandler(commands.Cog):
                     text=Translator.translate("ERROR_HANDLER_TEMP_ACTION_BAD_TIME", ctx, arg=error.args[1])
                 ))
 
+            elif ctx.command.qualified_name == 'config logging add' or 'config logging remove':
+                return await ctx.send(embed=warn_embed(
+                    title=Translator.translate("ERROR_HANDLER_BAD_ARGUMENT", ctx),
+                    text=Translator.translate("ERROR_HANDLER_CFG_LOGGING_BAD_CHANNEL", ctx)
+                ))
+
         elif isinstance(error, commands.NoPrivateMessage):
             return await ctx.author.send(Translator.translate("ERROR_HANDLER_SERVER_ONLY", ctx, command=str(ctx.command)))
 

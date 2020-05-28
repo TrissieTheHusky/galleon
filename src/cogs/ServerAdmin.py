@@ -14,12 +14,15 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from typing import Union
+
+from discord import TextChannel
 from discord.ext import commands
 
 from src.utils.base import is_timezone
 from src.utils.checks import is_server_manager_or_bot_owner
 from src.utils.custom_bot_class import DefraBot
-from src.utils.enums import TableRolesTypes
+from src.utils.enums import TableRolesTypes, ModLoggingType
 from src.utils.premade_embeds import DefraEmbed, error_embed
 from src.utils.translator import Translator
 
@@ -172,6 +175,98 @@ class ServerAdmin(commands.Cog):
             title=Translator.translate('CONFIG_MOD_ROLES_REMOVED', ctx.guild.id),
             description='\n'.join(
                 [str(ctx.guild.get_role(role_id).mention if ctx.guild.get_role(role_id) is not None else role_id) for role_id in roles])))
+
+    @mod_roles.command(name='reset')
+    @commands.cooldown(1, 1, commands.BucketType.guild)
+    async def mod_roles_reset(self, ctx):
+        """MOD_ROLES_RESET_HELP"""
+        if len(self.bot.cache.guilds.get(ctx.guild.id).mod_roles) <= 0:
+            return await ctx.send(Translator.translate('MOD_ROLES_RESET_FAIL'), ctx)
+
+        await self.bot.db.roles.set(TableRolesTypes.mod_roles, ctx.guild.id, [])
+        await self.bot.cache.refresh(ctx.guild.id)
+
+        await ctx.send(Translator.translate('MOD_ROLES_RESET_SUCCESS', ctx))
+
+    @config.group()
+    async def logging(self, ctx):
+        """CONFIG_LOGGING_HELP"""
+        if ctx.invoked_subcommand is None:
+            logging_settings = self.bot.cache.guilds.get(ctx.guild.id).logging
+            embed = DefraEmbed(title=Translator.translate('LOGGING_CURRENT_TITLE', ctx, servername=ctx.guild.name))
+
+            for modlog_type in ModLoggingType:
+                channel_ids = [channel_id for channel_id in getattr(logging_settings, modlog_type.value)]
+                channels_fmt = "\n".join([f"{channel.mention}"
+                                          if (channel := self.bot.get_channel(channel_id))
+                                          else f"~~`{channel_id}`~~"
+                                          for channel_id in channel_ids])
+                embed.add_field(name=modlog_type.value, value=channels_fmt if len(channel_ids) > 0 else "None")
+
+            await ctx.send(embed=embed)
+
+    @logging.command(name='add')
+    @commands.cooldown(1, 1, commands.BucketType.guild)
+    async def logging_add(self, ctx, channel: Union[TextChannel], logging_types: commands.Greedy[ModLoggingType]):
+        """CONFIG_LOGGING_ADD_HELP"""
+        logging_types = list(set(logging_types))  # BIG BRAIN CODE
+
+        for logging_type in logging_types:
+            if channel.id in getattr(self.bot.cache.guilds.get(ctx.guild.id).logging, logging_type.value):
+                logging_types.remove(logging_type)
+            else:
+                await self.bot.db.logging.add(logging_type, ctx.guild.id, channel.id)
+
+        if len(logging_types) <= 0:
+            return await ctx.send(Translator.translate('NOTHING_CHANGED', ctx))
+
+        await self.bot.cache.refresh(ctx.guild.id)
+        await ctx.send(Translator.translate('MOD_LOGGING_ADDED', ctx, channel=channel.mention,
+                                            logging_types=", ".join([ltype.value for ltype in logging_types])))
+
+    @logging.command(name='remove', aliases=('rmv', 'delete', 'del'))
+    @commands.cooldown(1, 1, commands.BucketType.guild)
+    async def logging_remove(self, ctx, channel: Union[TextChannel, int], logging_types: commands.Greedy[ModLoggingType]):
+        """CONFIG_LOGGING_REMOVE_HELP"""
+        logging_types = list(set(logging_types))  # BIG BRAIN CODE
+
+        if isinstance(channel, TextChannel):
+            for logging_type in logging_types:
+                if channel.id in getattr(self.bot.cache.guilds.get(ctx.guild.id).logging, logging_type.value):
+                    await self.bot.db.logging.remove(logging_type, ctx.guild.id, channel.id)
+                else:
+                    logging_types.remove(logging_type)
+
+        elif isinstance(channel, int):
+            for logging_type in logging_types:
+                if channel in getattr(self.bot.cache.guilds.get(ctx.guild.id).logging, logging_type.value):
+                    await self.bot.db.logging.remove(logging_type, ctx.guild.id, channel)
+                else:
+                    logging_types.remove(logging_type)
+
+        if len(logging_types) <= 0:
+            return await ctx.send(Translator.translate('NOTHING_CHANGED', ctx))
+
+        await self.bot.cache.refresh(ctx.guild.id)
+        await ctx.send(Translator.translate('MOD_LOGGING_REMOVED', ctx, channel=channel.mention if isinstance(channel, TextChannel) else channel,
+                                            logging_types=", ".join([ltype.value for ltype in logging_types])))
+
+    @logging.command(name='reset')
+    @commands.cooldown(1, 1, commands.BucketType.guild)
+    async def logging_reset(self, ctx, channel: Union[TextChannel, int] = None):
+        """CONFIG_LOGGING_RESET_HELP"""
+        if channel is None:
+            return await ctx.send(Translator.translate('CONFIG_LOGGING_RESET_CHANNEL_IS_NONE', ctx))
+
+        for logging_type in ModLoggingType:
+            if isinstance(channel, TextChannel):
+                await self.bot.db.logging.remove(logging_type, ctx.guild.id, channel.id)
+            elif isinstance(channel, int):
+                await self.bot.db.logging.remove(logging_type, ctx.guild.id, channel)
+
+        await self.bot.cache.refresh(ctx.guild.id)
+        await ctx.send(Translator.translate('CONFIG_LOGGING_RESET', ctx,
+                                            channel=f"{channel.mention}" if isinstance(channel, TextChannel) else f"{channel}"))
 
 
 def setup(bot):
