@@ -19,6 +19,7 @@ from typing import Optional
 
 from asyncpg.pool import Pool, create_pool
 
+from .logging import SQLLogging
 from .blacklist import SQLBlacklist
 from .language import SQLLanguage
 from .prefix import SQLPrefix
@@ -37,6 +38,7 @@ class Database:
     blacklist: Optional[SQLBlacklist] = None
     roles: Optional[SQLRoles] = None
     temp_actions: Optional[SQLTempActions] = None
+    logging: Optional[SQLLogging] = None
 
     @classmethod
     async def connect(cls, credentials) -> None:
@@ -51,6 +53,7 @@ class Database:
             cls.blacklist = SQLBlacklist(cls._pool)
             cls.roles = SQLRoles(cls._pool)
             cls.temp_actions = SQLTempActions(cls._pool)
+            cls.logging = SQLLogging(cls._pool)
 
             logger.info("[DB] Connection pool created.")
         except gaierror:

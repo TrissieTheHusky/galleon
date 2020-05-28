@@ -33,6 +33,14 @@ class SQLRoles(SQLBase):
                 elif TableRolesTypes(role_type) is TableRolesTypes.mute_role:
                     return await conn.execute("UPDATE bot.guilds SET mod_roles = $1 WHERE guild_id = $2", role_id, guild_id)
 
+    async def set(self, role_type: str, guild_id: int, new_list: list):
+        async with self._pool.acquire() as conn:
+            if TableRolesTypes(role_type) is TableRolesTypes.mod_roles:
+                return await conn.execute("UPDATE bot.guilds SET mod_roles = $1 WHERE guild_id = $2", new_list, guild_id)
+
+            elif TableRolesTypes(role_type) is TableRolesTypes.admin_roles:
+                return await conn.execute("UPDATE bot.guilds SET admin_roles = $1 WHERE guild_id = $2", new_list, guild_id)
+
     async def add(self, role_type: str, guild_id: int, role_id: int):
         async with self._pool.acquire() as conn:
             async with conn.transaction():
